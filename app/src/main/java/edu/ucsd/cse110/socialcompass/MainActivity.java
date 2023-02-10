@@ -6,7 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Pair;
+
 import java.util.*;
+
+import android.widget.TextView;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
         // check if this is a new user, and if so, initialize their sharedPreferences
         Boolean newUser = preferences.getBoolean("newUser", true);
         if (newUser) { initNewUser(); }
-
     }
 
     // This method should only be called one time EVER - for initializing brand new users.
@@ -37,5 +40,14 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Ask for location permission and build initial HashMap for storing data
         HashMap<Double latitude, Double longitutude, String name> location = new HashMap<>();
 
+        // HashMap containing (label, coordinates) pairs inputted by the User
+        HashMap<String, Pair<Float,Float>> userInputHashSet = new HashMap<String, Pair<Float,Float>>();
+
+        // Prompt user to input their home coordinates
+        Utilities.showAlertDialog(this, "Please input your Home coordinates");
+
+        //below line is set to "true" for testing purposes
+        editor.putBoolean("newUser", true);
+        editor.apply();
     }
 }
