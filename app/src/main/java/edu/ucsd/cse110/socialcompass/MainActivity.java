@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Pair;
-import java.util.HashMap;
+import java.util.*;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         //TODO: Ask for location permission and build initial HashMap for storing data
+        HashMap<Double latitude, Double longitutude, String name> location = new HashMap<>();
 
     }
 }
