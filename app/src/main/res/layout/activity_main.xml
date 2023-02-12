@@ -7,8 +7,9 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/app_name"
         android:layout_width="wrap_content"
-        android:layout_height="47dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Social Compass"
@@ -26,91 +27,106 @@
         android:id="@+id/outter_circle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="149dp"
-        android:layout_marginEnd="6dp"
         android:background="@drawable/outter_circle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/inner_circle"
-        android:layout_width="330dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="180dp"
         android:background="@drawable/inner_circle"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/north"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="196dp"
-        android:layout_marginTop="149dp"
+        android:layout_marginStart="185dp"
+        android:layout_marginEnd="187dp"
         android:text="N"
         android:textColor="@color/black"
         android:textSize="25sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/inner_circle"
+        app:layout_constraintEnd_toEndOf="@+id/outter_circle"
+        app:layout_constraintStart_toStartOf="@+id/outter_circle"
+        app:layout_constraintTop_toTopOf="@+id/outter_circle" />
 
     <TextView
         android:id="@+id/south"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="196dp"
-        android:layout_marginTop="508dp"
+        android:layout_marginStart="187dp"
+        android:layout_marginEnd="188dp"
         android:text="S"
         android:textColor="@color/black"
         android:textSize="25sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/outter_circle"
+        app:layout_constraintEnd_toEndOf="@+id/outter_circle"
+        app:layout_constraintStart_toStartOf="@+id/outter_circle"
+        app:layout_constraintTop_toBottomOf="@+id/inner_circle" />
 
     <TextView
         android:id="@+id/east"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="375dp"
-        android:layout_marginTop="328dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="178dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="178dp"
         android:text="E"
         android:textColor="@color/black"
         android:textSize="25sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/outter_circle"
+        app:layout_constraintEnd_toEndOf="@+id/outter_circle"
+        app:layout_constraintStart_toEndOf="@+id/inner_circle"
+        app:layout_constraintTop_toTopOf="@+id/outter_circle" />
 
     <TextView
         android:id="@+id/west"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="328dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="177dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="179dp"
         android:text="W"
         android:textColor="@color/black"
         android:textSize="25sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/outter_circle"
+        app:layout_constraintEnd_toStartOf="@+id/inner_circle"
+        app:layout_constraintStart_toStartOf="@+id/outter_circle"
+        app:layout_constraintTop_toTopOf="@+id/outter_circle" />
 
     <TextView
         android:id="@+id/house_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="292dp"
-        android:layout_marginTop="184dp"
+        android:layout_marginStart="252dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="58dp"
+        android:layout_marginBottom="279dp"
         android:background="@drawable/house_icon"
         android:tint="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/inner_circle"
+        app:layout_constraintEnd_toEndOf="@+id/outter_circle"
+        app:layout_constraintStart_toStartOf="@+id/inner_circle"
+        app:layout_constraintTop_toTopOf="@+id/outter_circle" />
 
     <TextView
         android:id="@+id/location_icon"
         android:layout_width="wrap_content"
-        android:layout_height="75dp"
-        android:layout_marginStart="168dp"
-        android:layout_marginTop="328dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/location_icon"
-        app:layout_constraintStart_toStartOf="parent"
+        android:rotation="180"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
