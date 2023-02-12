@@ -32,15 +32,24 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = (TextView) findViewById(R.id.serviceTextView);
 
 
-        Location mock = new Location("");
-        mock.setLatitude(0.0d);
-        mock.setLongitude(0.0d);
+        Location dest = new Location("");
+        dest.setLatitude(32.8819389463388d);
+        dest.setLongitude(-117.23756590001862d);
         Location myLocation = new Location(LocationManager.GPS_PROVIDER); //LocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         TextView bearing_angle = (TextView) findViewById(R.id.bearingAngle);
 
 
-        float bearing = myLocation.bearingTo(mock);
+        float bearing = myLocation.bearingTo(dest);
+
+        //Convert bearingTo to realBearing(which is 0-270deg
+        if(bearing < 0)
+        {
+            bearing = bearing+360;
+
+        }
+
+
         //float bearing = ((Location)locationService).bearingTo(mockCoordinates);
         locationService.getLocation().observe(this, loc->{
             textView.setText(Double.toString(loc.first)+" , "+
