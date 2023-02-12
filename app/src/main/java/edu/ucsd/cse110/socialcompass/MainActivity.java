@@ -9,6 +9,7 @@ import android.util.Pair;
 
 import java.util.*;
 
+import android.view.View;
 import android.widget.TextView;
 
 
@@ -38,10 +39,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         //TODO: Ask for location permission and build initial HashMap for storing data
-        HashMap<Double latitude, Double longitutude, String name> location = new HashMap<>();
 
         // HashMap containing (label, coordinates) pairs inputted by the User
-        HashMap<String, Pair<Float,Float>> userInputHashSet = new HashMap<String, Pair<Float,Float>>();
+        HashMap<String, Pair<Double,Double>> userInputHashSet = new HashMap<String, Pair<Double,Double>>();
 
         // Prompt user to input their home coordinates
         Utilities.showAlertDialog(this, "Please input your Home coordinates");
@@ -49,5 +49,12 @@ public class MainActivity extends AppCompatActivity {
         //below line is set to "true" for testing purposes
         editor.putBoolean("newUser", true);
         editor.apply();
+    }
+
+    public void onAddLocationClicked(View view) {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        Utilities.showAlertDialog(this, "Add Location Coordinates");
     }
 }
