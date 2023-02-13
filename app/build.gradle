@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+<<<<<<< HEAD
     namespace 'edu.ucsd.cse110.socialcompass'
     compileSdk 33
 
@@ -10,6 +11,15 @@ android {
         applicationId "edu.ucsd.cse110.socialcompass"
         minSdk 28
         targetSdk 33
+=======
+    namespace 'edu.ucsd.cse110.cse110_project'
+    compileSdk 32
+
+    defaultConfig {
+        applicationId "edu.ucsd.cse110.cse110_project"
+        minSdk 32
+        targetSdk 32
+>>>>>>> us3-1
         versionCode 1
         versionName "1.0"
 
@@ -30,7 +40,12 @@ android {
 
 dependencies {
 
+<<<<<<< HEAD
     implementation 'androidx.appcompat:appcompat:1.6.0'
+=======
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
+>>>>>>> us3-1
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
