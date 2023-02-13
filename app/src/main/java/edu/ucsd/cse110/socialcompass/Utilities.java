@@ -86,7 +86,7 @@ public class Utilities {
         if ( longitude < -180 || longitude > 180) { return null; }
 
         coordinates[0] = latitude;
-        coordinates[1] = latitude;
+        coordinates[1] = longitude;
         return coordinates;
     }
 }
