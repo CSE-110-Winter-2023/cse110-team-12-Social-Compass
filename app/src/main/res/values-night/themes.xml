@@ -1,10 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-<<<<<<< HEAD
     <style name="Theme.SocialCompass" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-=======
     <style name="Theme.CSE110_Project" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
->>>>>>> us3-1
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_200</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
