@@ -81,9 +81,6 @@ public class TestInput {
     }
 
     /**
-     * Tests for UI
+     * Tests for system (Story 1)
      */
-    public void ui() {
-        // TODO
-    }
 }
