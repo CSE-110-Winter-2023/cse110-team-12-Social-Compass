@@ -1,14 +1,8 @@
 pluginManagement {
     repositories {
-<<<<<<< HEAD
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-=======
         gradlePluginPortal()
         google()
         mavenCentral()
->>>>>>> us3-1
     }
 }
 dependencyResolutionManagement {
@@ -18,9 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-<<<<<<< HEAD
 rootProject.name = "Social Compass"
-=======
 rootProject.name = "CSE110_Project"
->>>>>>> us3-1
 include ':app'
