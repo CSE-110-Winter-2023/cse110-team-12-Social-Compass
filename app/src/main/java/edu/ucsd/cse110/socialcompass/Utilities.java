@@ -3,6 +3,7 @@ package edu.ucsd.cse110.socialcompass;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -11,7 +12,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import java.util.HashMap;
+
 public class Utilities {
+
+    private static Locations locations;
+
     // Prompts the user with an AlertDialog to input location name and coordinates
     public static void showAlertDialog(MainActivity activity, String message) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
@@ -35,16 +41,27 @@ public class Utilities {
 
                         double[] coordinates = parseCoordinates(input); // parse the input
 
+                        EditText inputLabel = promptUserView.findViewById(R.id.inputLabel);
+                        String name = inputLabel.getText().toString();
+
                         // if input is not null, then it is valid, so update preferences
-                        if (coordinates != null)
+                        if (name != null && coordinates != null)
                         {
+                            editor.putString("homeLabel", inputLabel.getText().toString());
                             editor.putString("homeCoords", inputCoords.getText().toString());
                             editor.apply();
 
                             // (Below 2 lines for testing purposes) Write home coordinates to textview
                             String homeCoords = preferences.getString("homeCoords", "Default");
+                            String homeLabel = preferences.getString("homeLabel", "Default");
                             TextView testCoords = activity.findViewById(R.id.testCoords);
+                            TextView testLabel = activity.findViewById(R.id.label);
                             testCoords.setText(homeCoords);
+                            testLabel.setText(homeLabel);
+                            if (locations == null) {
+                                locations = new Locations();
+                            }
+                            locations.addLocation(name, new Pair(coordinates[0], coordinates[1]));
                         }
                         else { showAlert(activity,"Invalid Input"); }
                     }

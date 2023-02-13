@@ -12,8 +12,6 @@ import java.util.*;
 import android.view.View;
 import android.widget.TextView;
 
-
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -29,7 +27,10 @@ public class MainActivity extends AppCompatActivity {
 
         // check if this is a new user, and if so, initialize their sharedPreferences
         Boolean newUser = preferences.getBoolean("newUser", true);
-        if (newUser) { initNewUser(); }
+        if (newUser) {
+            initNewUser();
+            newUser = false;
+        }
     }
 
     // This method should only be called one time EVER - for initializing brand new users.
@@ -39,9 +40,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         //TODO: Ask for location permission and build initial HashMap for storing data
-
-        // HashMap containing (label, coordinates) pairs inputted by the User
-        HashMap<String, Pair<Double,Double>> userInputHashSet = new HashMap<String, Pair<Double,Double>>();
+        // Initialize locations map in Utilities.java
 
         // Prompt user to input their home coordinates
         Utilities.showAlertDialog(this, "Please input your Home coordinates");
