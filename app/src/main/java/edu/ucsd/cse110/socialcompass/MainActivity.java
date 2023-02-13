@@ -1,6 +1,7 @@
 package edu.ucsd.cse110.socialcompass;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.android.R;
 
 import android.os.Bundle;
 
