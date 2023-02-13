@@ -79,4 +79,9 @@ public class TestInput {
     public void test11() {
         Assert.assertNull(Utilities.parseCoordinates("-90.00001, -180.0001"));
     }
+
+    @Test
+    public void test12() {
+        Assert.assertNull(Utilities.parseCoordinates("-100.00001, -180.0001"));
+    }
 }
