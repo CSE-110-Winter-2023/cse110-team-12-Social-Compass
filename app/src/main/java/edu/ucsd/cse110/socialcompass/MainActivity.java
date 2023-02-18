@@ -3,6 +3,7 @@ package edu.ucsd.cse110.socialcompass;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Pair;
@@ -49,9 +50,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onAddLocationClicked(View view) {
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
+//        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+//        SharedPreferences.Editor editor = preferences.edit();
+//
+//        Utilities.showAlertDialog(this, "Add Location Coordinates");
 
-        Utilities.showAlertDialog(this, "Add Location Coordinates");
+        Intent intent = new Intent(this, LocationListActivity.class);
+        startActivity(intent);
     }
 }
