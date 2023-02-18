@@ -19,6 +19,7 @@ public class LocationListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
 
+        // initialize the LocationList Ad
         LocationListAdapter adapter = new LocationListAdapter();
         adapter.setHasStableIds(true);
 

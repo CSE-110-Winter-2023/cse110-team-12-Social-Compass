@@ -6,24 +6,24 @@
     android:layout_height="128dp">
 
     <EditText
-        android:id="@+id/location_item_label"
+        android:id="@+id/inputLabel"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Label"
-        app:layout_constraintBottom_toTopOf="@+id/location_item_coords"
+        app:layout_constraintBottom_toTopOf="@+id/inputCoords"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <EditText
-        android:id="@+id/location_item_coords"
+        android:id="@+id/inputCoords"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="6dp"
@@ -32,6 +32,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/location_item_label"
-        app:layout_constraintTop_toBottomOf="@+id/location_item_label" />
+        app:layout_constraintStart_toStartOf="@+id/inputLabel"
+        app:layout_constraintTop_toBottomOf="@+id/inputLabel" />
 </androidx.constraintlayout.widget.ConstraintLayout>

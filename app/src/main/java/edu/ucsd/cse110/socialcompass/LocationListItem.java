@@ -18,6 +18,7 @@ public class LocationListItem {
     public long id = 0;
     public String label, coords;
 
+
     public LocationListItem(String label, String coords) {
         this.label = label;
         this.coords = coords;
