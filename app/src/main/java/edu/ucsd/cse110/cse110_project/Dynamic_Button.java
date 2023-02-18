@@ -53,12 +53,18 @@ public class Dynamic_Button {
         button.setLayoutParams(layout);
     }
 
-    private void updateButtonLayout() {
+    public void updateButtonLayout() {
         ConstraintLayout.LayoutParams layout = (ConstraintLayout.LayoutParams) button.getLayoutParams();
         layout.circleAngle = bearingAngle;
         button.setLayoutParams(layout);
     }
+
+    public String getLabel() {
+        return this.label;
+    }
 }
+
+
 
 /*
 public class Dynamic_Button {

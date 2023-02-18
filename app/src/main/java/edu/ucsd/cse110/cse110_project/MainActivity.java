@@ -24,6 +24,10 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class MainActivity extends AppCompatActivity {
     private List<Dynamic_Button> dynamic_buttons;
@@ -31,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     //private double geiselLat = 32.88114549458315d;
     //private double geiselLong = -117.23758450131251d;
     private HashMap<String, Pair<Double,Double>> sampleHashSet;
+
+    final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private Future<Void> future;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,18 +96,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    // Assume that we have a method called startPolling that starts the polling process
+    // Assume that we have a method called startPolling that starts the polling process
 //    public void startPolling() {
-//        final Handler handler = new Handler();
+//
 //
 //        Runnable runnable = new Runnable() {
 //            @Override
 //            public void run() {
-//                float newBearingAngle = getBearingAngle(); // Get the latest bearing angle
-//                if (newBearingAngle != Dynamic_Button.getBearingAngle()) {
-//                    // Update the button position if the bearing angle has changed
-//                    Dynamic_Button.setBearingAngle(newBearingAngle);
-//                    Dynamic_Button.updateButtonLayout();
+//
+//                for (Dynamic_Button button : dynamic_buttons) {
+//                    float newBearingAngle = button.getBearingAngle(); // Get the latest bearing angle
+//                    if (newBearingAngle != button.getBearingAngle()) {
+//                        // Update the button position if the bearing angle has changed
+//                        button.updateAngle(newBearingAngle);
+//                        button.updateButtonLayout();
+//                    }
 //                }
 //                handler.postDelayed(this, POLL_INTERVAL); // Schedule the next check
 //            }
@@ -109,11 +119,8 @@ public class MainActivity extends AppCompatActivity {
 //        handler.postDelayed(runnable, POLL_INTERVAL); // Start the polling process
 //    }
 //
-//    private float getBearingAngle() {
-//        // Return the latest bearing angle
-//    }
-
-    private static final long POLL_INTERVAL = 1000; // Poll every 1 second
+//
+//    private static final long POLL_INTERVAL = 1000; // Poll every 1 second
 
 }
 
