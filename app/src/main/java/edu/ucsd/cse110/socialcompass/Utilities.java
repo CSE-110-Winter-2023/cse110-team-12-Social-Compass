@@ -19,19 +19,9 @@ import edu.ucsd.cse110.socialcompass.db.Location;
 
 
 public class Utilities {
-
-    private static boolean success = false;
-    private static HashMap<String, Pair<Double, Double>> locations = new HashMap<>();
-    private static String homeName = "";
-    private static String friendName = "";
-    private static String parentName = "";
-
-
-
     // Prompts the user with an AlertDialog to input location name and coordinates
     public static void showAlertDialog(LocationListActivity activity, String message) {
         SharedPreferences preferences = activity.getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-        //SharedPreferences preferences = activity.getSharedPreferences();
         SharedPreferences.Editor editor = preferences.edit();
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
@@ -40,33 +30,12 @@ public class Utilities {
         LayoutInflater inflater = LayoutInflater.from(activity);
         View promptUserView = inflater.inflate(R.layout.dialog_userprompt, null);
 
-
         // get edit texts
         EditText homeCoords = promptUserView.findViewById(R.id.inputCoordsHome);
-
-        //String homeInputCoords = homeCoords.getText().toString();
-
-        //double[] homeCoordinates = parseCoordinates(homeInputCoords); // parse the input
-
         EditText homeLabel = promptUserView.findViewById(R.id.inputLabelHome);
-
-        //String homeLabelInput = homeLabel.getText().toString();
-
-        // get friend info
         EditText friendCoords = promptUserView.findViewById(R.id.inputCoordsFriend);
-        //String friendInputCoords = friendCoords.getText().toString();
-
-        //double[] friendCoordinates = parseCoordinates(friendInputCoords);
-
         EditText friendLabel = promptUserView.findViewById(R.id.inputLabelFriend);
-        //String friendLabelInput = friendLabel.getText().toString();
-
-        // get parent info
         EditText parentCoords = promptUserView.findViewById(R.id.inputCoordsParent);
-        //String parentInputCoords = parentCoords.getText().toString();
-
-        //double[] parentCoordinates = parseCoordinates(parentInputCoords);
-
         EditText parentLabel = promptUserView.findViewById(R.id.inputLabelParent);
 
         // get strings from shared preferences
@@ -94,15 +63,11 @@ public class Utilities {
                         SharedPreferences preferences = activity.getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
 
-                        // home editing
+                        // save user input to shared preferences
                         editor.putString("homeLabel", homeLabel.getText().toString());
                         editor.putString("homeCoords", homeCoords.getText().toString());
-
-                        // friend editing
                         editor.putString("friendLabel", friendLabel.getText().toString());
                         editor.putString("friendCoords", friendCoords.getText().toString());
-
-                        // parent editing
                         editor.putString("parentLabel", parentLabel.getText().toString());
                         editor.putString("parentCoords", parentCoords.getText().toString());
 
@@ -134,34 +99,22 @@ public class Utilities {
         String[] parts = input.split(", ");
 
         // check input is split into two parts separated by a comma
-        if (parts.length != 2) { return null; }
+        if (parts.length != 2) {
+            return null;
+        }
 
         double latitude = Double.parseDouble(parts[0]);
         double longitude = Double.parseDouble(parts[1]);
         // check that latitude and longitude are valid
-        if ( latitude < -90 || latitude > 90) { return null; }
-        if ( longitude < -180 || longitude > 180) { return null; }
+        if (latitude < -90 || latitude > 90) {
+            return null;
+        }
+        if (longitude < -180 || longitude > 180) {
+            return null;
+        }
 
         coordinates[0] = latitude;
         coordinates[1] = longitude;
         return coordinates;
     }
-
-    public static HashMap<String, Pair<Double, Double>> getHashMap() {
-        return locations;
-    }
-
-    public static String getHomeName() {
-        return homeName;
-    }
-
-    public static String getFriendName() {
-        return friendName;
-    }
-
-    public static String getParentName() {
-        return parentName;
-    }
-
-    public static double[] extractCoords;
 }
