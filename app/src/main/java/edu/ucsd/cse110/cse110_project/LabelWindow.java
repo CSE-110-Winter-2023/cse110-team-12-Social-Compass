@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 
 public class LabelWindow {
 
+    // Creates an AlertDialog when a house icon (custom button) is clicked
+    // and displays the label inputted by the user on start up.
     public static void showLabel(Activity activity, String message) {
         AlertDialog.Builder label = new AlertDialog.Builder(activity);
 
