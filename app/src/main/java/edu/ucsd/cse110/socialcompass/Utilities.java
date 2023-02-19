@@ -14,12 +14,15 @@ import androidx.appcompat.app.AlertDialog;
 
 import java.util.HashMap;
 
+
 public class Utilities {
 
+    private static boolean success = false;
     //private static Locations locations;
 
     // Prompts the user with an AlertDialog to input location name and coordinates
-    public static void showAlertDialog(MainActivity activity, String message) {
+    public static boolean showAlertDialog(MainActivity activity, String message) {
+
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
 
         // Load the dialog layout for prompting the User
@@ -56,17 +59,17 @@ public class Utilities {
 
                         // get parent info
                         EditText parentCoords = promptUserView.findViewById(R.id.inputCoordsParent);
-                        String parentInputCoords = friendCoords.getText().toString();
+                        String parentInputCoords = parentCoords.getText().toString();
 
                         double[] parentCoordinates = parseCoordinates(parentInputCoords);
 
                         EditText parentLabel = promptUserView.findViewById(R.id.inputLabelParent);
-                        String parentLabelInput = friendLabel.getText().toString();
+                        String parentLabelInput = parentLabel.getText().toString();
 
                         // if input is not null, then it is valid, so update preferences
-                        if (homeLabelInput != null && friendLabelInput != null && parentLabelInput != null
-                                && homeInputCoords != null && friendInputCoords != null
-                                && parentCoordinates != null)
+                        if (!homeLabelInput.equals("") && !friendLabelInput.equals("") && !parentLabelInput.equals("")
+                                && !homeInputCoords.equals("") && !friendInputCoords.equals("")
+                                && !parentInputCoords.equals(""))
                         {
                             // home editing
                             editor.putString("homeLabel", homeLabel.getText().toString());
@@ -110,18 +113,22 @@ public class Utilities {
                             TextView viewLabelParent = activity.findViewById(R.id.parentLabel);
                             viewCoordsParent.setText(parentInputCoords);
                             viewLabelParent.setText(parentLabelInput);
+                            success = true;
 //                            if (locations == null) {
 //                                locations = new Locations();
 //                            }
 //                            locations.addLocation(name, new Pair(coordinates[0], coordinates[1]));
                         }
-                        else { showAlert(activity,"Invalid Input"); }
+                        else {
+                            showAlert(activity,"Invalid Input");
+                        }
                     }
                 })
                 .setCancelable(false);
 
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
+        return success;
     }
 
     // Displays alert dialog with a message to the user
@@ -131,8 +138,12 @@ public class Utilities {
         alertBuilder
                 .setTitle("Alert!")
                 .setMessage(message)
-                .setPositiveButton("Ok", (dialog, id) -> {
-                    dialog.cancel();
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        showAlertDialog(activity,"Please input your Home, Friend, and Parent coordinates");
+                    }
+                    //dialog.cancel();
                 })
                 .setCancelable(true);
 

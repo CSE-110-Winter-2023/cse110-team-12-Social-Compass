@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         // Prompt user to input their home coordinates
-        Utilities.showAlertDialog(this, "Please input your Home, Friend, and Parent coordinates");
+        boolean check = Utilities.showAlertDialog(this, "Please input your Home, Friend, and Parent coordinates");
+
 
         //below line is set to "true" for testing purposes
         editor.putBoolean("newUser", true);
