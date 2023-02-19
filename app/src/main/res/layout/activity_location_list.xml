@@ -13,9 +13,53 @@
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/back_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="65dp"
+        android:onClick="onBackClicked"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/add_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:text="Add"
+        android:onClick="onAddInputClicked"
+        app:layout_constraintEnd_toEndOf="@+id/back_btn"
+        app:layout_constraintTop_toBottomOf="@+id/back_btn" />
+
+    <EditText
+        android:id="@+id/addInputLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location_items" />
+
+    <EditText
+        android:id="@+id/addCoordsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="1dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Coordinates"
+        app:layout_constraintStart_toStartOf="@+id/addInputLabel"
+        app:layout_constraintTop_toBottomOf="@+id/addInputLabel" />
 </androidx.constraintlayout.widget.ConstraintLayout>

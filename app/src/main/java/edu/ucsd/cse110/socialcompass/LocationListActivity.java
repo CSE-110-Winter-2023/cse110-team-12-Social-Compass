@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import java.util.List;
 
@@ -28,5 +29,13 @@ public class LocationListActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         adapter.setLocationListItems(LocationListItem.loadJSON(this, "locations.json"));
+    }
+
+    public void onBackClicked(View view) {
+
+        this.finish();
+    }
+
+    public void onAddInputClicked(View view) {
     }
 }
