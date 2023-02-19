@@ -17,12 +17,12 @@ public class Dynamic_Button {
     private float bearingAngle;
     private final Activity activity;
     static final int radius = 495; //some hard-coded value
-    private String label;
+    private final String label;
     private TextView button;
     private int id;
 
 
-    public Dynamic_Button(Activity context, float bearingAngle, String label) {
+    public Dynamic_Button(Activity context, String label, float bearingAngle) {
         this.activity = context;
         this.bearingAngle = bearingAngle;
         this.label = label;
@@ -58,13 +58,7 @@ public class Dynamic_Button {
         id = button.getId();
 
         // Add OnClickListener to the button
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LabelWindow.showLabel(activity, label);
-            }
-        });
-
+        button.setOnClickListener(view -> LabelWindow.showLabel(activity, label));
     }
 
     public void updateButtonLayout() {
@@ -82,80 +76,3 @@ public class Dynamic_Button {
     }
 
 }
-
-
-
-
-
-/*
-public class Dynamic_Button {
-    private float bearingAngle;
-    private Context context;
-    static final int radius = 495; //some hard-coded value
-    private String label;
-
-    //Pair<Double, Double> loc; //(Long, Lat) or was it (Lat, Long)?
-
-    public Dynamic_Button(Context context, float bearingAngle) {
-        this.context = context;
-        this.bearingAngle = bearingAngle;
-        //this.label = label;
-    }
-
-    public void updateAngle(float new_angle){
-        this.bearingAngle = new_angle;
-    }
-
-/*
-    public displayLabel(){
-
-    }*/
-/*
-    public void createButton() {
-        TextView sample = new TextView(context);
-        sample.setId(View.generateViewId());
-        sample.setBackground(ContextCompat.getDrawable(context, R.drawable.house_icon));
-        ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
-                150, 150
-        );
-        layout.circleRadius = 490;
-        layout.circleConstraint = R.id.location_icon;
-        layout.circleAngle = bearingAngle;
-        layout.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-        layout.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-        layout.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
-        layout.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-        sample.setLayoutParams(layout);
-
-        ViewGroup mainLayout = (ViewGroup) ((Activity) context).findViewById(R.id.main_layout);
-        mainLayout.addView(sample);
-    }
-
-}
-/*
-    private void createButtons(int bearing_angle) {
-        int length = 1;
-        //int angle = 360 / (length + 1);
-        int angle = bearing_angle;
-        for (int i = 0; i <= length; i++) {
-
-            TextView sample = new TextView(this);
-            sample.setId(View.generateViewId());
-            sample.setBackground(ContextCompat.getDrawable(this, R.drawable.house_icon));
-            ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
-                    150, 150
-            );
-            layout.circleRadius = 490;
-            layout.circleConstraint = R.id.location_icon;
-            layout.circleAngle = angle;
-            layout.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-            layout.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-            layout.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
-            layout.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-            sample.setLayoutParams(layout);
-
-            ViewGroup main_layout = (ViewGroup) findViewById(R.id.main_layout);
-            main_layout.addView(sample);
-        }
-}
-*/
