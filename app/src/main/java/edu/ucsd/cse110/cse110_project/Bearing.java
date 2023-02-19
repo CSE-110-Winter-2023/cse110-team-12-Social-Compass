@@ -1,6 +1,8 @@
 package edu.ucsd.cse110.cse110_project;
+
 public class Bearing {
-    protected static double bearing(double lat1, double lon1, double lat2, double lon2){
+
+    protected static float bearing(double lat1, double lon1, double lat2, double lon2){
         double longitude1 = lon1;
         double longitude2 = lon2;
         double latitude1 = Math.toRadians(lat1);
@@ -11,6 +13,7 @@ public class Bearing {
                 - Math.sin(latitude1) * Math.cos(latitude2)
                 * Math.cos(longDiff);
 
-        return (Math.toDegrees(Math.atan2(y, x))+360)%360;
+        return (float) ((Math.toDegrees(Math.atan2(y, x))+360)%360);
     }
+
 }
