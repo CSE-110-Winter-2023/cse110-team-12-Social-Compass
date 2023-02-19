@@ -57,27 +57,4 @@ public class LocationListItem {
                 ", coords=" + coords +
                 '}';
     }
-
-    @Dao
-    public interface LocationListItemDao {
-        @Insert
-        long insert(LocationListItem locationListItem);
-
-        @Query("SELECT * FROM 'location_list_items' WHERE 'id'=:id")
-        LocationListItem get(long id);
-
-        @Query("SELECT * FROM 'location_list_items' ORDER BY 'order'")
-        List<LocationListItem> getAll();
-
-        @Update
-        int update(LocationListItem locationListItem);
-
-        @Delete
-        int delete(LocationListItem locationListItem);
-    }
-
-    @Database(entities = {LocationListItem.class}, version = 1)
-    public abstract class LocationDatabase extends RoomDatabase {
-        public abstract LocationListItemDao locationListItemDao();
-    }
 }
