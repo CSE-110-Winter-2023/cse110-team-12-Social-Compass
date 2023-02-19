@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class MainActivity extends AppCompatActivity {
-    private List<Dynamic_Button> dynamic_buttons;
+    private HashMap<String, Dynamic_Button> dynamic_buttons;
     private LocationService locationService;
     //private double geiselLat = 32.88114549458315d;
     //private double geiselLong = -117.23758450131251d;
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         sampleHashSet = new HashMap<String, Pair<Double,Double>>();
         sampleHashSet.put("Geisel", new Pair<>(32.88114549458315d,-117.23758450131251d ));
         sampleHashSet.put("Rimac", new Pair<>(32.885159942166624d, -117.24044656136009d ));
+        sampleHashSet.put("Boston", new Pair<>(42.3199d, -71.0359d ));
 
 
         locationService = LocationService.singleton(this);
@@ -60,17 +61,18 @@ public class MainActivity extends AppCompatActivity {
         TextView bearingAngle = (TextView) findViewById(R.id.bearingAngle);
 
         // Create a list to hold ButtonCreator objects
-        dynamic_buttons = new ArrayList<>();
+        dynamic_buttons = new HashMap<>();
 
         // Instantiate ButtonCreator objects and add them to the list
 //        dynamic_buttons.add(new Dynamic_Button(this, 0f));
 //        dynamic_buttons.add(new Dynamic_Button(this, 90f));
 
 
-
+        LiveData<Pair<Double, Double>> locationLiveData = locationService.getLocation();
         locationService.getLocation().observe(this, loc->{
             textView.setText(Double.toString(loc.first)+" , "+
                     Double.toString(loc.second));
+
             //double angle = Bearing.bearing(loc.first, loc.second, geiselLat, geiselLong);
             //bearingAngle.setText(Double.toString(angle));
 
@@ -78,16 +80,21 @@ public class MainActivity extends AppCompatActivity {
             // and display them in the layout
 
             for(String i : sampleHashSet.keySet()){
-                double angle = Bearing.bearing(loc.first, loc.second, sampleHashSet.get(i).first, sampleHashSet.get(i).second);
-                dynamic_buttons.add(new Dynamic_Button(this, (float)angle));
+                float angle = Bearing.bearing(loc.first, loc.second, sampleHashSet.get(i).first, sampleHashSet.get(i).second);
 
+                if (dynamic_buttons.size() < sampleHashSet.size()) {
+                    dynamic_buttons.put(i,new Dynamic_Button(this, (float) angle));
+                }
+                else {
+                    dynamic_buttons.get(i).updateAngle(angle);
+                }
 
             }
 
-            for (Dynamic_Button button : dynamic_buttons) {
+            for (Dynamic_Button button : dynamic_buttons.values()) {
                 //buttonCreator.updateAngle((float) 120);
 
-                //buttonCreator.updateAngle();
+                //button.updateAngle();
                 ConstraintLayout mainLayout = findViewById(R.id.main_layout);
                 mainLayout.removeView(button.getButton());
                 button.createButton();
