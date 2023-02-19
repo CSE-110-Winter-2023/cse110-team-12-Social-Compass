@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 
@@ -32,10 +35,20 @@ public class LocationListActivity extends AppCompatActivity {
     }
 
     public void onBackClicked(View view) {
-
         this.finish();
     }
 
     public void onAddInputClicked(View view) {
+        Utilities.showAlertDialog(this, "Please input your Home coordinates");
+    }
+
+    public void onSetOrientationClicked(View view) {
+        SharedPreferences preferences = this.getSharedPreferences("preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putInt("orientation", 0);
+        editor.apply();
+
+        this.finish();
     }
 }

@@ -1,5 +1,6 @@
 package edu.ucsd.cse110.socialcompass;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -25,9 +26,12 @@ public class Utilities {
     private static String friendName = "";
     private static String parentName = "";
 
+
+
     // Prompts the user with an AlertDialog to input location name and coordinates
-    public static void showAlertDialog(MainActivity activity, String message) {
-        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+    public static void showAlertDialog(LocationListActivity activity, String message) {
+        SharedPreferences preferences = activity.getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        //SharedPreferences preferences = activity.getSharedPreferences();
         SharedPreferences.Editor editor = preferences.edit();
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
@@ -66,12 +70,12 @@ public class Utilities {
         EditText parentLabel = promptUserView.findViewById(R.id.inputLabelParent);
 
         // get strings from shared preferences
-        String homeLabelInput = preferences.getString("homeLabel", "Default");
-        String homeInputCoords = preferences.getString("homeCoords", "Default");
-        String friendLabelInput = preferences.getString("friendLabel", "Default");
-        String friendInputCoords = preferences.getString("friendCoords", "Default");
-        String parentLabelInput = preferences.getString("parentLabel", "Default");
-        String parentInputCoords = preferences.getString("parentCoords", "Default");
+        String homeLabelInput = preferences.getString("homeLabel", "");
+        String homeInputCoords = preferences.getString("homeCoords", "");
+        String friendLabelInput = preferences.getString("friendLabel", "");
+        String friendInputCoords = preferences.getString("friendCoords", "");
+        String parentLabelInput = preferences.getString("parentLabel", "");
+        String parentInputCoords = preferences.getString("parentCoords", "");
 
         // set text in the edit texts
         homeLabel.setText(homeLabelInput);
@@ -87,7 +91,7 @@ public class Utilities {
                 .setMessage(message)
                 .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences preferences = activity.getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
 
                         // home editing
@@ -101,36 +105,40 @@ public class Utilities {
                         // parent editing
                         editor.putString("parentLabel", parentLabel.getText().toString());
                         editor.putString("parentCoords", parentCoords.getText().toString());
+
+//                        String changeHomeCoords = preferences.getString("homeCoords",
+//                                "Default");
+//                        String changeHomeLabel = preferences.getString("homeLabel", "Default");
+//                        TextView viewHomeCoords = activity.findViewById(R.id.homeCoords);
+//                        TextView viewHomeLabel = activity.findViewById(R.id.homeLabel);
+//                        viewHomeCoords.setText(homeInputCoords);
+//                        viewHomeLabel.setText(homeLabelInput);
+//
+//
+//                        // (Below 2 lines for testing purposes) Write home coordinates to textview
+//                        String changeFriendCoords = preferences.getString("friendCoords",
+//                                "Default");
+//                        String changeFriendLabel = preferences.getString("friendLabel",
+//                                "Default");
+//                        TextView viewCoordsFriend = activity.findViewById(R.id.friendCoords);
+//                        TextView viewLabelFriend = activity.findViewById(R.id.friendLabel);
+//                        viewCoordsFriend.setText(friendInputCoords);
+//                        viewLabelFriend.setText(friendLabelInput);
+//
+//                        // (Below 2 lines for testing purposes) Write home coordinates to textview
+//                        String changeParentCoords = preferences.getString("parentCoords",
+//                                "Default");
+//                        String changeParentLabel = preferences.getString("parentLabel",
+//                                "Default");
+//                        TextView viewCoordsParent = activity.findViewById(R.id.parentCoords);
+//                        TextView viewLabelParent = activity.findViewById(R.id.parentLabel);
+//                        viewCoordsParent.setText(parentInputCoords);
+//                        viewLabelParent.setText(parentLabelInput);
+
+                        showAlert(activity, "Data Saved Successfully");
+
+                        editor.putBoolean("newUser", false);
                         editor.apply();
-
-                        String changeHomeCoords = preferences.getString("homeCoords",
-                                "Default");
-                        String changeHomeLabel = preferences.getString("homeLabel", "Default");
-                        TextView viewHomeCoords = activity.findViewById(R.id.homeCoords);
-                        TextView viewHomeLabel = activity.findViewById(R.id.homeLabel);
-                        viewHomeCoords.setText(homeInputCoords);
-                        viewHomeLabel.setText(homeLabelInput);
-
-
-                        // (Below 2 lines for testing purposes) Write home coordinates to textview
-                        String changeFriendCoords = preferences.getString("friendCoords",
-                                "Default");
-                        String changeFriendLabel = preferences.getString("friendLabel",
-                                "Default");
-                        TextView viewCoordsFriend = activity.findViewById(R.id.friendCoords);
-                        TextView viewLabelFriend = activity.findViewById(R.id.friendLabel);
-                        viewCoordsFriend.setText(friendInputCoords);
-                        viewLabelFriend.setText(friendLabelInput);
-
-                        // (Below 2 lines for testing purposes) Write home coordinates to textview
-                        String changeParentCoords = preferences.getString("parentCoords",
-                                "Default");
-                        String changeParentLabel = preferences.getString("parentLabel",
-                                "Default");
-                        TextView viewCoordsParent = activity.findViewById(R.id.parentCoords);
-                        TextView viewLabelParent = activity.findViewById(R.id.parentLabel);
-                        viewCoordsParent.setText(parentInputCoords);
-                        viewLabelParent.setText(parentLabelInput);
                     }
                 })
                 .setCancelable(false);
@@ -140,20 +148,8 @@ public class Utilities {
     }
 
     // Displays alert dialog with a message to the user
-    private static void showAlert(MainActivity activity, String message) {
+    private static void showAlert(LocationListActivity activity, String message) {
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
-
-        alertBuilder
-                .setTitle("Alert!")
-                .setMessage(message)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener(){
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        showAlertDialog(activity,"Please input your Home, Friend, and Parent coordinates");
-                    }
-                    //dialog.cancel();
-                })
-                .setCancelable(true);
 
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();

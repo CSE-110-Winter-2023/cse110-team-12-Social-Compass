@@ -10,86 +10,85 @@
         android:id="@+id/friendLabel"
         android:layout_width="192dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="107dp"
+        android:layout_marginBottom="13dp"
         android:gravity="center_horizontal"
         android:text=""
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/parentLabel"
+        app:layout_constraintBottom_toTopOf="@+id/friendCoords"
         app:layout_constraintEnd_toStartOf="@+id/friendCoords"
         app:layout_constraintStart_toStartOf="@+id/friendCoords"
-        app:layout_constraintTop_toBottomOf="@+id/homeLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/homeCoords" />
 
     <TextView
         android:id="@+id/parentLabel"
         android:layout_width="192dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="459dp"
+        android:layout_marginBottom="13dp"
         android:gravity="center_horizontal"
         android:text=""
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/parentCoords"
         app:layout_constraintEnd_toStartOf="@+id/parentCoords"
         app:layout_constraintStart_toStartOf="@+id/parentCoords"
-        app:layout_constraintTop_toBottomOf="@+id/friendLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/friendCoords" />
 
     <TextView
         android:id="@+id/homeCoords"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="58dp"
         android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/friendLabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.054" />
+        app:layout_constraintTop_toBottomOf="@+id/homeLabel" />
 
     <TextView
         android:id="@+id/friendCoords"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="75dp"
         android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/parentLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.213" />
+        app:layout_constraintTop_toBottomOf="@+id/friendLabel" />
 
     <TextView
         android:id="@+id/parentCoords"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="237dp"
         android:text=""
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/add_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.394" />
+        app:layout_constraintTop_toBottomOf="@+id/parentLabel" />
 
     <Button
         android:id="@+id/add_btn"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="460dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="142dp"
         android:onClick="onAddLocationClicked"
-        android:text="Add Location"
+        android:text="Modify"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeCoords" />
+        app:layout_constraintTop_toBottomOf="@+id/parentCoords" />
 
     <TextView
         android:id="@+id/homeLabel"
         android:layout_width="192dp"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="87dp"
+        android:layout_marginBottom="10dp"
         android:gravity="center_horizontal"
         android:text=""
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/friendLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/homeCoords"
+        app:layout_constraintEnd_toStartOf="@+id/homeCoords"
+        app:layout_constraintStart_toStartOf="@+id/homeCoords"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
