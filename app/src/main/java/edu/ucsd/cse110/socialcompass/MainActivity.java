@@ -32,8 +32,17 @@ public class MainActivity extends AppCompatActivity {
         db = LocationDatabase.singleton(this);
         locationDao = db.locationDao();
 
+        /**
+         * for (entry e : map) {
+         *  if (e != null && e == Utilities.getHomeName()) {
+         *      //make new object
+         *  }
+         *  }
+         */
+
         HashMap<String, Pair<Double, Double>> map = Utilities.getHashMap();
-        Location myHome = new Location(Utilities.getHomeName(),
+        //saveHashMap();
+        /*Location myHome = new Location(Utilities.getHomeName(),
                 Objects.requireNonNull(map.get(Utilities.getHomeName())).first, Objects.requireNonNull(map.get(Utilities.getHomeName())).second);
         myHome.setLocationId(locationDao.maxId() + 1);
         locationDao.insert(myHome);
@@ -46,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         Location myParent = new Location(Utilities.getParentName(),
                 Objects.requireNonNull(map.get(Utilities.getParentName())).first, Objects.requireNonNull(map.get(Utilities.getParentName())).second);
         myParent.setLocationId(locationDao.maxId() + 1);
-        locationDao.insert(myParent);
+        locationDao.insert(myParent);*/
     }
 
     public void loadProfile() {
@@ -84,6 +93,15 @@ public class MainActivity extends AppCompatActivity {
     public void saveData() {
 
     }
+
+    /*public HashMap<String, Pair<Double, Double>> getArray() {
+        SharedPreferences sp = this.getSharedPreferences(SHARED_PREFS_NAME, Activity.MODE_PRIVATE);
+
+        //NOTE: if shared preference is null, the method return empty Hashset and not null
+        Set<String> set = sp.getStringSet("list", new HashSet<String>());
+
+        return new ArrayList<String>(set);
+    }*/
 
     public void onStop() {
         saveData();

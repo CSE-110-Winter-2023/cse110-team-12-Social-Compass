@@ -27,12 +27,75 @@ public class Utilities {
 
     // Prompts the user with an AlertDialog to input location name and coordinates
     public static void showAlertDialog(MainActivity activity, String message) {
+        SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
 
         // Load the dialog layout for prompting the User
         LayoutInflater inflater = LayoutInflater.from(activity);
         View promptUserView = inflater.inflate(R.layout.dialog_userprompt, null);
+
+        // get user's input from the EditText field
+        // get home info
+        EditText homeCoords = promptUserView.findViewById(R.id.inputCoordsHome);
+
+        //String homeInputCoords = homeCoords.getText().toString();
+
+        //double[] homeCoordinates = parseCoordinates(homeInputCoords); // parse the input
+
+        EditText homeLabel = promptUserView.findViewById(R.id.inputLabelHome);
+
+        //String homeLabelInput = homeLabel.getText().toString();
+
+        // get friend info
+        EditText friendCoords = promptUserView.findViewById(R.id.inputCoordsFriend);
+        //String friendInputCoords = friendCoords.getText().toString();
+
+        //double[] friendCoordinates = parseCoordinates(friendInputCoords);
+
+        EditText friendLabel = promptUserView.findViewById(R.id.inputLabelFriend);
+        //String friendLabelInput = friendLabel.getText().toString();
+
+        // get parent info
+        EditText parentCoords = promptUserView.findViewById(R.id.inputCoordsParent);
+        //String parentInputCoords = parentCoords.getText().toString();
+
+        //double[] parentCoordinates = parseCoordinates(parentInputCoords);
+
+        EditText parentLabel = promptUserView.findViewById(R.id.inputLabelParent);
+        //String parentLabelInput = parentLabel.getText().toString();
+
+//        editor.putString("homeLabel", homeLabel.getText().toString());
+//        editor.putString("homeCoords", homeCoords.getText().toString());
+//        editor.putString("friendLabel", friendLabel.getText().toString());
+//        editor.putString("friendCoords", friendCoords.getText().toString());
+//        editor.putString("parentLabel", parentLabel.getText().toString());
+//        editor.putString("parentCoords", parentCoords.getText().toString());
+        //editor.apply();
+
+        // (Below 2 lines for testing purposes) Write home coordinates to textview
+        /*String changeFriendCoords = preferences.getString("friendCoords",
+                "Default");
+        String changeFriendLabel = preferences.getString("friendLabel",
+                "Default");*/
+        String homeLabelInput = preferences.getString("homeLabel", "Default");
+        String homeInputCoords = preferences.getString("homeCoords", "Default");
+        String friendLabelInput = preferences.getString("friendLabel", "Default");
+        String friendInputCoords = preferences.getString("friendCoords", "Default");
+        String parentLabelInput = preferences.getString("parentLabel", "Default");
+        String parentInputCoords = preferences.getString("parentCoords", "Default");
+
+        homeLabel.setText(homeLabelInput);
+        homeCoords.setText(homeInputCoords);
+        friendLabel.setText(friendLabelInput);
+        friendCoords.setText(friendInputCoords);
+        parentLabel.setText(parentLabelInput);
+        parentCoords.setText(parentInputCoords);
+
+        double[] homeCoordinates = parseCoordinates(homeInputCoords);
+        double[] friendCoordinates = parseCoordinates(friendInputCoords);
+        double[] parentCoordinates = parseCoordinates(parentInputCoords);
 
         alertBuilder
                 .setView(promptUserView)
@@ -43,38 +106,13 @@ public class Utilities {
                         SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
 
-                        // get user's input from the EditText field
-                        // get home info
-                        EditText homeCoords = promptUserView.findViewById(R.id.inputCoordsHome);
-                        String homeInputCoords = homeCoords.getText().toString();
-
-                        double[] homeCoordinates = parseCoordinates(homeInputCoords); // parse the input
-
-                        EditText homeLabel = promptUserView.findViewById(R.id.inputLabelHome);
-                        String homeLabelInput = homeLabel.getText().toString();
-
-                        // get friend info
-                        EditText friendCoords = promptUserView.findViewById(R.id.inputCoordsFriend);
-                        String friendInputCoords = friendCoords.getText().toString();
-
-                        double[] friendCoordinates = parseCoordinates(friendInputCoords);
-
-                        EditText friendLabel = promptUserView.findViewById(R.id.inputLabelFriend);
-                        String friendLabelInput = friendLabel.getText().toString();
-
-                        // get parent info
-                        EditText parentCoords = promptUserView.findViewById(R.id.inputCoordsParent);
-                        String parentInputCoords = parentCoords.getText().toString();
-
-                        double[] parentCoordinates = parseCoordinates(parentInputCoords);
-
-                        EditText parentLabel = promptUserView.findViewById(R.id.inputLabelParent);
-                        String parentLabelInput = parentLabel.getText().toString();
-
                         // if input is not null, then it is valid, so update preferences
-                        if (!homeLabelInput.equals("") && !friendLabelInput.equals("") && !parentLabelInput.equals("")
-                                && !homeInputCoords.equals("") && !friendInputCoords.equals("")
-                                && !parentInputCoords.equals(""))
+                        if (!homeLabel.getText().toString().equals("")
+                                && !friendLabel.getText().toString().equals("")
+                                && !parentLabel.getText().toString().equals("")
+                                && !homeCoords.getText().toString().equals("")
+                                && !friendCoords.getText().toString().equals("")
+                                && !parentCoords.getText().toString().equals(""))
                         {
                             // home editing
                             editor.putString("homeLabel", homeLabel.getText().toString());
