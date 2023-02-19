@@ -14,14 +14,19 @@ import androidx.appcompat.app.AlertDialog;
 
 import java.util.HashMap;
 
+import edu.ucsd.cse110.socialcompass.db.Location;
+
 
 public class Utilities {
 
     private static boolean success = false;
-    //private static Locations locations;
+    private static HashMap<String, Pair<Double, Double>> locations = new HashMap<>();
+    private static String homeName = "";
+    private static String friendName = "";
+    private static String parentName = "";
 
     // Prompts the user with an AlertDialog to input location name and coordinates
-    public static boolean showAlertDialog(MainActivity activity, String message) {
+    public static void showAlertDialog(MainActivity activity, String message) {
 
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
 
@@ -118,6 +123,20 @@ public class Utilities {
 //                                locations = new Locations();
 //                            }
 //                            locations.addLocation(name, new Pair(coordinates[0], coordinates[1]));
+                            assert homeCoordinates != null;
+                            locations.put(homeLabelInput,
+                                    new Pair<>(homeCoordinates[0], homeCoordinates[1]));
+                            assert friendCoordinates != null;
+                            locations.put(friendLabelInput,
+                                    new Pair<>(friendCoordinates[0], friendCoordinates[1]));
+                            assert parentCoordinates != null;
+                            locations.put(parentLabelInput,
+                                    new Pair<>(parentCoordinates[0], parentCoordinates[1]));
+
+                            homeName = homeLabelInput;
+                            friendName = friendLabelInput;
+                            parentName = parentLabelInput;
+                            //showAlert(activity, "Successfully saved data");
                         }
                         else {
                             showAlert(activity,"Invalid Input");
@@ -128,7 +147,6 @@ public class Utilities {
 
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
-        return success;
     }
 
     // Displays alert dialog with a message to the user
@@ -170,5 +188,21 @@ public class Utilities {
         coordinates[0] = latitude;
         coordinates[1] = longitude;
         return coordinates;
+    }
+
+    public static HashMap<String, Pair<Double, Double>> getHashMap() {
+        return locations;
+    }
+
+    public static String getHomeName() {
+        return homeName;
+    }
+
+    public static String getFriendName() {
+        return friendName;
+    }
+
+    public static String getParentName() {
+        return parentName;
     }
 }

@@ -24,6 +24,12 @@ public interface LocationDao {
     @Query("SELECT * FROM 'locations' ORDER BY 'order'")
     List<Location> getAll();
 
+    @Query("SELECT MAX(location_id) FROM locations")
+    int maxId();
+
+    @Insert
+    void insert(Location location);
+
     @Update
     int update(Location location);
 

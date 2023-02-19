@@ -1,5 +1,7 @@
 package edu.ucsd.cse110.socialcompass.db;
 
+import android.util.Pair;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -13,9 +15,10 @@ public class Location {
     /**
      * Add a location, given label and coordinates
      */
-    public Location(String label, String coordinates) {
+    public Location(String label, double latitude, double longitude) {
         this.label = label;
-        this.coordinates = coordinates;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     @PrimaryKey(autoGenerate = true)
@@ -25,8 +28,11 @@ public class Location {
     @ColumnInfo(name = "label")
     private String label;
 
-    @ColumnInfo(name = "coordinates")
-    private String coordinates;
+    @ColumnInfo(name = "latitude")
+    private double latitude;
+
+    @ColumnInfo(name = "longitude")
+    private double longitude;
 
     public int getLocationId() { return locationId; }
 
@@ -36,11 +42,15 @@ public class Location {
 
     public void setLabel(String label) { this.label = label; }
 
-    public String getCoordinates() { return coordinates; }
+    public double getLatitude() { return latitude; }
 
-    public void setCoordinates(String coordinates) { this.coordinates = coordinates; }
+    public double getLongitude() { return longitude; }
+
+    public void setLatitude(double latitude) { this.latitude = latitude; }
+
+    public void setLongitude(double longitude) { this.longitude = longitude; }
 
     public String toString() {
-        return label + " " + coordinates;
+        return label + " " + latitude + ", " + longitude;
     }
 }

@@ -10,7 +10,12 @@ import android.util.Pair;
 
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Objects;
+
+import edu.ucsd.cse110.socialcompass.db.Location;
 import edu.ucsd.cse110.socialcompass.db.LocationDao;
 import edu.ucsd.cse110.socialcompass.db.LocationDatabase;
 
@@ -23,19 +28,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadProfile();
+        LocationDatabase.useTestSingleton(this);
+        db = LocationDatabase.singleton(this);
+        locationDao = db.locationDao();
+
+        HashMap<String, Pair<Double, Double>> map = Utilities.getHashMap();
+        Location myHome = new Location(Utilities.getHomeName(),
+                Objects.requireNonNull(map.get(Utilities.getHomeName())).first, Objects.requireNonNull(map.get(Utilities.getHomeName())).second);
+        myHome.setLocationId(locationDao.maxId() + 1);
+        locationDao.insert(myHome);
+
+        Location myFriend = new Location(Utilities.getFriendName(),
+                Objects.requireNonNull(map.get(Utilities.getFriendName())).first, Objects.requireNonNull(map.get(Utilities.getFriendName())).second);
+        myFriend.setLocationId(locationDao.maxId() + 1);
+        locationDao.insert(myFriend);
+
+        Location myParent = new Location(Utilities.getParentName(),
+                Objects.requireNonNull(map.get(Utilities.getParentName())).first, Objects.requireNonNull(map.get(Utilities.getParentName())).second);
+        myParent.setLocationId(locationDao.maxId() + 1);
+        locationDao.insert(myParent);
     }
 
     public void loadProfile() {
-
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-
         // check if this is a new user, and if so, initialize their sharedPreferences
         Boolean newUser = preferences.getBoolean("newUser", true);
-        if (newUser) {
-            initNewUser();
-            newUser = false;
-        }
-
+        initNewUser();
     }
 
     // This method should only be called one time EVER - for initializing brand new users.
@@ -45,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         // Prompt user to input their home coordinates
-        boolean check = Utilities.showAlertDialog(this, "Please input your Home, Friend, and Parent coordinates");
+        Utilities.showAlertDialog(this, "Please input your Home, Friend, and Parent coordinates");
 
 
         //below line is set to "true" for testing purposes
@@ -61,5 +79,14 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, LocationListActivity.class);
         startActivity(intent);
+    }
+
+    public void saveData() {
+
+    }
+
+    public void onStop() {
+        saveData();
+        super.onStop();
     }
 }

@@ -27,5 +27,5 @@ public abstract class LocationDatabase extends RoomDatabase {
                 .build();
     }
 
-    public abstract LocationDao personDao();
+    public abstract LocationDao locationDao();
 }
