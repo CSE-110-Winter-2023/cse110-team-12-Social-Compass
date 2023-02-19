@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @RunWith(AndroidJUnit4.class)
 public class TestDatabase {
-    private LocationListItem.LocationListItemDao dao;
+    /*private LocationListItem.LocationListItemDao dao;
     private LocationListItem.LocationDatabase db;
 
     @Before
@@ -29,5 +29,5 @@ public class TestDatabase {
     @After
     public void closeDb() throws IOException {
         db.close();
-    }
+    }*/
 }
