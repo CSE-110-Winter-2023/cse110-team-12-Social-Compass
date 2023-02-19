@@ -18,7 +18,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Setting layout for activity
         setContentView(R.layout.activity_main);
+
+        //Checking for app permissions and requesting permission if permissions not granted
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
@@ -26,23 +30,27 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Populating hashmap for quick reference
+        //Get rid of sampleHashSet afterwards
         sampleHashSet = new HashMap<String, Pair<Double,Double>>();
         sampleHashSet.put("Geisel", new Pair<>(32.88114549458315d,-117.23758450131251d ));
         sampleHashSet.put("Rimac", new Pair<>(32.885159942166624d, -117.24044656136009d ));
         sampleHashSet.put("Boston", new Pair<>(42.3199d, -71.0359d ));
 
+        //Creating instance of locationService to get device location
         LocationService locationService = LocationService.singleton(this);
 
-        // Create a list to hold ButtonCreator objects
+        // Create a list to hold DynamicButton objects
         dynamic_buttons = new HashMap<>();
 
+        //Observing location changes and updating dynamic buttons
         locationService.getLocation().observe(this, loc->{
 
-            // Iterate through the ButtonCreator objects, update their bearing angles,
+            // Iterate through the Dynamic_Buttons objects, update their bearing angles,
             // and display them in the layout
             for(String i : sampleHashSet.keySet()){
                 float angle = Bearing.bearing(loc.first, loc.second, sampleHashSet.get(i).first, sampleHashSet.get(i).second);
 
+                //Creating dynamic_button object if not already created, otherwise update its angle
                 if (dynamic_buttons.size() < sampleHashSet.size()) {
                     dynamic_buttons.put(i,new Dynamic_Button(this, i, (float) angle));
                 }
@@ -51,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            //Displaying the dynamic buttons in the layout
             for (Dynamic_Button button : dynamic_buttons.values()) {
                 ConstraintLayout mainLayout = findViewById(R.id.main_layout);
                 mainLayout.removeView(button.getButton());
