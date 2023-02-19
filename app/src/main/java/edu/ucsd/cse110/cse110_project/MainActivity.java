@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         locationService = LocationService.singleton(this);
-        TextView textView = (TextView) findViewById(R.id.serviceTextView);
-        TextView bearingAngle = (TextView) findViewById(R.id.bearingAngle);
+//        TextView textView = (TextView) findViewById(R.id.serviceTextView);
+//        TextView bearingAngle = (TextView) findViewById(R.id.bearingAngle);
 
         // Create a list to hold ButtonCreator objects
         dynamic_buttons = new HashMap<>();
@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         LiveData<Pair<Double, Double>> locationLiveData = locationService.getLocation();
         locationService.getLocation().observe(this, loc->{
-            textView.setText(Double.toString(loc.first)+" , "+
-                    Double.toString(loc.second));
+//            textView.setText(Double.toString(loc.first)+" , "+
+//                    Double.toString(loc.second));
 
             //double angle = Bearing.bearing(loc.first, loc.second, geiselLat, geiselLong);
             //bearingAngle.setText(Double.toString(angle));
@@ -83,7 +83,10 @@ public class MainActivity extends AppCompatActivity {
                 float angle = Bearing.bearing(loc.first, loc.second, sampleHashSet.get(i).first, sampleHashSet.get(i).second);
 
                 if (dynamic_buttons.size() < sampleHashSet.size()) {
-                    dynamic_buttons.put(i,new Dynamic_Button(this, (float) angle));
+                    dynamic_buttons.put(i,new Dynamic_Button(this, (float) angle, i));
+                    // Add OnClickListener to the button
+//                    int id = dynamic_buttons.get(i).getId();
+//                    dynamic_buttons.get(i).setOnClickListener(id);
                 }
                 else {
                     dynamic_buttons.get(i).updateAngle(angle);
@@ -103,31 +106,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Assume that we have a method called startPolling that starts the polling process
-//    public void startPolling() {
-//
-//
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                for (Dynamic_Button button : dynamic_buttons) {
-//                    float newBearingAngle = button.getBearingAngle(); // Get the latest bearing angle
-//                    if (newBearingAngle != button.getBearingAngle()) {
-//                        // Update the button position if the bearing angle has changed
-//                        button.updateAngle(newBearingAngle);
-//                        button.updateButtonLayout();
-//                    }
-//                }
-//                handler.postDelayed(this, POLL_INTERVAL); // Schedule the next check
-//            }
-//        };
-//
-//        handler.postDelayed(runnable, POLL_INTERVAL); // Start the polling process
-//    }
-//
-//
-//    private static final long POLL_INTERVAL = 1000; // Poll every 1 second
+    public void onShowHouseClicked(View view) {
+        LabelWindow.showLabel(this, "message");
+    }
+
 
 }
 

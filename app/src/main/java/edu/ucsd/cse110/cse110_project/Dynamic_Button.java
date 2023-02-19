@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -13,15 +15,17 @@ import java.util.HashMap;
 
 public class Dynamic_Button {
     private float bearingAngle;
-    private Context context;
+    private final Activity activity;
     static final int radius = 495; //some hard-coded value
     private String label;
     private TextView button;
+    private int id;
 
 
-    public Dynamic_Button(Context context, float bearingAngle) {
-        this.context = context;
+    public Dynamic_Button(Activity context, float bearingAngle, String label) {
+        this.activity = context;
         this.bearingAngle = bearingAngle;
+        this.label = label;
     }
 
     public void updateAngle(float bearingAngle) {
@@ -37,9 +41,9 @@ public class Dynamic_Button {
     }
 
     public void createButton() {
-        button = new TextView(context);
+        button = new Button(activity);
         button.setId(View.generateViewId());
-        button.setBackground(ContextCompat.getDrawable(context, R.drawable.house_icon));
+        button.setBackground(ContextCompat.getDrawable(activity, R.drawable.house_icon));
         ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
                 150, 150
         );
@@ -51,6 +55,16 @@ public class Dynamic_Button {
         layout.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
         layout.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
         button.setLayoutParams(layout);
+        id = button.getId();
+
+        // Add OnClickListener to the button
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LabelWindow.showLabel(activity, label);
+            }
+        });
+
     }
 
     public void updateButtonLayout() {
@@ -62,7 +76,14 @@ public class Dynamic_Button {
     public String getLabel() {
         return this.label;
     }
+
+    public int getId() {
+        return this.id;
+    }
+
 }
+
+
 
 
 
