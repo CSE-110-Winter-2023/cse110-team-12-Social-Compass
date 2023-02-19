@@ -106,35 +106,6 @@ public class Utilities {
                         editor.putString("parentLabel", parentLabel.getText().toString());
                         editor.putString("parentCoords", parentCoords.getText().toString());
 
-//                        String changeHomeCoords = preferences.getString("homeCoords",
-//                                "Default");
-//                        String changeHomeLabel = preferences.getString("homeLabel", "Default");
-//                        TextView viewHomeCoords = activity.findViewById(R.id.homeCoords);
-//                        TextView viewHomeLabel = activity.findViewById(R.id.homeLabel);
-//                        viewHomeCoords.setText(homeInputCoords);
-//                        viewHomeLabel.setText(homeLabelInput);
-//
-//
-//                        // (Below 2 lines for testing purposes) Write home coordinates to textview
-//                        String changeFriendCoords = preferences.getString("friendCoords",
-//                                "Default");
-//                        String changeFriendLabel = preferences.getString("friendLabel",
-//                                "Default");
-//                        TextView viewCoordsFriend = activity.findViewById(R.id.friendCoords);
-//                        TextView viewLabelFriend = activity.findViewById(R.id.friendLabel);
-//                        viewCoordsFriend.setText(friendInputCoords);
-//                        viewLabelFriend.setText(friendLabelInput);
-//
-//                        // (Below 2 lines for testing purposes) Write home coordinates to textview
-//                        String changeParentCoords = preferences.getString("parentCoords",
-//                                "Default");
-//                        String changeParentLabel = preferences.getString("parentLabel",
-//                                "Default");
-//                        TextView viewCoordsParent = activity.findViewById(R.id.parentCoords);
-//                        TextView viewLabelParent = activity.findViewById(R.id.parentLabel);
-//                        viewCoordsParent.setText(parentInputCoords);
-//                        viewLabelParent.setText(parentLabelInput);
-
                         showAlert(activity, "Data Saved Successfully");
 
                         editor.putBoolean("newUser", false);
