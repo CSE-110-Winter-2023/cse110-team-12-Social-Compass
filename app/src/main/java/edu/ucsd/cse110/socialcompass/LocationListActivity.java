@@ -39,7 +39,7 @@ public class LocationListActivity extends AppCompatActivity {
     }
 
     public void onAddInputClicked(View view) {
-        Utilities.showAlertDialog(this, "Please input your Home coordinates");
+        Utilities.showAlertDialog(this, "Here is your saved data.");
     }
 
     public void onSetOrientationClicked(View view) {

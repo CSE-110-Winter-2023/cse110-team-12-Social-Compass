@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         // check if this is a new user, and if so, initialize their sharedPreferences
         Boolean newUser = preferences.getBoolean("newUser", true);
-        if (newUser) { initNewUser(); }
+        initNewUser();
     }
 
     // This method should only be called one time EVER - for initializing brand new users.
@@ -46,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
         HashMap<String, Pair<Float,Float>> userInputHashSet = new HashMap<String, Pair<Float,Float>>();
 
 //        // Prompt user to input their home coordinates
-//        Utilities.showAlertDialog(this, "Please input your Home coordinates");
+        //Utilities.showAlertDialog(this, "Please input your Home coordinates");
+        Utilities.showFirstAlertonLoad(this, "Please input your Home, Friend, and Parent " +
+                "coordinates");
 
         //below line is set to "true" for testing purposes
         editor.putBoolean("newUser", true);
