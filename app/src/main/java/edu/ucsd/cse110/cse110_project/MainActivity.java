@@ -7,6 +7,7 @@ import androidx.core.util.Pair;
 import androidx.core.app.ActivityCompat;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -65,28 +66,36 @@ public class MainActivity extends AppCompatActivity {
                 button.createButton();
                 mainLayout.addView(button.getButton());
             }
+            orientationService = OrientationService.singleton(this);
+            this.reobserveOrientation();
         });
 
 
-        orientationService = OrientationService.singleton(this);
-        this.reobserveOrientation();
     }
 
-    public void reobserveOrientation() {
+    /**
+     * method used to grab the orientation data
+     */
+    private void reobserveOrientation() {
         var orientationData = orientationService.getOrientation();
         orientationData.observe(this, this::onOrientationChanged);
     }
 
+    /**
+     * method to use the orientation change value to rotate the NESW directions and house buttons
+     * @param orientation the azimuth for the orientation change
+     */
     private void onOrientationChanged(Float orientation) {
-        TextView orientationText = findViewById(R.id.serviceTextView);
+        // change azimuth value to be in degrees
         float degrees = (float) Math.toDegrees(orientation);
+
+        // set the value of degrees to be positive
         if (1 / degrees == Double.POSITIVE_INFINITY) degrees = 180;
         if (degrees < 0) {
             degrees += 360;
         }
-        orientationText.setText(Utilities.formatOrientation(degrees));
 
-        // rotating the NESW signs
+        // rotating the NESW direction signs
         TextView northView = (TextView) findViewById(R.id.north);
         TextView eastView = (TextView) findViewById(R.id.east);
         TextView southView = (TextView) findViewById(R.id.south);
@@ -109,6 +118,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * method use to rotate the direction textView signs
+     * @param angle the new angle to update the compass with
+     * @param view the text view that corresponds to the NESW direction signs
+     */
     private void setDirectionLayout(float angle, TextView view){
         ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
                 55, 100
@@ -123,7 +137,12 @@ public class MainActivity extends AppCompatActivity {
         view.setLayoutParams(layout);
     }
 
-    private void setButtonLayout(float angle, Button button){
+    /**
+     * method use to rotate the house buttons
+     * @param angle the new angle to update the compass with
+     * @param button the house buttons
+     */
+    public void setButtonLayout(float angle, Button button){
         ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
                 150, 150
         );

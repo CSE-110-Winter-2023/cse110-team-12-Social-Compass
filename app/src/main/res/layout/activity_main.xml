@@ -116,17 +116,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/serviceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:layout_marginBottom="61dp"
-        android:text="fdsfdsf"
-        android:textSize="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/inner_circle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/location_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
