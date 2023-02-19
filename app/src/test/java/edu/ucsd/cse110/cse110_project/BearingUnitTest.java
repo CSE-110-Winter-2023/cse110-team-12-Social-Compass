@@ -12,7 +12,7 @@ public class BearingUnitTest {
     }
 
     @Test
-    public void testBearingCalc() {
+    public void testBearingNegativeCalc() {
         assertEquals("", "");
     }
 
