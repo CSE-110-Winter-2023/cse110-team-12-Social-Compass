@@ -36,8 +36,8 @@ public class Utilities {
         LayoutInflater inflater = LayoutInflater.from(activity);
         View promptUserView = inflater.inflate(R.layout.dialog_userprompt, null);
 
-        // get user's input from the EditText field
-        // get home info
+
+        // get edit texts
         EditText homeCoords = promptUserView.findViewById(R.id.inputCoordsHome);
 
         //String homeInputCoords = homeCoords.getText().toString();
@@ -64,21 +64,8 @@ public class Utilities {
         //double[] parentCoordinates = parseCoordinates(parentInputCoords);
 
         EditText parentLabel = promptUserView.findViewById(R.id.inputLabelParent);
-        //String parentLabelInput = parentLabel.getText().toString();
 
-//        editor.putString("homeLabel", homeLabel.getText().toString());
-//        editor.putString("homeCoords", homeCoords.getText().toString());
-//        editor.putString("friendLabel", friendLabel.getText().toString());
-//        editor.putString("friendCoords", friendCoords.getText().toString());
-//        editor.putString("parentLabel", parentLabel.getText().toString());
-//        editor.putString("parentCoords", parentCoords.getText().toString());
-        //editor.apply();
-
-        // (Below 2 lines for testing purposes) Write home coordinates to textview
-        /*String changeFriendCoords = preferences.getString("friendCoords",
-                "Default");
-        String changeFriendLabel = preferences.getString("friendLabel",
-                "Default");*/
+        // get strings from shared preferences
         String homeLabelInput = preferences.getString("homeLabel", "Default");
         String homeInputCoords = preferences.getString("homeCoords", "Default");
         String friendLabelInput = preferences.getString("friendLabel", "Default");
@@ -86,16 +73,13 @@ public class Utilities {
         String parentLabelInput = preferences.getString("parentLabel", "Default");
         String parentInputCoords = preferences.getString("parentCoords", "Default");
 
+        // set text in the edit texts
         homeLabel.setText(homeLabelInput);
         homeCoords.setText(homeInputCoords);
         friendLabel.setText(friendLabelInput);
         friendCoords.setText(friendInputCoords);
         parentLabel.setText(parentLabelInput);
         parentCoords.setText(parentInputCoords);
-
-        double[] homeCoordinates = parseCoordinates(homeInputCoords);
-        double[] friendCoordinates = parseCoordinates(friendInputCoords);
-        double[] parentCoordinates = parseCoordinates(parentInputCoords);
 
         alertBuilder
                 .setView(promptUserView)
@@ -106,79 +90,47 @@ public class Utilities {
                         SharedPreferences preferences = activity.getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = preferences.edit();
 
-                        // if input is not null, then it is valid, so update preferences
-                        if (!homeLabel.getText().toString().equals("")
-                                && !friendLabel.getText().toString().equals("")
-                                && !parentLabel.getText().toString().equals("")
-                                && !homeCoords.getText().toString().equals("")
-                                && !friendCoords.getText().toString().equals("")
-                                && !parentCoords.getText().toString().equals(""))
-                        {
-                            // home editing
-                            editor.putString("homeLabel", homeLabel.getText().toString());
-                            editor.putString("homeCoords", homeCoords.getText().toString());
-                            editor.apply();
+                        // home editing
+                        editor.putString("homeLabel", homeLabel.getText().toString());
+                        editor.putString("homeCoords", homeCoords.getText().toString());
 
-                            String changeHomeCoords = preferences.getString("homeCoords",
-                                    "Default");
-                            String changeHomeLabel = preferences.getString("homeLabel", "Default");
-                            TextView viewHomeCoords = activity.findViewById(R.id.homeCoords);
-                            TextView viewHomeLabel = activity.findViewById(R.id.homeLabel);
-                            viewHomeCoords.setText(homeInputCoords);
-                            viewHomeLabel.setText(homeLabelInput);
+                        // friend editing
+                        editor.putString("friendLabel", friendLabel.getText().toString());
+                        editor.putString("friendCoords", friendCoords.getText().toString());
 
-                            // friend editing
-                            editor.putString("friendLabel", friendLabel.getText().toString());
-                            editor.putString("friendCoords", friendCoords.getText().toString());
-                            editor.apply();
+                        // parent editing
+                        editor.putString("parentLabel", parentLabel.getText().toString());
+                        editor.putString("parentCoords", parentCoords.getText().toString());
+                        editor.apply();
 
-                            // (Below 2 lines for testing purposes) Write home coordinates to textview
-                            String changeFriendCoords = preferences.getString("friendCoords",
-                                    "Default");
-                            String changeFriendLabel = preferences.getString("friendLabel",
-                                    "Default");
-                            TextView viewCoordsFriend = activity.findViewById(R.id.friendCoords);
-                            TextView viewLabelFriend = activity.findViewById(R.id.friendLabel);
-                            viewCoordsFriend.setText(friendInputCoords);
-                            viewLabelFriend.setText(friendLabelInput);
+                        String changeHomeCoords = preferences.getString("homeCoords",
+                                "Default");
+                        String changeHomeLabel = preferences.getString("homeLabel", "Default");
+                        TextView viewHomeCoords = activity.findViewById(R.id.homeCoords);
+                        TextView viewHomeLabel = activity.findViewById(R.id.homeLabel);
+                        viewHomeCoords.setText(homeInputCoords);
+                        viewHomeLabel.setText(homeLabelInput);
 
-                            // parent editing
-                            editor.putString("parentLabel", parentLabel.getText().toString());
-                            editor.putString("parentCoords", parentCoords.getText().toString());
-                            editor.apply();
 
-                            // (Below 2 lines for testing purposes) Write home coordinates to textview
-                            String changeParentCoords = preferences.getString("parentCoords",
-                                    "Default");
-                            String changeParentLabel = preferences.getString("parentLabel",
-                                    "Default");
-                            TextView viewCoordsParent = activity.findViewById(R.id.parentCoords);
-                            TextView viewLabelParent = activity.findViewById(R.id.parentLabel);
-                            viewCoordsParent.setText(parentInputCoords);
-                            viewLabelParent.setText(parentLabelInput);
-                            success = true;
-//                            if (locations == null) {
-//                                locations = new Locations();
-//                            }
-//                            locations.addLocation(name, new Pair(coordinates[0], coordinates[1]));
-                            assert homeCoordinates != null;
-                            locations.put(homeLabelInput,
-                                    new Pair<>(homeCoordinates[0], homeCoordinates[1]));
-                            assert friendCoordinates != null;
-                            locations.put(friendLabelInput,
-                                    new Pair<>(friendCoordinates[0], friendCoordinates[1]));
-                            assert parentCoordinates != null;
-                            locations.put(parentLabelInput,
-                                    new Pair<>(parentCoordinates[0], parentCoordinates[1]));
+                        // (Below 2 lines for testing purposes) Write home coordinates to textview
+                        String changeFriendCoords = preferences.getString("friendCoords",
+                                "Default");
+                        String changeFriendLabel = preferences.getString("friendLabel",
+                                "Default");
+                        TextView viewCoordsFriend = activity.findViewById(R.id.friendCoords);
+                        TextView viewLabelFriend = activity.findViewById(R.id.friendLabel);
+                        viewCoordsFriend.setText(friendInputCoords);
+                        viewLabelFriend.setText(friendLabelInput);
 
-                            homeName = homeLabelInput;
-                            friendName = friendLabelInput;
-                            parentName = parentLabelInput;
-                            //showAlert(activity, "Successfully saved data");
-                        }
-                        else {
-                            showAlert(activity,"Invalid Input");
-                        }
+                        // (Below 2 lines for testing purposes) Write home coordinates to textview
+                        String changeParentCoords = preferences.getString("parentCoords",
+                                "Default");
+                        String changeParentLabel = preferences.getString("parentLabel",
+                                "Default");
+                        TextView viewCoordsParent = activity.findViewById(R.id.parentCoords);
+                        TextView viewLabelParent = activity.findViewById(R.id.parentLabel);
+                        viewCoordsParent.setText(parentInputCoords);
+                        viewLabelParent.setText(parentLabelInput);
                     }
                 })
                 .setCancelable(false);
@@ -243,4 +195,6 @@ public class Utilities {
     public static String getParentName() {
         return parentName;
     }
+
+    public static double[] extractCoords;
 }
