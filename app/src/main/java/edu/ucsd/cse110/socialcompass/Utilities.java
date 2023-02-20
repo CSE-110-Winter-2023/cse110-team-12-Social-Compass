@@ -18,7 +18,10 @@ import java.util.HashMap;
 
 import edu.ucsd.cse110.socialcompass.db.Location;
 
-
+/**
+ * This class stores all the helper methods for showing alerts and dialogs, as well as taking in
+ * inputs. Its sole purpose is to handle all user input and display messages accordingly.
+ */
 public class Utilities {
 
     private static boolean success = false;
@@ -27,6 +30,11 @@ public class Utilities {
     private static String friendName = "";
     private static String parentName = "";
 
+    /**
+     *
+     * @param mainactivity
+     * @param message
+     */
     public static void showFirstAlertonLoad(MainActivity mainactivity, String message) {
         SharedPreferences preferences = mainactivity.getSharedPreferences("mainPrefs",
                 Context.MODE_PRIVATE);
@@ -114,7 +122,11 @@ public class Utilities {
         alertDialog.show();
     }
 
-    // Prompts the user with an AlertDialog to input location name and coordinates
+    /**
+     *
+     * @param activity
+     * @param message
+     */
     public static void showAlertDialog(LocationListActivity activity, String message) {
         SharedPreferences preferences = activity.getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         //SharedPreferences preferences = activity.getSharedPreferences();
@@ -204,7 +216,11 @@ public class Utilities {
         alertDialog.show();
     }
 
-    // Displays alert dialog with a message to the user
+    /**
+     * Alert that shows when the
+     * @param activity
+     * @param message
+     */
     private static void showAlert(LocationListActivity activity, String message) {
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
@@ -212,7 +228,11 @@ public class Utilities {
         alertDialog.show();
     }
 
-    // Displays alert dialog with a message to the user
+    /**
+     * First alert that activates when the app is started up the first time
+     * @param activity Activity page to which the dialog should appear
+     * @param message Message to display when the dialog appears
+     */
     private static void showFirstAlertHelper(MainActivity activity, String message) {
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
@@ -220,7 +240,11 @@ public class Utilities {
         alertDialog.show();
     }
 
-    // Takes input from user and returns (latitude, longitude) coordinates as doubles
+    /**
+     * Helper method which parses the coordinate inputs for easier processing
+     * @param input coordinates as an input string
+     * @return 2-element array for storing the corresponding latitude and longitude
+     */
     public static double[] parseCoordinates(String input) {
         input = input.replaceAll("[\\()]", "");
 

@@ -14,6 +14,9 @@ import android.view.View;
 
 import java.util.List;
 
+/**
+ * Class for editing list of locations/labels once the user has initially entered their data
+ */
 public class LocationListActivity extends AppCompatActivity {
 
     public RecyclerView recyclerView;
@@ -38,10 +41,18 @@ public class LocationListActivity extends AppCompatActivity {
         this.finish();
     }
 
+    /**
+     * Dialog that appears when the user confirms to save their inputted data
+     * @param view The view that should appear when user inputs data
+     */
     public void onAddInputClicked(View view) {
         Utilities.showAlertDialog(this, "Here is your saved data.");
     }
 
+    /**
+     * Mock UI testing for editing coordinates in a quick way
+     * @param view The view that should appear when user inputs data
+     */
     public void onSetOrientationClicked(View view) {
         SharedPreferences preferences = this.getSharedPreferences("preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
