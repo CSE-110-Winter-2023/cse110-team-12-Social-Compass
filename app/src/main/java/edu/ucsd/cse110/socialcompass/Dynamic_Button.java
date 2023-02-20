@@ -1,17 +1,14 @@
-package edu.ucsd.cse110.cse110_project;
+package edu.ucsd.cse110.socialcompass;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
-import java.util.HashMap;
+import edu.ucsd.cse110.cse110_project.R;
 
 public class Dynamic_Button {
     private float bearingAngle;

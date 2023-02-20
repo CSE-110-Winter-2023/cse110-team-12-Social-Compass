@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'edu.ucsd.cse110.cse110_project'
+    namespace 'edu.ucsd.cse110.socialcompass'
     compileSdk 33
 
     defaultConfig {
