@@ -16,13 +16,17 @@ public class Dynamic_Button {
     private TextView button;
     private int id;
 
+    // Constructor; passes in the activity you want the button,
+    // label of the button, and the corresponding bearing angle
+    public Dynamic_Button(Activity activity, String label, float bearingAngle) {
+        this.activity = activity;
 
-    public Dynamic_Button(Activity context, String label, float bearingAngle) {
-        this.activity = context;
         this.bearingAngle = bearingAngle;
         this.label = label;
     }
 
+
+    // Updates the button object's bearing angle
     public void updateAngle(float bearingAngle) {
         this.bearingAngle = bearingAngle;
     }
@@ -35,6 +39,8 @@ public class Dynamic_Button {
         return button;
     }
 
+
+    // Creates a new button in the activity and sets ints constraints
     public void createButton() {
         button = new Button(activity);
         button.setId(View.generateViewId());
@@ -46,6 +52,8 @@ public class Dynamic_Button {
         float innerCircleRadius = (float) activity.findViewById(R.id.inner_circle).getHeight() / 2;
         float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
         layout.circleRadius = (int)Math.floor(dynamicRadius);
+
+        //layout.circleRadius = Math.round(dynamicRadius);
         layout.circleConstraint = R.id.location_icon;
         layout.circleAngle = bearingAngle;
         layout.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
@@ -59,12 +67,13 @@ public class Dynamic_Button {
         button.setOnClickListener(view -> LabelWindow.showLabel(activity, label));
     }
 
-    public void updateButtonLayout() {
-        ConstraintLayout.LayoutParams layout = (ConstraintLayout.LayoutParams) button.getLayoutParams();
-        layout.circleAngle = bearingAngle;
-        button.setLayoutParams(layout);
 
-    }
+    // Unused for now
+//    public void updateButtonLayout() {
+//        ConstraintLayout.LayoutParams layout = (ConstraintLayout.LayoutParams) button.getLayoutParams();
+//        layout.circleAngle = bearingAngle;
+//        button.setLayoutParams(layout);
+//    }
 
     public String getLabel() {
         return this.label;
@@ -75,3 +84,4 @@ public class Dynamic_Button {
     }
 
 }
+

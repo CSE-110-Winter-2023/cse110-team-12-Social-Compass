@@ -31,7 +31,11 @@ public class LocationService implements LocationListener {
 
     }
 
-    //Constuctor stuff
+
+    /**
+     * Constructor for LocationService
+     * @param activity Context needed to initiate LocationManager
+     */
     protected LocationService(Activity activity){
         this.locationValue = new MutableLiveData<>();
         this.activity = activity;
@@ -66,6 +70,5 @@ public class LocationService implements LocationListener {
         this.locationValue = mockDataSource;
     }
 
-
-
 }
+
