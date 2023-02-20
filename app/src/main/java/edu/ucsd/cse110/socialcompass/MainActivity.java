@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 //        locationHashset.put("Rimac", new Pair<>(32.885159942166624d, -117.24044656136009d ));
 //        locationHashset.put("Boston", new Pair<>(42.3199d, -71.0359d ));
 
-        orientation = (float) preferences.getInt("orientation",0);
+        //orientation = (float) preferences.getInt("orientation",0);
 
         LocationService locationService = LocationService.singleton(this);
 
