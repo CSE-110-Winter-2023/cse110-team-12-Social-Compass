@@ -48,7 +48,7 @@ public class Dynamic_Button {
         ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
                 150, 150
         );
-        float outerCircleRadius = (float) activity.findViewById(R.id.outter_circle).getHeight() / 2;
+        float outerCircleRadius = (float) activity.findViewById(R.id.outer_circle).getHeight() / 2;
         float innerCircleRadius = (float) activity.findViewById(R.id.inner_circle).getHeight() / 2;
         float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
         layout.circleRadius = (int)Math.floor(dynamicRadius);

@@ -6,6 +6,8 @@ import android.os.Build;
 import android.widget.TextView;
 import androidx.lifecycle.MutableLiveData;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.internal.platform.content.PermissionGranter;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -17,6 +19,7 @@ public class TestOrientation {
     @Test
     public void testMockSourceInput() {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+
         scenario.onActivity(activity -> {
             OrientationService service = OrientationService.singleton(activity);
             MutableLiveData<Float> source = new MutableLiveData<>();

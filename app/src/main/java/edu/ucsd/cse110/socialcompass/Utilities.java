@@ -129,7 +129,7 @@ public class Utilities {
      * @param activity
      * @param message
      */
-    public static void showAlertDialog(LocationListActivity activity, String message) {
+    public static void showAlertDialog(LocationListActivity activity, MainActivity mainActivity, String message) {
         SharedPreferences preferences = activity.getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         //SharedPreferences preferences = activity.getSharedPreferences();
         SharedPreferences.Editor editor = preferences.edit();
@@ -210,6 +210,8 @@ public class Utilities {
 
                         editor.putBoolean("newUser", false);
                         editor.apply();
+                        mainActivity.onInputReady();
+
                     }
                 })
                 .setCancelable(false);

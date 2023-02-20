@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -45,8 +46,8 @@ public class LocationListActivity extends AppCompatActivity {
      * Dialog that appears when the user confirms to save their inputted data
      * @param view The view that should appear when user inputs data
      */
-    public void onAddInputClicked(View view) {
-        Utilities.showAlertDialog(this, "Here is your saved data.");
+    public void onAddInputClicked(View view, MainActivity activity) {
+        Utilities.showAlertDialog(this, activity,"Here is your saved data.");
     }
 
     /**

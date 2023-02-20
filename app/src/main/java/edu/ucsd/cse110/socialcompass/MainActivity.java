@@ -49,9 +49,11 @@ public class MainActivity extends AppCompatActivity {
         //Populating hashmap for quick reference
         //Get rid of sampleHashSet afterwards
         sampleHashSet = new HashMap<String, Pair<Double,Double>>();
-        sampleHashSet.put("Geisel", new Pair<>(32.88114549458315d,-117.23758450131251d ));
-        sampleHashSet.put("Rimac", new Pair<>(32.885159942166624d, -117.24044656136009d ));
-        sampleHashSet.put("Boston", new Pair<>(42.3199d, -71.0359d ));
+//        sampleHashSet.put("Geisel", new Pair<>(32.88114549458315d,-117.23758450131251d ));
+//        sampleHashSet.put("Rimac", new Pair<>(32.885159942166624d, -117.24044656136009d ));
+//        sampleHashSet.put("Boston", new Pair<>(42.3199d, -71.0359d ));
+
+
 
         //Creating instance of locationService to get device location
         LocationService locationService = LocationService.singleton(this);
@@ -102,11 +104,16 @@ public class MainActivity extends AppCompatActivity {
         //Populating hashmap for quick reference
         locationHashset = new HashMap<String, Pair<Double,Double>>();
         double [] parseHomeCoord = Utilities.parseCoordinates(mainPreferences.getString("homeCoords", ""));
-        double [] parseFriendCoord = Utilities.parseCoordinates(mainPreferences.getString("homeCoords", ""));
-        double [] parseParentCoord = Utilities.parseCoordinates(mainPreferences.getString("homeCoords", ""));
-        locationHashset.put("Home", new Pair<>(parseHomeCoord[0],parseHomeCoord[1]));
-        locationHashset.put("Friend", new Pair<>(parseFriendCoord[0],parseFriendCoord[1]));
-        locationHashset.put("Parent", new Pair<>(parseParentCoord[0],parseParentCoord[1]));
+        double [] parseFriendCoord = Utilities.parseCoordinates(mainPreferences.getString("friendCoords", ""));
+        double [] parseParentCoord = Utilities.parseCoordinates(mainPreferences.getString("parentCoords", ""));
+
+        String homeName = mainPreferences.getString("homeLabel","Home");
+        String friendName = mainPreferences.getString("friendLabel","Friend");
+        String parentName = mainPreferences.getString("parentLabel","Parent");
+
+        locationHashset.put(homeName, new Pair<>(parseHomeCoord[0],parseHomeCoord[1]));
+        locationHashset.put(friendName, new Pair<>(parseFriendCoord[0],parseFriendCoord[1]));
+        locationHashset.put(parentName, new Pair<>(parseParentCoord[0],parseParentCoord[1]));
 //        locationHashset.put("Geisel", new Pair<>(32.88114549458315d,-117.23758450131251d ));
 //        locationHashset.put("Rimac", new Pair<>(32.885159942166624d, -117.24044656136009d ));
 //        locationHashset.put("Boston", new Pair<>(42.3199d, -71.0359d ));
@@ -236,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
                 55, 100
         );
-        float outerCircleRadius = (float) this.findViewById(R.id.outter_circle).getHeight() / 2;
+        float outerCircleRadius = (float) this.findViewById(R.id.outer_circle).getHeight() / 2;
         float innerCircleRadius = (float) this.findViewById(R.id.inner_circle).getHeight() / 2;
         float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
         layout.circleRadius = (int)Math.floor(dynamicRadius);
@@ -258,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
                 150, 150
         );
-        float outerCircleRadius = (float) this.findViewById(R.id.outter_circle).getHeight() / 2;
+        float outerCircleRadius = (float) this.findViewById(R.id.outer_circle).getHeight() / 2;
         float innerCircleRadius = (float) this.findViewById(R.id.inner_circle).getHeight() / 2;
         float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
         layout.circleRadius = (int)Math.floor(dynamicRadius);
@@ -276,4 +283,9 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         orientationService.unregisterSensorListeners();
     }
+
+    public HashMap<String,Pair<Double,Double>> getLocation() {
+        return this.locationHashset;
+    }
+
 }
