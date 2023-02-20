@@ -31,7 +31,7 @@ public class LocationService implements LocationListener {
 
     }
 
-    //Constuctor stuff
+    //Constructor stuff
     protected LocationService(Activity activity){
         this.locationValue = new MutableLiveData<>();
         this.activity = activity;
