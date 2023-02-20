@@ -1,8 +1,10 @@
-package edu.ucsd.cse110.cse110_project;
+package edu.ucsd.cse110.socialcompass;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import edu.ucsd.cse110.socialcompass.Bearing;
 
 public class BearingUnitTest {
 

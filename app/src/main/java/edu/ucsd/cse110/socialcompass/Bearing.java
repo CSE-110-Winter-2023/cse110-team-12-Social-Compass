@@ -1,4 +1,4 @@
-package edu.ucsd.cse110.cse110_project;
+package edu.ucsd.cse110.socialcompass;
 
 public class Bearing {
 
