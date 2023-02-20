@@ -15,8 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import android.util.Pair;
-
 import java.util.HashMap;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<String, Pair<Double,Double>> sampleHashSet;
 
     private OrientationService orientationService;
-    private HashMap<String, Dynamic_Button> dynamic_buttons;
     private HashMap<String, Pair<Double,Double>> locationHashset;
     private float orientation;
 
