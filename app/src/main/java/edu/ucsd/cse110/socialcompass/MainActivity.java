@@ -18,8 +18,6 @@ import android.content.pm.PackageManager;
 
 import java.util.HashMap;
 
-import edu.ucsd.cse110.cse110_project.R;
-
 public class MainActivity extends AppCompatActivity {
     private HashMap<String, Dynamic_Button> dynamic_buttons;
     private HashMap<String, Pair<Double,Double>> sampleHashSet;

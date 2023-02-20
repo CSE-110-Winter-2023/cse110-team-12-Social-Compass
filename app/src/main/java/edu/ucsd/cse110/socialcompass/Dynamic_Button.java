@@ -8,8 +8,6 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
-import edu.ucsd.cse110.cse110_project.R;
-
 public class Dynamic_Button {
     private float bearingAngle;
     private final Activity activity;
