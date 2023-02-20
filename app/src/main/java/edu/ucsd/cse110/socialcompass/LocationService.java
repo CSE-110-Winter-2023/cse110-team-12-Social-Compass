@@ -31,6 +31,7 @@ public class LocationService implements LocationListener {
 
     }
 
+
     /**
      * Constructor for LocationService
      * @param activity Context needed to initiate LocationManager
@@ -70,3 +71,4 @@ public class LocationService implements LocationListener {
     }
 
 }
+

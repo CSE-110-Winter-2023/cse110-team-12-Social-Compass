@@ -114,6 +114,8 @@ public class Utilities {
 
                         editor.putBoolean("newUser", false);
                         editor.apply();
+
+                        mainactivity.onInputReady();
                     }
                 })
                 .setCancelable(false);
