@@ -1,4 +1,4 @@
-package edu.ucsd.cse110.cse110_project;
+package edu.ucsd.cse110.socialcompass;
 public class Constants {
     public static final float NORTH = 0;
     public static final float EAST = (float) (Math.PI / 2);

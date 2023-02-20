@@ -1,4 +1,4 @@
-package edu.ucsd.cse110.cse110_project;
+package edu.ucsd.cse110.socialcompass;
 
 import android.app.Activity;
 import android.app.AlertDialog;
