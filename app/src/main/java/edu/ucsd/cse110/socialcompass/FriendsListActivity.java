@@ -15,9 +15,9 @@ public class FriendsListActivity extends AppCompatActivity {
     }
 
 //    FriendsListAdapter adapter = new FriendsListAdapter();
-//        adapter.setHasStableIds(true);
+//    adapter.setHasStableIds(true);
 //
-//    recyclerView = findViewById(R.id.location_items);
+//    recyclerView = findViewById(R.id.friend_items);
 //        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 //        recyclerView.setAdapter(adapter);
 //

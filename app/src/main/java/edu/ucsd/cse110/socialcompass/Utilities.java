@@ -51,13 +51,6 @@ public class Utilities {
                             editor.putString("homeCoords", inputCoords.getText().toString());
                             editor.apply();
 
-                            // (Below 2 lines for testing purposes) Write home coordinates to textview
-                            String homeCoords = preferences.getString("homeCoords", "Default");
-                            String homeLabel = preferences.getString("homeLabel", "Default");
-                            TextView testCoords = activity.findViewById(R.id.testCoords);
-                            TextView testLabel = activity.findViewById(R.id.label);
-                            testCoords.setText(homeCoords);
-                            testLabel.setText(homeLabel);
                             if (locations == null) {
                                 locations = new Locations();
                             }
