@@ -12,9 +12,12 @@
         android:theme="@style/Theme.SocialCompass"
         tools:targetApi="31">
         <activity
-            android:name=".LocationListActivity"
+<<<<<<< HEAD
+=======
+            android:name=".LocationsActivity"
             android:exported="false" />
         <activity
+>>>>>>> LocationsActivity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
