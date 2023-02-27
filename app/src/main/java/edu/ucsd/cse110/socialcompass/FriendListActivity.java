@@ -21,5 +21,5 @@ public class FriendListActivity extends AppCompatActivity {
 //        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 //        recyclerView.setAdapter(adapter);
 //
-//        adapter.setLocationListItems(FriendsListItem.loadJSON(this, "locations.json"));
+//        adapter.setLocationListItems(FriendsListItem.loadJSON(this, "test_friends.json"));
 }
