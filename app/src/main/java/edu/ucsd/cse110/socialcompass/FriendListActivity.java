@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
-public class FriendsListActivity extends AppCompatActivity {
+public class FriendListActivity extends AppCompatActivity {
 
     public RecyclerView recyclerView;
     @Override

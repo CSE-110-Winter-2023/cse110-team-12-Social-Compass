@@ -1,26 +1,17 @@
 package edu.ucsd.cse110.socialcompass;
 
-import android.content.Context;
-
 //import com.google.gson.Gson;
 //import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
 
-public class FriendsListItem {
+public class FriendListItem {
 
-    public long id = 0;
-    public String label, coords;
+    public long id; // id for database
+    public String name, uid;
 
-    public FriendsListItem(String label, String coords) {
-        this.label = label;
-        this.coords = coords;
+    public FriendListItem(String name, String uid) {
+        this.name = name;
+        this.uid = uid;
     }
 
 //    public static List<FriendsListItem> loadJSON(Context context, String path) {
@@ -38,9 +29,9 @@ public class FriendsListItem {
 
     @Override
     public String toString() {
-        return "LocationListItem{" +
-                "label='" + label + '\'' +
-                ", coords=" + coords +
+        return "FriendListItem{" +
+                "name='" + name + '\'' +
+                ", uid=" + uid +
                 '}';
     }
 }

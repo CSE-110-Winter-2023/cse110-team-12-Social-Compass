@@ -1,6 +1,5 @@
 package edu.ucsd.cse110.socialcompass;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,10 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.view.View;
-import android.util.Pair;
-
-import android.view.View;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onSeeFriendsClicked(View view) {
-        Intent intent = new Intent(this, FriendsListActivity.class);
+        Intent intent = new Intent(this, FriendListActivity.class);
         startActivity(intent);
     }
 }
