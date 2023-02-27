@@ -13,6 +13,7 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+<<<<<<< HEAD
     <style name="Theme.SocialCompass.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -21,3 +22,6 @@
         parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.SocialCompass.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
+=======
+</resources>
+>>>>>>> main

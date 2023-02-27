@@ -13,9 +13,79 @@
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/orientation_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:onClick="onBackClicked"
+        android:text="Back"
+        app:layout_constraintEnd_toEndOf="@+id/orientation_btn"
+        app:layout_constraintTop_toBottomOf="@+id/orientation_btn" />
+
+    <Button
+        android:id="@+id/add_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:onClick="onAddInputClicked"
+        android:text="Add"
+        app:layout_constraintEnd_toEndOf="@+id/back_btn"
+        app:layout_constraintTop_toBottomOf="@+id/back_btn" />
+
+    <EditText
+        android:id="@+id/addInputLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="48dp"
+        android:ems="10"
+        android:hint="Name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/addCoordsLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/orientation_btn" />
+
+    <EditText
+        android:id="@+id/addCoordsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginBottom="18dp"
+        android:ems="10"
+        android:hint="Coordinates"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/addInputLabel" />
+
+    <Button
+        android:id="@+id/orientation_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="114dp"
+        android:text="Set"
+        android:onClick="onSetOrientationClicked"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/editOrient"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="46dp"
+        android:ems="10"
+        android:hint="orientation"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/addInputLabel"
+        app:layout_constraintStart_toStartOf="@+id/addInputLabel" />
 </androidx.constraintlayout.widget.ConstraintLayout>
