@@ -1,7 +1,7 @@
 package edu.ucsd.cse110.socialcompass;
 
-//import com.google.gson.Gson;
-//import com.google.gson.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 public class FriendListItem {
