@@ -1,5 +1,5 @@
 [
-  {"label": "Parent's home", "coords": "(32.0, 32.0)"},
-  {"label": "Friend 1's home", "coords":  "(0.0,0.0"},
-  {"label": "Friend 2's home", "coords":  "(0.0, 100.0"}
+  {"name": "Parent's home", "uid": "123456"},
+  {"name": "Friend 1's home", "uid":  "654321"},
+  {"name": "Friend 2's home", "uid":  "102938"}
 ]
