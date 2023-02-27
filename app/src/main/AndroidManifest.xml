@@ -17,12 +17,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         tools:targetApi="31">
         <activity
-<<<<<<< HEAD
-=======
-            android:name=".LocationListActivity"
-            android:exported="false" />
-        <activity
->>>>>>> main
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
