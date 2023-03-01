@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LocationListActivity">
+    tools:context=".FriendListActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/location_items"
+        android:id="@+id/friend_items"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="1dp"
