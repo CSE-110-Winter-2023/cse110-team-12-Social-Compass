@@ -1,22 +1,29 @@
 package edu.ucsd.cse110.socialcompass;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+    private static FriendDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        SharedPreferences preferences = getSharedPreferences("mainPrefs", MODE_PRIVATE);
-        // check if this is a new user, and if so, initialize their sharedPreferences
-        Boolean newUser = preferences.getBoolean("newUser", true); // true by default
-        if (newUser) { initNewUser(); }
+        Context context = this.getApplicationContext();
+        db = FriendDatabase.getSingleton(context);
+        var dao = db.friendListItemDao();
+        List<FriendListItem> users = dao.getAll();
+        if (users.size()==0) {
+            initNewUser();
+        }
     }
 
     // This method should only be called one time EVER - for initializing brand new users.
@@ -25,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
 
         //TODO: Ask for location permission and build initial HashMap for storing data
-
+        Utilities.showUserNamePromptAlert(this, "Please input your name",db);
         editor.putBoolean("newUser", false); // update newUser status to false.
         editor.apply();
     }
