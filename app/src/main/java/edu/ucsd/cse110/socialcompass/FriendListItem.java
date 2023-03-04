@@ -28,7 +28,7 @@ public class FriendListItem {
     public int order;
 
     // Constructor matching fields above
-    public FriendListItem(@NonNull String name, String uid, int order) {
+    public FriendListItem(@NonNull String name, @NonNull String uid, int order) {
         this.name = name;
         this.uid = uid;
         this.order = order;
