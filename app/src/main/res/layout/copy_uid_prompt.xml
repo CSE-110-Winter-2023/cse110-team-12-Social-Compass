@@ -20,29 +20,39 @@
         android:id="@+id/uid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="158dp"
+        android:layout_marginStart="25dp"
         android:layout_weight="1"
         android:hint="UID"
-        app:layout_constraintBaseline_toBaselineOf="@+id/uidLabel"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@id/copy_info"
+        app:layout_constraintEnd_toStartOf="@id/copy"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/copy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="242dp"
-        android:layout_marginEnd="44dp"
+        android:layout_width="30dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="240dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/copy"
         android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@id/copy_info"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/uid"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/copy_info"
-        android:layout_width="215dp"
-        android:layout_height="55dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="25dp"
         android:text="Share this UID with your friends and family to add each other on the app!"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="519dp" />
+        app:layout_constraintTop_toBottomOf="@id/uid" />
 </androidx.constraintlayout.widget.ConstraintLayout>
