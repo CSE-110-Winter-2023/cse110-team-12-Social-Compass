@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/uidLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="39dp"
+        android:layout_marginBottom="13dp"
+        android:layout_weight="1"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/copy"
+        app:layout_constraintStart_toEndOf="@+id/uid" />
+
+    <TextView
+        android:id="@+id/uid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="158dp"
+        android:layout_weight="1"
+        android:hint="UID"
+        app:layout_constraintBaseline_toBaselineOf="@+id/uidLabel"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/copy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="242dp"
+        android:layout_marginEnd="44dp"
+        android:background="@drawable/copy"
+        android:clickable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/copy_info"
+        android:layout_width="215dp"
+        android:layout_height="55dp"
+        android:text="Share this UID with your friends and family to add each other on the app!"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="519dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
