@@ -47,7 +47,7 @@ public class Utilities {
         String uniqueID = UUID.randomUUID().toString();
         alertBuilder
                 .setView(promptUserNameView)
-                .setTitle("Enter Your Name")
+                .setTitle("Username")
                 .setMessage(message)
                 .setPositiveButton("Submit", (dialog, id) -> {
                     String name = userName.getText().toString();
@@ -55,7 +55,7 @@ public class Utilities {
                     //not sure if this is correct
                     db.friendListItemDao().insert(user);
                     dialog.cancel();
-                    showCopyUIDAlert(activity, "Copy UID", uniqueID);
+                    showCopyUIDAlert(activity, "User UID", uniqueID);
                 })
                 .setCancelable(false);
 
@@ -68,7 +68,7 @@ public class Utilities {
      * @param activity
      * @param message
      */
-    private static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
+    public static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
         LayoutInflater inflater = LayoutInflater.from(activity);

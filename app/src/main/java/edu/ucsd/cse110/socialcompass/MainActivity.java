@@ -21,20 +21,20 @@ public class MainActivity extends AppCompatActivity {
         db = FriendDatabase.getSingleton(context);
         var dao = db.friendListItemDao();
         List<FriendListItem> users = dao.getAll();
-        if (users.size()==0) {
+        if (true) {
             initNewUser();
         }
     }
 
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
-        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
+//        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+//        SharedPreferences.Editor editor = preferences.edit();
 
         //TODO: Ask for location permission and build initial HashMap for storing data
-        Utilities.showUserNamePromptAlert(this, "Please input your name",db);
-        editor.putBoolean("newUser", false); // update newUser status to false.
-        editor.apply();
+        Utilities.showUserNamePromptAlert(this, "Please enter your name",db);
+//        editor.putBoolean("newUser", false); // update newUser status to false.
+//        editor.apply();
     }
 
     public void onSeeFriendsClicked(View view) {
