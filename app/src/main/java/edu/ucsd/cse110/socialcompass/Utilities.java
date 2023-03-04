@@ -37,7 +37,7 @@ public class Utilities {
      */
     public static void showUserNamePromptAlert(MainActivity activity, String message, FriendDatabase db) {
 
-        android.app.AlertDialog.Builder alertBuilder1 = new android.app.AlertDialog.Builder(activity);
+        android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
         LayoutInflater inflater = LayoutInflater.from(activity);
         View promptUserNameView = inflater.inflate(R.layout.dialog_user_name_prompt, null);
@@ -45,7 +45,7 @@ public class Utilities {
         // get edit texts for user's name
         EditText userName = promptUserNameView.findViewById(R.id.inputName);
         String uniqueID = UUID.randomUUID().toString();
-        alertBuilder1
+        alertBuilder
                 .setView(promptUserNameView)
                 .setTitle("Enter Your Name")
                 .setMessage(message)
@@ -54,52 +54,7 @@ public class Utilities {
                     FriendListItem user = new FriendListItem(name,uniqueID,-1);
                     //not sure if this is correct
                     db.friendListItemDao().insert(user);
-                    dialog.cancel();
 
-                    showCopyUIDAlert(activity, "Copy UID", uniqueID);
-
-                })
-                .setCancelable(false);
-
-        android.app.AlertDialog alertDialog1 = alertBuilder1.create();
-        alertDialog1.show();
-    }
-
-    /**
-     * Alert that shows when the
-     * @param activity
-     * @param message
-     */
-    private static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
-        android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
-
-        LayoutInflater inflater = LayoutInflater.from(activity);
-        View copyUIDView = inflater.inflate(R.layout.copy_uid_prompt, null);
-
-        TextView uidTextView  = copyUIDView.findViewById(R.id.uid);
-        uidTextView.setText(uid);
-
-        TextView copyButton = (TextView) copyUIDView.findViewById(R.id.copy);
-
-        // copy UID to clipboard
-        copyButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View var1) {
-                ClipboardManager clipboard = (ClipboardManager) var1.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                String label = "uid";
-                String text = uidTextView.getText().toString();
-                ClipData clip = ClipData.newPlainText(label, text);
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(var1.getContext(), "Text copied to clipboard", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        alertBuilder
-                .setView(copyUIDView)
-                .setTitle("Welcome!")
-                .setMessage(message)
-                .setPositiveButton("Continue", (dialog, id) -> {
                 })
                 .setCancelable(false);
 
