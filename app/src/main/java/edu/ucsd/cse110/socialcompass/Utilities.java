@@ -60,15 +60,29 @@ public class Utilities {
                 })
                 .setCancelable(false);
 
+        android.app.AlertDialog.Builder alertBuilder2 = new android.app.AlertDialog.Builder(activity);
+        alertBuilder2
+                .setView(promptUserNameView)
+                .setTitle("You can now enter your friend's UID")
+                //.setMessage(message)
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Dismiss the AlertDialog and start FriendListActivity
+                        Intent intent = new Intent(activity, FriendListActivity.class);
+                        activity.startActivity(intent);
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setCancelable(false);
+
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
+
+        android.app.AlertDialog alertDialog2 = alertBuilder2.create();
+        alertDialog2.show();
     }
 
-    /**
-     * Alert that shows when the
-     * @param activity
-     * @param message
-     */
     public static String getUID()
     {
         return uniqueID;
