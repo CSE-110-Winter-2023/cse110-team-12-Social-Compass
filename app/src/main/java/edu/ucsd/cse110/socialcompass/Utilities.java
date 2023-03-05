@@ -29,12 +29,13 @@ import edu.ucsd.cse110.socialcompass.db.Location;
  * inputs. Its sole purpose is to handle all user input and display messages accordingly.
  */
 public class Utilities {
-
+    static String uniqueID;
     /**
      * Alert that shows when the
      * @param activity
      * @param message
      */
+
     public static void showUserNamePromptAlert(MainActivity activity, String message, FriendDatabase db) {
 
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
@@ -44,7 +45,7 @@ public class Utilities {
 
         // get edit texts for user's name
         EditText userName = promptUserNameView.findViewById(R.id.inputName);
-        String uniqueID = UUID.randomUUID().toString();
+        uniqueID = UUID.randomUUID().toString();
         alertBuilder
                 .setView(promptUserNameView)
                 .setTitle("Username")
@@ -68,6 +69,11 @@ public class Utilities {
      * @param activity
      * @param message
      */
+    public static String getUID()
+    {
+        return uniqueID;
+
+    }
     public static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 

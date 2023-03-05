@@ -21,7 +21,8 @@ public class MainActivity extends AppCompatActivity {
         db = FriendDatabase.getSingleton(context);
         var dao = db.friendListItemDao();
         List<FriendListItem> users = dao.getAll();
-        if (true) {
+       // if (users.size() == 0) {
+        if(Utilities.getUID() == null){
             initNewUser();
         }
     }
