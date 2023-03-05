@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Ask for location permission and build initial HashMap for storing data
         Utilities.showUserNamePromptAlert(this, "Please enter your name",db);
 
+
 //        editor.putBoolean("newUser", false); // update newUser status to false.
 //        editor.apply();
     }
