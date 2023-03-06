@@ -43,7 +43,6 @@ public class Utilities {
         LayoutInflater inflater = LayoutInflater.from(activity);
         View promptUserNameView = inflater.inflate(R.layout.dialog_user_name_prompt, null);
         uniqueID = UUID.randomUUID().toString();
-        Log.d("USERNAME",uniqueID);
         // get edit texts for user's name
         EditText userName = promptUserNameView.findViewById(R.id.inputName);
         alertBuilder
