@@ -28,16 +28,9 @@ import java.util.List;
 public class TestUsernameInput {
     ActivityScenario<MainActivity> scenario;
 
-    @Before
-    public void setup(){
-        scenario = ActivityScenario.launch(MainActivity.class);
-    }
-
-
     @Test
     public void test_username_uid(){
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
+        scenario = ActivityScenario.launch(MainActivity.class);
         scenario.onActivity(activity -> {
             Context context = activity.getApplicationContext();
 
@@ -59,8 +52,7 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored(){
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
+        scenario = ActivityScenario.launch(MainActivity.class);
         scenario.onActivity(activity -> {
             Context context = activity.getApplicationContext();
 
