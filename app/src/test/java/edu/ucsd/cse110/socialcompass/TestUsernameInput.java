@@ -15,9 +15,11 @@ import android.widget.EditText;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.rule.ActivityTestRule;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -29,11 +31,13 @@ import java.util.List;
 public class TestUsernameInput {
 
     private FriendDatabase db;
+    private ActivityScenario<MainActivity> scenario;
 
     @Before
     public void setup() {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
+        scenario = ActivityScenario.launch(MainActivity.class);
     }
 
     @After
@@ -43,7 +47,7 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_uid() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        //ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
@@ -57,11 +61,13 @@ public class TestUsernameInput {
             // check that the UID is created
             assertNotNull(Utilities.getUID());
         });
+        scenario.moveToState(Lifecycle.State.DESTROYED);
     }
 
     @Test
     public void test_username_and_uid_stored() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+
+        //ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
 
@@ -94,5 +100,11 @@ public class TestUsernameInput {
             assertEquals(Utilities.getUID(), user.uid);
             assertEquals(-1, user.order);
         });
+        scenario.moveToState(Lifecycle.State.DESTROYED);
+    }
+
+    @After
+    public void CloseDataBase() throws Exception {
+        db.close();
     }
 }
