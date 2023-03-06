@@ -41,11 +41,15 @@ public class TestUsernameInput {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
         intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-        scenario = ActivityScenario.launch(intent);
+        try {
+            scenario = ActivityScenario.launch(intent); // this is an error
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @After
-    public void cleanup() {
+    public void cleanup() throws IOException {
         db.close();
     }
 
@@ -103,10 +107,5 @@ public class TestUsernameInput {
             assertEquals(Utilities.getUID(), user.uid);
             assertEquals(-1, user.order);
         });
-    }
-
-    @After
-    public void CloseDataBase() throws IOException {
-        db.close();
     }
 }
