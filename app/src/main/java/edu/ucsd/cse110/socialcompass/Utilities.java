@@ -43,18 +43,22 @@ public class Utilities {
         LayoutInflater inflater = LayoutInflater.from(activity);
         View promptUserNameView = inflater.inflate(R.layout.dialog_user_name_prompt, null);
         uniqueID = UUID.randomUUID().toString();
+        Log.d("USERNAME",uniqueID);
         // get edit texts for user's name
         EditText userName = promptUserNameView.findViewById(R.id.inputName);
         alertBuilder
                 .setView(promptUserNameView)
                 .setTitle("Username")
                 .setMessage(message)
-                .setPositiveButton("Submit", (dialog, id) -> {
-                    uniqueID = UUID.randomUUID().toString();
-                    String name = userName.getText().toString();
-                    FriendListItem user = new FriendListItem(name, uniqueID, -1);
-                    //not sure if this is correct
-                    db.friendListItemDao().insert(user);
+                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        uniqueID = UUID.randomUUID().toString();
+                        String name = userName.getText().toString();
+                        FriendListItem user = new FriendListItem(name, uniqueID, -1);
+                        //not sure if this is correct
+                        db.friendListItemDao().insert(user);
+                    }
                 })
                 .setCancelable(false);
 
