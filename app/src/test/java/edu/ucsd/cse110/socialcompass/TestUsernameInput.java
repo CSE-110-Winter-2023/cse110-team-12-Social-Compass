@@ -63,6 +63,7 @@ public class TestUsernameInput {
     public void test_username_and_uid_stored() {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
