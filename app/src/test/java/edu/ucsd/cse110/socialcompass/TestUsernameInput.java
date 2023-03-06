@@ -15,6 +15,7 @@ import android.widget.EditText;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,14 +29,14 @@ public class TestUsernameInput {
     ActivityScenario<MainActivity> scenario;
 
     @Before
-    public void setup_scenario(){
+    public void setup(){
         scenario = ActivityScenario.launch(MainActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
     }
 
     @Test
     public void test_username_uid(){
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
         scenario.onActivity(activity -> {
             Context context = activity.getApplicationContext();
 
