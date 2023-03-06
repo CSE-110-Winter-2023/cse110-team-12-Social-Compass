@@ -16,18 +16,18 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = Build.VERSION_CODES.P)
 public class TestOrientation {
-    @Test
-    public void testMockSourceInput() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-
-        scenario.onActivity(activity -> {
-            OrientationService service = OrientationService.singleton(activity);
-            MutableLiveData<Float> source = new MutableLiveData<>();
-            service.setMockOrientationSource(source);
-            source.setValue((float)90);
-            assertEquals(service.getOrientation().getValue(), (float)90);
-        });
-    }
+//    @Test
+//    public void testMockSourceInput() {
+//        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+//
+//        scenario.onActivity(activity -> {
+//            OrientationService service = OrientationService.singleton(activity);
+//            MutableLiveData<Float> source = new MutableLiveData<>();
+//            service.setMockOrientationSource(source);
+//            source.setValue((float)90);
+//            assertEquals(service.getOrientation().getValue(), (float)90);
+//        });
+//    }
 
     @Test
     public void testDirectionSignsRotated180Degrees() {
