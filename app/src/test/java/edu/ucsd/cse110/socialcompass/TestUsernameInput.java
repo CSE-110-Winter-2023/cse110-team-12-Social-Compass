@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.After;
 import org.junit.Before;
@@ -27,17 +28,27 @@ import java.util.List;
 @RunWith(RobolectricTestRunner.class)
 public class TestUsernameInput {
 
+    private FriendDatabase db;
+
+    @Before
+    public void setup() {
+        Context context = ApplicationProvider.getApplicationContext();
+        db = FriendDatabase.getSingleton(context);
+    }
+
+    @After
+    public void cleanup() {
+        db.close();
+    }
+
     @Test
-    public void test_username_uid(){
+    public void test_username_uid() {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
-            Context context = activity.getApplicationContext();
-
             // create the database and call the Alert Dialog
-            FriendDatabase db = FriendDatabase.getSingleton(context);
-            Utilities.showUserNamePromptAlert(activity, "Please enter your name",db);
+            Utilities.showUserNamePromptAlert(activity, "Please enter your name", db);
 
             // make sure that the alert has popped up
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
@@ -45,23 +56,17 @@ public class TestUsernameInput {
 
             // check that the UID is created
             assertNotNull(Utilities.getUID());
-
-            db.close();
-
         });
     }
 
     @Test
-    public void test_username_and_uid_stored(){
+    public void test_username_and_uid_stored() {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
-            Context context = activity.getApplicationContext();
-
             // create the database and call the Alert Dialog
-            FriendDatabase db = FriendDatabase.getSingleton(context);
-            Utilities.showUserNamePromptAlert(activity, "Please enter your name",db);
+            Utilities.showUserNamePromptAlert(activity, "Please enter your name", db);
 
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
             assertNotNull(alertDialog);
@@ -75,22 +80,18 @@ public class TestUsernameInput {
             assertTrue(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick());
 
             String name = username.getText().toString();
-            FriendListItem user = new FriendListItem(name,Utilities.getUID(),-1);
+            FriendListItem user = new FriendListItem(name, Utilities.getUID(), -1);
             db.friendListItemDao().insert(user);
 
             var dao = db.friendListItemDao();
             List<FriendListItem> users = dao.getAll();
             assertEquals(1, users.size());
 
-
             // check that the user is stored in the database
             user = users.get(0);
             assertEquals("Sam", user.name);
             assertEquals(Utilities.getUID(), user.uid);
             assertEquals(-1, user.order);
-            db.close();
-
         });
-
     }
 }
