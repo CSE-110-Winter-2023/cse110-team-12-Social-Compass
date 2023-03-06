@@ -33,6 +33,7 @@ public class TestUsernameInput {
         scenario = ActivityScenario.launch(MainActivity.class);
     }
 
+
     @Test
     public void test_username_uid(){
         scenario.onActivity(activity -> {
