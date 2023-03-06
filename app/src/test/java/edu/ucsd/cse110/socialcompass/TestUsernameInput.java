@@ -15,6 +15,7 @@ import android.widget.EditText;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -24,13 +25,17 @@ import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
 public class TestUsernameInput {
+    ActivityScenario<MainActivity> scenario;
+
+    @Before
+    public void setup_scenario(){
+        scenario = ActivityScenario.launch(MainActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
+    }
 
     @Test
     public void test_username_uid(){
-        var scenario = ActivityScenario.launch(MainActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
-
         scenario.onActivity(activity -> {
             Context context = activity.getApplicationContext();
 
@@ -52,10 +57,6 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored(){
-        var scenario = ActivityScenario.launch(MainActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
-
         scenario.onActivity(activity -> {
             Context context = activity.getApplicationContext();
 
@@ -88,9 +89,9 @@ public class TestUsernameInput {
             assertEquals("Sam", user.name);
             assertEquals(Utilities.getUID(), user.uid);
             assertEquals(-1, user.order);
-
             db.close();
 
         });
+
     }
 }
