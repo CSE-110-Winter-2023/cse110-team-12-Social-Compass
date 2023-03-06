@@ -26,11 +26,14 @@ import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
 public class TestUsernameInput {
-    ActivityScenario<MainActivity> scenario;
 
     @Test
     public void test_username_uid(){
-        scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+
         scenario.onActivity(activity -> {
             Context context = activity.getApplicationContext();
 
@@ -52,7 +55,11 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored(){
-        scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
+        scenario.moveToState(Lifecycle.State.RESUMED);
+
         scenario.onActivity(activity -> {
             Context context = activity.getApplicationContext();
 
