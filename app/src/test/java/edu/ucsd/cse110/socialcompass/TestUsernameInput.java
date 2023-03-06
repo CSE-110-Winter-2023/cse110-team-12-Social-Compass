@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
 
+import java.io.IOException;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
@@ -32,12 +34,14 @@ public class TestUsernameInput {
 
     private FriendDatabase db;
     private ActivityScenario<MainActivity> scenario;
+    private Intent intent;
 
     @Before
     public void setup() {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
-        scenario = ActivityScenario.launch(MainActivity.class);
+        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        scenario = ActivityScenario.launch(intent);
     }
 
     @After
@@ -61,7 +65,6 @@ public class TestUsernameInput {
             // check that the UID is created
             assertNotNull(Utilities.getUID());
         });
-        scenario.moveToState(Lifecycle.State.DESTROYED);
     }
 
     @Test
@@ -100,11 +103,10 @@ public class TestUsernameInput {
             assertEquals(Utilities.getUID(), user.uid);
             assertEquals(-1, user.order);
         });
-        scenario.moveToState(Lifecycle.State.DESTROYED);
     }
 
     @After
-    public void CloseDataBase() throws Exception {
+    public void CloseDataBase() throws IOException {
         db.close();
     }
 }
