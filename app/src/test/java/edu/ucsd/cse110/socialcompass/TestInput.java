@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Objects;
 
-public class TestInput {
+public class    TestInput {
     private boolean compareArrays(double[] a, double[] b) {
         return a[0] == b[0] && a[1] == b[1];
     }

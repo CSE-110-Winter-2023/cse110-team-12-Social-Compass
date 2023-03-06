@@ -50,15 +50,55 @@ public class Utilities {
                 .setView(promptUserNameView)
                 .setTitle("Username")
                 .setMessage(message)
-                .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        uniqueID = UUID.randomUUID().toString();
-                        String name = userName.getText().toString();
-                        FriendListItem user = new FriendListItem(name, uniqueID, -1);
-                        //not sure if this is correct
-                        db.friendListItemDao().insert(user);
-                    }
+                .setPositiveButton("Submit", (dialog, id) -> {
+                    String name = userName.getText().toString();
+                    FriendListItem user = new FriendListItem(name,uniqueID,-1);
+                    db.friendListItemDao().insert(user);
+                    dialog.cancel();
+                    showCopyUIDAlert(activity, "User UID", uniqueID);
+                })
+                .setCancelable(false);
+
+        android.app.AlertDialog alertDialog = alertBuilder.create();
+        alertDialog.show();
+    }
+
+    /**
+     * Alert that shows when the
+     * @param activity
+     * @param message
+     */
+    public static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
+        android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
+
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        View copyUIDView = inflater.inflate(R.layout.copy_uid_prompt, null);
+
+        TextView uidTextView  = copyUIDView.findViewById(R.id.uid);
+        uidTextView.setText(uid);
+
+        TextView copyButton = (TextView) copyUIDView.findViewById(R.id.copy);
+
+        // copy UID to clipboard
+        copyButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View var1) {
+                ClipboardManager clipboard = (ClipboardManager) var1.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                String label = "uid";
+                String text = uidTextView.getText().toString();
+                ClipData clip = ClipData.newPlainText(label, text);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(var1.getContext(), "Text copied to clipboard", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        alertBuilder
+                .setView(copyUIDView)
+                .setTitle("Welcome!")
+                .setMessage(message)
+                .setPositiveButton("Continue", (dialog, id) -> {
+
                 })
                 .setCancelable(false);
 
