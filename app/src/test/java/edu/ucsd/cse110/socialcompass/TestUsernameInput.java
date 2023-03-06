@@ -51,6 +51,7 @@ public class TestUsernameInput {
             db.close();
 
         });
+        scenario.moveToState(Lifecycle.State.DESTROYED);
     }
 
     @Test
