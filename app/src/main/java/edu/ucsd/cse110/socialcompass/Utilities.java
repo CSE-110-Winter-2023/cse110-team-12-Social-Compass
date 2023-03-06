@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,7 @@ import edu.ucsd.cse110.socialcompass.db.Location;
  * inputs. Its sole purpose is to handle all user input and display messages accordingly.
  */
 public class Utilities {
-
+    static String uniqueID;
     /**
      * Alert that shows when the
      * @param activity
@@ -44,22 +45,28 @@ public class Utilities {
         uniqueID = UUID.randomUUID().toString();
         // get edit texts for user's name
         EditText userName = promptUserNameView.findViewById(R.id.inputName);
-        String uniqueID = UUID.randomUUID().toString();
         alertBuilder
                 .setView(promptUserNameView)
-                .setTitle("Enter Your Name")
+                .setTitle("Username")
                 .setMessage(message)
                 .setPositiveButton("Submit", (dialog, id) -> {
+                    uniqueID = UUID.randomUUID().toString();
                     String name = userName.getText().toString();
-                    FriendListItem user = new FriendListItem(name,uniqueID,-1);
+                    FriendListItem user = new FriendListItem(name, uniqueID, -1);
                     //not sure if this is correct
                     db.friendListItemDao().insert(user);
-
                 })
                 .setCancelable(false);
 
+
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
+    }
+
+    public static String getUID()
+    {
+        return uniqueID;
+
     }
 
     /**
