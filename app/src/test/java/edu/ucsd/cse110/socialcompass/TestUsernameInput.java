@@ -41,10 +41,7 @@ public class TestUsernameInput {
     @Before
     public void setup() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
-        db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
-                .allowMainThreadQueries() // Allow room to make queries on main thread without warnings
-                .build();
-        dao = db.friendListItemDao();
+        db = FriendDatabase.getSingleton(context);
     }
 
     @After
