@@ -42,7 +42,11 @@ public class TestUsernameInput {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
         intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-        scenario = ActivityScenario.launch(intent); // this is an error
+        if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
+            scenario = ActivityScenario.launch(intent); // this is an error
+        } else {
+            scenario.recreate();
+        }
     }
 
     @After
