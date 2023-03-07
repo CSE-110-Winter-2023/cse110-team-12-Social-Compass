@@ -25,6 +25,7 @@ public class FriendListItem {
 
     @NonNull
     public String name, uid;
+    public boolean isFriend;
     public int order;
 
     // Constructor matching fields above
@@ -32,6 +33,7 @@ public class FriendListItem {
         this.name = name;
         this.uid = uid;
         this.order = order;
+        this.isFriend = !uid.equals(Utilities.getUID());
     }
 
     // Factory method for loading our JSON

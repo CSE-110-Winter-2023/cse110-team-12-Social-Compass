@@ -38,6 +38,6 @@ public interface FriendListItemDao {
 
     @Query("SELECT * FROM friend_list_items WHERE uid = :uid")
     FriendListItem getFriendListItem(String uid);
-    @Query("SELECT * FROM friend_list_items")
+    @Query("SELECT * FROM friend_list_items WHERE isFriend = 'true'")
     List<FriendListItem> getFriendList();
 }
