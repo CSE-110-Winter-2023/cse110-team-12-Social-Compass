@@ -56,7 +56,7 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_uid() {
-        scenario.moveToState(Lifecycle.State.CREATED);
+        //scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
@@ -73,7 +73,7 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored() {
-        scenario.moveToState(Lifecycle.State.CREATED);
+        //scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
