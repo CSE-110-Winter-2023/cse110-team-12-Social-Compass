@@ -68,8 +68,14 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored() {
+        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
+            scenario = ActivityScenario.launch(intent); // this is an error
+        } else {
+            scenario.recreate();
+        }
         //scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
+        //scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
