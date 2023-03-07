@@ -16,11 +16,17 @@ public class FriendListActivity extends AppCompatActivity {
     private EditText uidEditText;
     private Button addButton;
 
+    FriendDatabase db;
+    FriendListItemDao dao;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
+
+        db = FriendDatabase.getSingleton(getApplication());
+        dao = db.friendListItemDao();
 
         viewModel = new ViewModelProvider(this)
                 .get(FriendListViewModel.class);
@@ -47,10 +53,14 @@ public class FriendListActivity extends AppCompatActivity {
     }
 
     public void insertFriendListItem(String uid) {
-        FriendDatabase db = FriendDatabase.getSingleton(getApplication());
-        FriendListItemDao dao = db.friendListItemDao();
+        //FriendDatabase db = FriendDatabase.getSingleton(getApplication());
+        //FriendListItemDao dao = db.friendListItemDao();
         int order = dao.getOrderForAppend();
-        dao.insert(new FriendListItem(uid, "Unknown", order));
+
+        //Not done until we do Story 5, "Unknown" should be the name corresponding to UID
+        //Need to search for the name corresponding to the UID otherwise cannot find the user
+        //TEST THIS AFTER STORY 5
+        dao.insert(new FriendListItem("Unknown", uid, order));
     }
 
 }

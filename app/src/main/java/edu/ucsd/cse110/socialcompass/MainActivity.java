@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         if(Utilities.getUID() == null){
             initNewUser();
         }
-
     }
 
     // This method should only be called one time EVER - for initializing brand new users.

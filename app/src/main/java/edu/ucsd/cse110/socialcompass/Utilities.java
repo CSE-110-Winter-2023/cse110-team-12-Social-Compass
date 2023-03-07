@@ -64,33 +64,6 @@ public class Utilities {
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
 
-//        android.app.AlertDialog.Builder alertBuilder2 = new android.app.AlertDialog.Builder(activity);
-//
-//        LayoutInflater inflater2 = LayoutInflater.from(activity);
-//        View promptUserNameView2 = inflater2.inflate(R.layout.dialog_user_name_prompt, null);
-//        //TextView userName = promptUserNameView.findViewById(R.id.inputName);
-//
-//        alertBuilder2
-//                .setView(promptUserNameView2)
-//                .setTitle("You can now enter your friend's UID")
-//                //.setMessage(message)
-//                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        // Dismiss the AlertDialog and start FriendListActivity
-//                        Intent intent = new Intent(activity, FriendListActivity.class);
-//                        activity.startActivity(intent);
-//                        dialogInterface.dismiss();
-//                    }
-//                })
-//                .setCancelable(false);
-//
-//        android.app.AlertDialog alertDialog2 = alertBuilder2.create();
-//        alertDialog2.show();
-
-
-//        android.app.AlertDialog alertDialog2 = alertBuilder2.create();
-//        alertDialog2.show();
     }
     public static void showInitFriendAlert(MainActivity activity, String message)
     {
@@ -123,7 +96,6 @@ public class Utilities {
     public static String getUID()
     {
         return uniqueID;
-
     }
     public static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
