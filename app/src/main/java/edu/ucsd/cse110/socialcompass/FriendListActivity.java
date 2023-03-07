@@ -31,8 +31,6 @@ public class FriendListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
-        //db = FriendDatabase.getSingleton(getApplication());
-        //dao = db.friendListItemDao();
         dao = MainActivity.getDao();
 
         viewModel = new ViewModelProvider(this)
