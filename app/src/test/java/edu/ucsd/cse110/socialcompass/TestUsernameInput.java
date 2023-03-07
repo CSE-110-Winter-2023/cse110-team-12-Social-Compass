@@ -41,17 +41,17 @@ public class TestUsernameInput {
     @After
     public void cleanup() throws IOException {
         db.close();
-    }
-
-    @Test
-    public void test_username_uid() {
-        //scenario.moveToState(Lifecycle.State.CREATED);
         intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
             scenario = ActivityScenario.launch(intent); // this is an error
         } else {
             scenario.recreate();
         }
+    }
+
+    @Test
+    public void test_username_uid() {
+        //scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
