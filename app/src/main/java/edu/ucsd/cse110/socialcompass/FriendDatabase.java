@@ -50,4 +50,10 @@ public abstract class FriendDatabase extends RoomDatabase {
         }
         singleton = testDatabase;
     }
+
+    public static void useTestSingleton(Context context) {
+        singleton = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
+                .allowMainThreadQueries()
+                .build();
+    }
 }

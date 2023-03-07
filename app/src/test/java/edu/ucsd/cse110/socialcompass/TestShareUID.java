@@ -8,17 +8,12 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 
 import org.junit.Test;
-import org.junit.*;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
@@ -26,7 +21,7 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import java.util.UUID;
 
 @RunWith(RobolectricTestRunner.class)
-public class TestUserNameInput {
+public class TestShareUID {
     @Test
     public void test_copy_button_copies_UID(){
         var scenario = ActivityScenario.launch(MainActivity.class);
