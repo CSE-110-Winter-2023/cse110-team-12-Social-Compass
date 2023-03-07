@@ -35,6 +35,7 @@ public class TestUsernameInput {
     private ActivityScenario<MainActivity> scenario;
     private Intent intent;
 
+<<<<<<< HEAD
     @Rule
     public ActivityScenarioRule rule = new ActivityScenarioRule(MainActivity.class);
 
@@ -67,6 +68,26 @@ public class TestUsernameInput {
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
 
+=======
+
+    @Before
+    public void setup() {
+        Context context = ApplicationProvider.getApplicationContext();
+        db = FriendDatabase.getSingleton(context);
+        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
+            scenario = ActivityScenario.launch(intent); // this is an error
+        } else {
+            scenario.recreate();
+        }
+        scenario = ActivityScenario.launch(intent); // this is an error
+    }
+
+
+    @Test
+    public void test_username_uid() {
+        //scenario.moveToState(Lifecycle.State.CREATED);
+>>>>>>> c31c87a1d6701fd4094d1bd9b7a311555f7d6156
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
             Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
@@ -78,15 +99,29 @@ public class TestUsernameInput {
             // check that the UID is created
             assertNotNull(Utilities.getUID());
         });
+
+        scenario.close();
+        scenario = null;
     }
 
     @Test
     public void test_username_and_uid_stored() {
+<<<<<<< HEAD
         clear();
         //var scenario = ActivityScenario.launch(MainActivity.class);
         ActivityScenario scenario = rule.getScenario();
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
+=======
+        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
+            scenario = ActivityScenario.launch(intent); // this is an error
+        } else {
+            scenario.recreate();
+        }
+        //scenario.moveToState(Lifecycle.State.CREATED);
+        //scenario.moveToState(Lifecycle.State.STARTED);
+>>>>>>> c31c87a1d6701fd4094d1bd9b7a311555f7d6156
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
@@ -118,5 +153,7 @@ public class TestUsernameInput {
             assertEquals(Utilities.getUID(), user.uid);
             assertEquals(-1, user.order);
         });
+
+        scenario.close();
     }
 }
