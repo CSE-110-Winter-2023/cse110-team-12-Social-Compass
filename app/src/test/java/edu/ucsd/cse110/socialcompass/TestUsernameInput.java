@@ -42,16 +42,11 @@ public class TestUsernameInput {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
         intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-        try {
-            scenario = ActivityScenario.launch(intent); // this is an error
-        } catch (Exception e) {
-            e.printStackTrace(); // prints the stack trace
-        }
+        scenario = ActivityScenario.launch(intent); // this is an error
     }
 
     @After
     public void cleanup() throws IOException {
-        scenario.moveToState(Lifecycle.State.DESTROYED);
         db.close();
     }
 
