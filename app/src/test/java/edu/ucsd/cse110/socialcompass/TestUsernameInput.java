@@ -49,7 +49,7 @@ public class TestUsernameInput {
 
     @After
     public void cleanup() throws IOException {
-        //db.close();
+        db.close();
     }
 
     public void clear() {
@@ -58,7 +58,6 @@ public class TestUsernameInput {
             dao.delete(friend);
         }
     }
-
 
     /*@Before
     public void setup() {
