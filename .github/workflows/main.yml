@@ -42,25 +42,29 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: set up JDK 11
+      - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: '11'
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android-sdk@v2
+        uses: react-native-community/sdk-setup-action@v2
         with:
-          sdk-version: '31.0.0'
+          ndk-version: '21.4.7075529'
+          sdk-version: '31'
 
-      #Execute unit tests
-      - name: Unit Test
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Execute tests
         run: ./gradlew testDebugUnitTest
 
-      #Report test results
-      - name: Android Test Report
-        uses: asadmansr/android-test-report-action@v1.2.0
-        if: ${{ always() }}
+      - name: Generate Test Report
+        uses: mikepenz/action-junit-report@v2
+        with:
+          files: '**/TEST-*.xml'
+
 
 
 #?
