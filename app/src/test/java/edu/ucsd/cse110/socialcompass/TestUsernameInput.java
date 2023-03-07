@@ -31,28 +31,31 @@ public class TestUsernameInput {
     private ActivityScenario<MainActivity> scenario;
     private Intent intent;
 
-
-    @Before
+    /*@Before
     public void setup() {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
-
+        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
             scenario = ActivityScenario.launch(intent); // this is an error
         } else {
             scenario.recreate();
         }
-    }
+    }*/
 
-    @After
+    /*@After
     public void cleanup() throws IOException {
         db.close();
         intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-    }
+    }*/
 
     @Test
     public void test_username_uid() {
-        //scenario.moveToState(Lifecycle.State.CREATED);
+        Context context = ApplicationProvider.getApplicationContext();
+        db = FriendDatabase.getSingleton(context);
+        var scenario = ActivityScenario.launch(MainActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
@@ -69,14 +72,11 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored() {
-        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-        if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
-            scenario = ActivityScenario.launch(intent); // this is an error
-        } else {
-            scenario.recreate();
-        }
-        //scenario.moveToState(Lifecycle.State.CREATED);
-        //scenario.moveToState(Lifecycle.State.STARTED);
+        Context context = ApplicationProvider.getApplicationContext();
+        db = FriendDatabase.getSingleton(context);
+        var scenario = ActivityScenario.launch(MainActivity.class);
+        scenario.moveToState(Lifecycle.State.CREATED);
+        scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
