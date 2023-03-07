@@ -72,7 +72,7 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_uid() {
-        clear();
+        //clear();
         //var scenario = ActivityScenario.launch(MainActivity.class);
         ActivityScenario scenario = rule.getScenario();
         scenario.moveToState(Lifecycle.State.CREATED);
@@ -96,7 +96,7 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored() {
-        clear();
+        //clear();
         //var scenario = ActivityScenario.launch(MainActivity.class);
         ActivityScenario scenario = rule.getScenario();
         scenario.moveToState(Lifecycle.State.CREATED);
