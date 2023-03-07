@@ -20,9 +20,10 @@ public class FriendListActivity extends AppCompatActivity {
     private Button addButton;
 
     FriendDatabase db;
-    FriendListItemDao dao;
+    //FriendListItemDao dao;
 
     static boolean isInserted = false;
+    FriendListItemDao dao;
 
 
     @Override
@@ -32,6 +33,7 @@ public class FriendListActivity extends AppCompatActivity {
 
         //db = FriendDatabase.getSingleton(getApplication());
         //dao = db.friendListItemDao();
+        dao = MainActivity.getDao();
 
         viewModel = new ViewModelProvider(this)
                 .get(FriendListViewModel.class);
@@ -61,7 +63,7 @@ public class FriendListActivity extends AppCompatActivity {
     public void insertFriendListItem(String uid) {
         //FriendDatabase db = FriendDatabase.getSingleton(getApplication());
         //FriendListItemDao dao = db.friendListItemDao();
-        dao = getDao();
+        //dao = getDao();
         if (dao == null) {
             throw new IllegalStateException("dao is null");
         }
@@ -69,10 +71,10 @@ public class FriendListActivity extends AppCompatActivity {
 
         //Not done until we do Story 5, "Unknown" should be the name corresponding to UID
         //Need to search for the name corresponding to the UID otherwise cannot find the user
-        //TEST THIS AFTER STORY 5
+        //TEST THIS AGAIN AFTER STORY 5
         dao.insert(new FriendListItem("Unknown", uid, order));
-        //Log.i("tag", "Size is " + dao.getAll().size());
-        System.out.println("Size is: " + dao.getFriendList().size());
+        Log.i("tag", "Size is " + dao.getAll().size());
+        //System.out.println("Size is: " + dao.getFriendList().size());
         if (dao.getAll().size() == 1) {
             isInserted = true;
         }

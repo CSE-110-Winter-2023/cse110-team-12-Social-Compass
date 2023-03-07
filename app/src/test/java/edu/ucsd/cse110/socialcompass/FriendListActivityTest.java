@@ -40,7 +40,7 @@ public class FriendListActivityTest {
         db.close();
     }
 
-    @Test
+    /*@Test
     public void testInsertFriendListItem() {
         String uid = "testUid";
         FriendListActivity activity = new FriendListActivity();
@@ -50,7 +50,32 @@ public class FriendListActivityTest {
         assertTrue(FriendListActivity.checkInsert());
         //assertEquals(1, items.size());
         //ssertEquals(uid, items.get(0).getUid());
+    }*/
+
+    @Test
+    public void testInsertFriendListItem() {
+        String uid = "testUid";
+        FriendListActivity activity = new FriendListActivity();
+        activity.dao = dao;
+        activity.insertFriendListItem(uid);
+
+        List<FriendListItem> items = dao.getAll();
+        assertEquals(1, items.size());
+        assertEquals(uid, items.get(0).getUid());
     }
+    /*@Test
+    public void testInsertFriendListItem() {
+        String uid = "testUid";
+        FriendListActivity activity = new FriendListActivity();
+
+
+        List<FriendListItem> items = dao.getAll();
+        //assertTrue(FriendListActivity.checkInsert());
+        assertEquals(0, items.size());
+
+        activity.insertFriendListItem(uid);
+        assertEquals(uid, items.get(0).getUid());
+    }*/
 }
 //@RunWith(AndroidJUnit4.class)
 //public class FriendListActivityTest {

@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static FriendListItemDao getDao()
     {
-        return dao;
+        return db.friendListItemDao();
     }
 
 
