@@ -8,10 +8,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
+import java.io.Console;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static FriendDatabase db;
+    private static FriendListItemDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,13 +21,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Context context = this.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
-        var dao = db.friendListItemDao();
+        dao = db.friendListItemDao();
         List<FriendListItem> users = dao.getAll();
        // if (users.size() == 0) {
         if(Utilities.getUID() == null){
             initNewUser();
         }
     }
+    public static FriendListItemDao getDao()
+    {
+        return dao;
+    }
+
+
 
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {

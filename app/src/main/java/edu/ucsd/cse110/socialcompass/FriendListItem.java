@@ -56,4 +56,8 @@ public class FriendListItem {
                 ", order=" + order +
                 '}';
     }
+
+    public String getUid() {
+        return this.uid;
+    }
 }
