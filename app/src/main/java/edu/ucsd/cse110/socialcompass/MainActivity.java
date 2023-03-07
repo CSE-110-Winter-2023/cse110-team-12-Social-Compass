@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
-import java.io.Console;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,13 +20,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Context context = this.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
-        dao = db.friendListItemDao();
+        var dao = db.friendListItemDao();
         List<FriendListItem> users = dao.getAll();
-       // if (users.size() == 0) {
-        if(Utilities.getUID() == null){
+
+        if (users.size() == 0) {
             initNewUser();
         }
     }
+
     public static FriendListItemDao getDao()
     {
         return dao;
@@ -37,15 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
-//        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-
         //TODO: Ask for location permission and build initial HashMap for storing data
         Utilities.showUserNamePromptAlert(this, "Please enter your name",db);
 
-
-//        editor.putBoolean("newUser", false); // update newUser status to false.
-//        editor.apply();
     }
 
     public void onSeeFriendsClicked(View view) {

@@ -150,29 +150,4 @@ public class Utilities {
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
     }
-
-    /**
-     * Helper method which parses the coordinate inputs for easier processing
-     * @param input coordinates as an input string
-     * @return 2-element array for storing the corresponding latitude and longitude
-     */
-    public static double[] parseCoordinates(String input) {
-        input = input.replaceAll("[\\()]", "");
-
-        double[] coordinates = new double[2];
-        String[] parts = input.split(", ");
-
-        // check input is split into two parts separated by a comma
-        if (parts.length != 2) { return null; }
-
-        double latitude = Double.parseDouble(parts[0]);
-        double longitude = Double.parseDouble(parts[1]);
-        // check that latitude and longitude are valid
-        if ( latitude < -90 || latitude > 90) { return null; }
-        if ( longitude < -180 || longitude > 180) { return null; }
-
-        coordinates[0] = latitude;
-        coordinates[1] = longitude;
-        return coordinates;
-    }
 }
