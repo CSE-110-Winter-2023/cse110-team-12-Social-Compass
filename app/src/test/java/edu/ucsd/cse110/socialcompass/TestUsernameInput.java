@@ -36,16 +36,13 @@ public class TestUsernameInput {
     private ActivityScenario<MainActivity> scenario;
     private Intent intent;
 
+
     @Before
     public void setup() {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
         intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-        try {
-            scenario = ActivityScenario.launch(intent); // this is an error
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        scenario = ActivityScenario.launch(intent); // this is an error
     }
 
     @After
@@ -55,7 +52,6 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_uid() {
-        //ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
@@ -73,8 +69,6 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored() {
-
-        //ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
 
