@@ -1,15 +1,13 @@
 package edu.ucsd.cse110.socialcompass;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.widget.Button;
+import android.content.Intent;
 import android.widget.EditText;
 
 import androidx.lifecycle.Lifecycle;
@@ -23,28 +21,37 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
 
+import java.io.IOException;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
 public class TestUsernameInput {
 
     private FriendDatabase db;
+    private ActivityScenario<MainActivity> scenario;
+    private Intent intent;
+
 
     @Before
     public void setup() {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
+        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
+            scenario = ActivityScenario.launch(intent); // this is an error
+        } else {
+            scenario.recreate();
+        }
     }
 
     @After
-    public void cleanup() {
+    public void cleanup() throws IOException {
         db.close();
     }
 
     @Test
     public void test_username_uid() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
+        //scenario.moveToState(Lifecycle.State.CREATED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
@@ -61,8 +68,7 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
+        //scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
