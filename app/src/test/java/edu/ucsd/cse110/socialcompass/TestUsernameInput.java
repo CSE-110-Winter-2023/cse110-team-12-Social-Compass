@@ -80,6 +80,7 @@ public class TestUsernameInput {
 
             assertTrue(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick());
 
+            // hard coded from button positive
             String name = username.getText().toString();
             FriendListItem user = new FriendListItem(name, Utilities.getUID(), -1);
             db.friendListItemDao().insert(user);
