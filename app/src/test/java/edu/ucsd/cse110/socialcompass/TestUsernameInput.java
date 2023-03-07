@@ -36,24 +36,19 @@ public class TestUsernameInput {
     public void setup() {
         Context context = ApplicationProvider.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
-
+        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
             scenario = ActivityScenario.launch(intent); // this is an error
         } else {
             scenario.recreate();
         }
+        scenario = ActivityScenario.launch(intent); // this is an error
     }
 
-    @After
-    public void cleanup() throws IOException {
-        db.close();
-        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-    }
 
     @Test
     public void test_username_uid() {
         //scenario.moveToState(Lifecycle.State.CREATED);
-
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
             Utilities.showUserNamePromptAlert(activity, "Please enter your name", db);
@@ -65,6 +60,9 @@ public class TestUsernameInput {
             // check that the UID is created
             assertNotNull(Utilities.getUID());
         });
+
+        scenario.close();
+        scenario = null;
     }
 
     @Test
@@ -108,5 +106,7 @@ public class TestUsernameInput {
             assertEquals(Utilities.getUID(), user.uid);
             assertEquals(-1, user.order);
         });
+
+        scenario.close();
     }
 }
