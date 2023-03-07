@@ -11,11 +11,14 @@ import android.content.Intent;
 import android.widget.EditText;
 
 import androidx.lifecycle.Lifecycle;
+import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -28,38 +31,45 @@ import java.util.List;
 public class TestUsernameInput {
 
     private FriendDatabase db;
+    private FriendListItemDao dao;
     private ActivityScenario<MainActivity> scenario;
     private Intent intent;
 
-    /*@Before
-    public void setup() {
-        Context context = ApplicationProvider.getApplicationContext();
-        db = FriendDatabase.getSingleton(context);
-        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-        if (scenario == null || !scenario.getState().isAtLeast(Lifecycle.State.CREATED)) {
-            scenario = ActivityScenario.launch(intent); // this is an error
-        } else {
-            scenario.recreate();
-        }
-    }*/
+    @Rule
+    public ActivityScenarioRule rule = new ActivityScenarioRule(MainActivity.class);
 
-    /*@After
+    @Before
+    public void setup() throws Exception {
+        Context context = ApplicationProvider.getApplicationContext();
+        db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
+                .allowMainThreadQueries() // Allow room to make queries on main thread without warnings
+                .build();
+        dao = db.friendListItemDao();
+    }
+
+    @After
     public void cleanup() throws IOException {
-        db.close();
-        intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
-    }*/
+        //db.close();
+    }
+
+    public void clear() {
+        List<FriendListItem> friends = dao.getAll();
+        for (FriendListItem friend : friends) {
+            dao.delete(friend);
+        }
+    }
 
     @Test
     public void test_username_uid() {
-        Context context = ApplicationProvider.getApplicationContext();
-        db = FriendDatabase.getSingleton(context);
-        var scenario = ActivityScenario.launch(MainActivity.class);
+        clear();
+        //var scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario scenario = rule.getScenario();
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
-            Utilities.showUserNamePromptAlert(activity, "Please enter your name", db);
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
 
             // make sure that the alert has popped up
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
@@ -72,15 +82,15 @@ public class TestUsernameInput {
 
     @Test
     public void test_username_and_uid_stored() {
-        Context context = ApplicationProvider.getApplicationContext();
-        db = FriendDatabase.getSingleton(context);
-        var scenario = ActivityScenario.launch(MainActivity.class);
+        clear();
+        //var scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario scenario = rule.getScenario();
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
-            Utilities.showUserNamePromptAlert(activity, "Please enter your name", db);
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
 
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
             assertNotNull(alertDialog);
