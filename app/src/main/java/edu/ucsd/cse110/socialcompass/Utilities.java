@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
+import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 
 /**
@@ -40,15 +42,25 @@ public class Utilities {
         // get edit texts for user's name
         EditText userName = promptUserNameView.findViewById(R.id.inputName);
         uniqueID = UUID.randomUUID().toString();
+
+        // save user's UID to their shared preferences
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("myUID", uniqueID);
+        editor.apply();
+
         alertBuilder
                 .setView(promptUserNameView)
                 .setTitle("Username")
                 .setMessage(message)
                 .setPositiveButton("Submit", (dialog, id) -> {
                     String name = userName.getText().toString();
-                    FriendListItem user = new FriendListItem(name,uniqueID,-1);
-                    //not sure if this is correct
-                    db.friendListItemDao().insert(user);
+
+                    //save name to user's shared preferences
+                    //add a new "Friend" for self in onCreate of FriendListActivity
+                    editor.putString("myName", name);
+                    editor.apply();
+
                     dialog.cancel();
                     showCopyUIDAlert(activity, "User UID", uniqueID);
                 })

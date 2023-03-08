@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,15 +29,9 @@ import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 public class FriendListActivity extends AppCompatActivity {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
-    private FriendListViewModel viewModel;
-    private EditText uidEditText;
-    private Button addButton;
 
-    FriendDatabase db;
-    //FriendListItemDao dao;
-
+    private String UserName, UserUID;
     static boolean isInserted = false;
-    FriendDao dao;
 
 
     @Override
@@ -43,35 +39,25 @@ public class FriendListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
+        // For first time users, get their uid and name from sharedPreferences
+        SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
+        UserName = preferences.getString("myName", "Error getting name");
+        UserUID = preferences.getString("myUID", "Error getting UID");
+        boolean newUser = preferences.getBoolean("newUser", true);
+
         var viewModel = setupViewModel();
         var adapter = setupAdapter(viewModel);
-
         setupViews(viewModel, adapter);
-//        dao = MainActivity.getDao();
-//
-//        viewModel = new ViewModelProvider(this)
-//                .get(FriendListViewModel.class);
-//
-//        FriendListAdapter adapter = new FriendListAdapter();
-//        adapter.setHasStableIds(true);
-//        viewModel.getFriendListItems().observe(this, adapter::setFriendListItems);
-//
-//        recyclerView = findViewById(R.id.friend_items);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(adapter);
-//
-//
-//        uidEditText = findViewById(R.id.UID_text);
-//        addButton = findViewById(R.id.add_btn);
-//        addButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String uid = uidEditText.getText().toString();
-//                System.out.println("banana");
-//                insertFriendListItem(uid);
-//                uidEditText.setText("");
-//            }
-//        });
+
+        // if this is a new user, add them to the database
+        if (newUser==true) {
+            var self = new Friend(UserName, UserUID, -1);
+            viewModel.save(self);
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("newUser", false);
+            editor.apply();
+        }
     }
 
     private FriendListViewModel setupViewModel() {
