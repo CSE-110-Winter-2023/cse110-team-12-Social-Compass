@@ -27,12 +27,15 @@ public class FriendListItem {
     public String name, uid;
     public boolean isFriend;
     public int order;
+    public Double lat, lon;
 
     // Constructor matching fields above
-    public FriendListItem(@NonNull String name, @NonNull String uid, int order) {
+    public FriendListItem(@NonNull String name, @NonNull String uid, int order, Double lat, Double lon) {
         this.name = name;
         this.uid = uid;
         this.order = order;
+        this.lat = lat;
+        this.lon = lon;
         this.isFriend = !uid.equals(Utilities.getUID());
     }
 
@@ -61,5 +64,13 @@ public class FriendListItem {
 
     public String getUid() {
         return this.uid;
+    }
+
+    public static FriendListItem fromJSON(String json) {
+        return new Gson().fromJson(json, FriendListItem.class);
+    }
+
+    public String toJSON() {
+        return new Gson().toJson(this);
     }
 }

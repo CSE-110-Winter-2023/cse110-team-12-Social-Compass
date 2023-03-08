@@ -43,8 +43,8 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
     @Override
     public int getItemCount() { return locationItems.size(); }
 
-    @Override
-    public long getItemId(int position) { return locationItems.get(position).id; }
+//    @Override
+//    public long getItemId(int position) { return locationItems.get(position).id; }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -63,7 +63,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         public void setLocationItem(@NonNull LocationListItem locationItem) {
             this.locationItem = locationItem;
             this.editLabel.setText(locationItem.label);
-            this.editCoords.setText(locationItem.coords);
+           // this.editCoords.setText(locationItem.coords);
         }
     }
 }

@@ -56,6 +56,7 @@ public class LocationService implements LocationListener {
 
     }
 
+
     @Override
     public void onLocationChanged(@NonNull Location location) {
         this.locationValue.postValue(new Pair<Double,Double>(location.getLatitude(),location.getLongitude()));

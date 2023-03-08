@@ -28,13 +28,18 @@ import java.util.List;
 public class LocationListItem {
 
     @PrimaryKey(autoGenerate = true)
-    public long id = 0;
-    @NonNull
-    public String label, coords;
+    public String private_code;
 
-    public LocationListItem(@NonNull String label, @NonNull String coords) {
+    @NonNull
+    public String label;
+    public Double latitude, longitude;
+
+    public LocationListItem(@NonNull String label, @NonNull String public_code, @NonNull Double lat, @NonNull Double lon) {
         this.label = label;
-        this.coords = coords;
+        this.private_code = public_code;
+        this.latitude = lat;
+        this.longitude = lon;
+
     }
 
     public static List<LocationListItem> loadJSON(Context context, String path) {
@@ -54,7 +59,15 @@ public class LocationListItem {
     public String toString() {
         return "LocationListItem{" +
                 "label='" + label + '\'' +
-                ", coords=" + coords +
+                ", coords="  +
                 '}';
+    }
+
+    public static LocationListItem fromJSON(String json) {
+        return new Gson().fromJson(json, LocationListItem.class);
+    }
+
+    public String toJSON() {
+        return new Gson().toJson(this);
     }
 }

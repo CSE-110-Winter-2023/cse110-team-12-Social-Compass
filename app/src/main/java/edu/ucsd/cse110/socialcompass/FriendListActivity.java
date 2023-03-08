@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import edu.ucsd.cse110.socialcompass.db.Location;
+
 public class FriendListActivity extends AppCompatActivity {
     public RecyclerView recyclerView;
     private FriendListViewModel viewModel;
@@ -67,10 +69,8 @@ public class FriendListActivity extends AppCompatActivity {
         }
         int order = dao.getOrderForAppend();
 
-        //Not done until we do Story 5, "Unknown" should be the name corresponding to UID
-        //Need to search for the name corresponding to the UID otherwise cannot find the user
-        //TEST THIS AGAIN AFTER STORY 5
-        dao.insert(new FriendListItem("Unknown", uid, order));
+        LocationListItem friend = FriendAPI.provide().getFriendListItem(uid);
+        //dao.insert(new FriendListItem(friend.label, uid, order, friend.latitude, friend.longitude));
         Log.i("tag", "Size is " + dao.getAll().size());
         //System.out.println("Size is: " + dao.getFriendList().size());
         if (dao.getAll().size() == 1) {

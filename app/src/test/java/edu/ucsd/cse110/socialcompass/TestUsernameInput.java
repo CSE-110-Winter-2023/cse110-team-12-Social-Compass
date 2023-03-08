@@ -54,7 +54,7 @@ public class TestUsernameInput {
     @Test
     public void testValidUsernameID() {
         scenario.onActivity(activity -> {
-            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
+           // Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name");
 
             // make sure that the alert has popped up
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();

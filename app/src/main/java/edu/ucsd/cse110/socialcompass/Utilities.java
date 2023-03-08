@@ -1,28 +1,23 @@
 package edu.ucsd.cse110.socialcompass;
 
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.text.AllCapsTransformationMethod;
+import androidx.lifecycle.LiveData;
 
-import java.util.HashMap;
 import java.util.UUID;
-
-import edu.ucsd.cse110.socialcompass.db.Location;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class stores all the helper methods for showing alerts and dialogs, as well as taking in
@@ -36,7 +31,7 @@ public class Utilities {
      * @param message
      */
 
-    public static void showUserNamePromptAlert(MainActivity activity, String message, FriendDatabase db) {
+    public static void showUserNamePromptAlert(MainActivity activity, String message, FriendDatabase db, LocationService locationManager) {
 
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
@@ -52,9 +47,18 @@ public class Utilities {
                 .setMessage(message)
                 .setPositiveButton("Submit", (dialog, id) -> {
                     String name = userName.getText().toString();
-                    FriendListItem user = new FriendListItem(name,uniqueID,-1);
-                    //not sure if this is correct
-                    db.friendListItemDao().insert(user);
+
+                    // get long and lat
+                    locationManager.getLocation().observe(activity, loc->{
+                        Log.d("BOO", loc.first + " " + loc.second);
+                        LocationListItem location = new LocationListItem(name,uniqueID, loc.first, loc.second);
+                        FriendListItem user = new FriendListItem(name,uniqueID, -1, loc.first, loc.second);
+                        //insert into local and remote database
+                        db.friendListItemDao().insert(user);
+                        FriendAPI.provide().putFriendListItemAsync(location);
+                    });
+
+
                     dialog.cancel();
                     showCopyUIDAlert(activity, "User UID", uniqueID);
                 })
