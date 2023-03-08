@@ -12,7 +12,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-@Database(entities = {FriendListItem.class}, version=1)
+//@Database(entities = {FriendListItem.class}, version=1)
+@Database(entities = {FriendListItem.class}, version=2)
 public abstract class FriendDatabase extends RoomDatabase {
     private static FriendDatabase singleton = null;
     private static boolean isNew = true;

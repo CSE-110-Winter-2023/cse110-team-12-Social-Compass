@@ -147,4 +147,8 @@ public class Utilities {
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
     }
+
+    public static String getUID(){
+        return uniqueID;
+    }
 }
