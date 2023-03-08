@@ -1,14 +1,19 @@
-package edu.ucsd.cse110.socialcompass;
+package edu.ucsd.cse110.socialcompass.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
 import java.util.List;
+
+import edu.ucsd.cse110.socialcompass.R;
+import edu.ucsd.cse110.socialcompass.Utilities;
+import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
+import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+import edu.ucsd.cse110.socialcompass.model.FriendListItemDao;
 
 public class MainActivity extends AppCompatActivity {
     private static FriendDatabase db;
@@ -20,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Context context = this.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
-        var dao = db.friendListItemDao();
+        dao = db.friendListItemDao();
         List<FriendListItem> users = dao.getAll();
         if (users.size() == 0) {
             initNewUser();

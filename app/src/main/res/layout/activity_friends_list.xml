@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FriendListActivity">
+    tools:context=".activity.FriendListActivity">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/friend_items"
+        android:id="@+id/recycler_friends"
         android:layout_width="0dp"
         android:layout_height="550dp"
         android:layout_marginStart="1dp"
@@ -19,7 +19,7 @@
 
 
     <Button
-        android:id="@+id/add_btn"
+        android:id="@+id/addUID_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="19dp"

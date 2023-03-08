@@ -18,6 +18,9 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+import edu.ucsd.cse110.socialcompass.model.FriendListItemDao;
+
 @RunWith(AndroidJUnit4.class)
 public class FriendDatabaseTest {
     private FriendListItemDao dao;

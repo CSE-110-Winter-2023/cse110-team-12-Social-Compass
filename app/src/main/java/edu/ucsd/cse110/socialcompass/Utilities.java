@@ -1,28 +1,22 @@
 package edu.ucsd.cse110.socialcompass;
 
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.text.AllCapsTransformationMethod;
-
-import java.util.HashMap;
 import java.util.UUID;
 
-import edu.ucsd.cse110.socialcompass.db.Location;
+import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
+import edu.ucsd.cse110.socialcompass.activity.MainActivity;
+import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 
 /**
  * This class stores all the helper methods for showing alerts and dialogs, as well as taking in

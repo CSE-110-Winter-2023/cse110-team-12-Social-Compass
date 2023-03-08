@@ -5,7 +5,7 @@
     android:id = "@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.ucsd.cse110.socialcompass.MainActivity">
+    tools:context="edu.ucsd.cse110.socialcompass.activity.MainActivity">
 
     <Button
         android:id="@+id/see_friends_btn"

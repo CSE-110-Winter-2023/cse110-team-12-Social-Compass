@@ -6,12 +6,13 @@ import android.os.Build;
 import android.widget.TextView;
 import androidx.lifecycle.MutableLiveData;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.internal.platform.content.PermissionGranter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk = Build.VERSION_CODES.P)

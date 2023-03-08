@@ -18,6 +18,11 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 
+import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
+import edu.ucsd.cse110.socialcompass.activity.MainActivity;
+import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+import edu.ucsd.cse110.socialcompass.model.FriendListItemDao;
+
 
 @RunWith(AndroidJUnit4.class)
 public class FriendListActivityTest {
