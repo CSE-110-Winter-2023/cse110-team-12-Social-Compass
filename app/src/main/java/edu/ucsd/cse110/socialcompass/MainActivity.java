@@ -12,6 +12,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static FriendDatabase db;
+    private static FriendListItemDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    public static FriendListItemDao getDao()
+    {
+        return db.friendListItemDao();
+    }
+
+
 
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
