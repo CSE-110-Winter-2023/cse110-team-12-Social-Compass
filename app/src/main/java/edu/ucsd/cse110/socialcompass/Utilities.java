@@ -64,6 +64,7 @@ public class Utilities {
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
 
+
     }
     public static void showInitFriendAlert(MainActivity activity, String message)
     {
