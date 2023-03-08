@@ -28,4 +28,7 @@ public class FriendListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
+
+    public void onAddUIDClicked(View view) {
+    }
 }

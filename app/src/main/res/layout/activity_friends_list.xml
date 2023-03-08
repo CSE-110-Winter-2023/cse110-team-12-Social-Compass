@@ -17,60 +17,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--    <Button-->
-    <!--        android:id="@+id/back_btn"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:onClick="onBackClicked"-->
-    <!--        android:text="Back"-->
-    <!--        tools:layout_editor_absoluteX="307dp"-->
-    <!--        tools:layout_editor_absoluteY="619dp" />-->
-
     <Button
-        android:id="@+id/add_btn"
+        android:id="@+id/addUID_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="16dp"
-        android:onClick="onAddInputClicked"
-        android:text="Add"
+        android:onClick="onAddUIDClicked"
+        android:hint="Insert UID"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-    <!--    <Button-->
-    <!--        android:id="@+id/add_btn"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginEnd="3dp"-->
-    <!--        android:onClick="onAddInputClicked"-->
-    <!--        android:text="Add"-->
-    <!--        app:layout_constraintEnd_toEndOf="@+id/back_btn"-->
-    <!--        app:layout_constraintTop_toBottomOf="@+id/back_btn" />-->
 
-    <!--    <EditText-->
-    <!--        android:id="@+id/addInputLabel"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="48dp"-->
-    <!--        android:layout_marginStart="16dp"-->
-    <!--        android:layout_marginTop="48dp"-->
-    <!--        android:layout_marginBottom="48dp"-->
-    <!--        android:ems="10"-->
-    <!--        android:hint="Name"-->
-    <!--        android:inputType="textPersonName"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@+id/addCoordsLabel"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="@+id/orientation_btn" />-->
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/addCoordsLabel"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="48dp"-->
-    <!--        android:layout_marginStart="1dp"-->
-    <!--        android:layout_marginBottom="18dp"-->
-    <!--        android:ems="10"-->
-    <!--        android:hint="Coordinates"-->
-    <!--        android:inputType="textPersonName"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/addInputLabel" />-->
     <EditText
         android:id="@+id/UID_text"
         android:layout_width="wrap_content"
@@ -81,25 +38,4 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <!--    <Button-->
-    <!--        android:id="@+id/orientation_btn"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:onClick="onSetOrientationClicked"-->
-    <!--        android:text="Set"-->
-    <!--        tools:layout_editor_absoluteX="309dp"-->
-    <!--        tools:layout_editor_absoluteY="570dp" />-->
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/editOrient"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="48dp"-->
-    <!--        android:layout_marginStart="2dp"-->
-    <!--        android:layout_marginBottom="46dp"-->
-    <!--        android:ems="10"-->
-    <!--        android:hint="orientation"-->
-    <!--        android:inputType="textPersonName"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@+id/addInputLabel"-->
-    <!--        app:layout_constraintStart_toStartOf="@+id/addInputLabel" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>
