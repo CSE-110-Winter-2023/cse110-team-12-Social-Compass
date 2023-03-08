@@ -36,6 +36,7 @@ public class Utilities {
      * @param activity
      * @param message
      */
+
     public static void showUserNamePromptAlert(MainActivity activity, String message, FriendDatabase db) {
 
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
@@ -58,15 +59,67 @@ public class Utilities {
                 })
                 .setCancelable(false);
 
+
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
+
+//        android.app.AlertDialog.Builder alertBuilder2 = new android.app.AlertDialog.Builder(activity);
+//
+//        LayoutInflater inflater2 = LayoutInflater.from(activity);
+//        View promptUserNameView2 = inflater2.inflate(R.layout.dialog_user_name_prompt, null);
+//        //TextView userName = promptUserNameView.findViewById(R.id.inputName);
+//
+//        alertBuilder2
+//                .setView(promptUserNameView2)
+//                .setTitle("You can now enter your friend's UID")
+//                //.setMessage(message)
+//                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        // Dismiss the AlertDialog and start FriendListActivity
+//                        Intent intent = new Intent(activity, FriendListActivity.class);
+//                        activity.startActivity(intent);
+//                        dialogInterface.dismiss();
+//                    }
+//                })
+//                .setCancelable(false);
+//
+//        android.app.AlertDialog alertDialog2 = alertBuilder2.create();
+//        alertDialog2.show();
+
+
+//        android.app.AlertDialog alertDialog2 = alertBuilder2.create();
+//        alertDialog2.show();
+    }
+    public static void showInitFriendAlert(MainActivity activity, String message)
+    {
+        android.app.AlertDialog.Builder alertBuilder2 = new android.app.AlertDialog.Builder(activity);
+
+        LayoutInflater inflater2 = LayoutInflater.from(activity);
+        //View promptUserNameView2 = inflater2.inflate(R.layout.dialog_user_name_prompt, null);
+        View promptUserNameView2 = inflater2.inflate(R.layout.dialog_init_friend_prompt, null);
+        //TextView userName = promptUserNameView.findViewById(R.id.inputName);
+
+        alertBuilder2
+                .setView(promptUserNameView2)
+                .setTitle("You can now enter your friend's UID")
+                //.setMessage(message)
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Dismiss the AlertDialog and start FriendListActivity
+                        Intent intent = new Intent(activity, FriendListActivity.class);
+                        activity.startActivity(intent);
+                        dialogInterface.dismiss();
+                    }
+                })
+                .setCancelable(false);
+
+        android.app.AlertDialog alertDialog2 = alertBuilder2.create();
+        alertDialog2.show();
+
     }
 
-    /**
-     * Alert that shows when the
-     * @param activity
-     * @param message
-     */
     public static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
@@ -96,8 +149,12 @@ public class Utilities {
                 .setView(copyUIDView)
                 .setTitle("Welcome!")
                 .setMessage(message)
-                .setPositiveButton("Continue", (dialog, id) -> {
-
+                //.setPositiveButton("Continue", (dialog, id) -> {
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        showInitFriendAlert(activity, "Make FRiend");
+                    }
                 })
                 .setCancelable(false);
 
