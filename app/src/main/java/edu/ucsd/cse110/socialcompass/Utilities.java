@@ -93,10 +93,7 @@ public class Utilities {
         alertDialog2.show();
 
     }
-    public static String getUID()
-    {
-        return uniqueID;
-    }
+
     public static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
