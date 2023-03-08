@@ -12,31 +12,32 @@ import java.util.List;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
+import edu.ucsd.cse110.socialcompass.model.FriendDao;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
-import edu.ucsd.cse110.socialcompass.model.FriendListItemDao;
 
 public class MainActivity extends AppCompatActivity {
     private static FriendDatabase db;
-    private static FriendListItemDao dao;
+    private static FriendDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Context context = this.getApplicationContext();
-        db = FriendDatabase.getSingleton(context);
-        dao = db.friendListItemDao();
-        List<FriendListItem> users = dao.getAll();
-        if (users.size() == 0) {
-            initNewUser();
-        }
+//        db = FriendDatabase.getSingleton(context);
+//        dao = db.friendListItemDao();
+//        List<FriendListItem> users = dao.getAll();
+//        if (users.size() == 0) {
+//            initNewUser();
+//        }
+        initNewUser();
 
     }
 
-    public static FriendListItemDao getDao()
-    {
-        return db.friendListItemDao();
-    }
+//    public static FriendDao getDao()
+//    {
+//        return db.friendListItemDao();
+//    }
 
 
 
