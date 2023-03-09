@@ -25,8 +25,6 @@ public class TestShareFeature {
     @Test
     public void test_copy_button_copies_UID(){
         var scenario = ActivityScenario.launch(MainActivity.class);
-        scenario.moveToState(Lifecycle.State.CREATED);
-        scenario.moveToState(Lifecycle.State.STARTED);
 
         scenario.onActivity(activity -> {
             // Create UID and call the AlertDialog that contains the copy button
@@ -57,7 +55,6 @@ public class TestShareFeature {
             // check that the text on the clipboard is the same as the UID generated for this test
             assertEquals(uniqueID, text);
         });
-        scenario.close();
     }
 
 }
