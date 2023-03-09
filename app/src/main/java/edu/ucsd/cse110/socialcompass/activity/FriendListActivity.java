@@ -117,6 +117,7 @@ public class FriendListActivity extends AppCompatActivity {
         addUIDButton.setOnClickListener((View v) -> {
             String uid = input.getText().toString();
             var friend = viewModel.getFriend(uid).getValue();
+            //TODO: if friend is null, catch and display an alertidalog error to user
             assert friend != null;
 
             friend.uid = uid;
@@ -130,26 +131,6 @@ public class FriendListActivity extends AppCompatActivity {
         var intent = FriendActivity.intentFor(this, friend);
         startActivity(intent);
     }
-
-//    public void insertFriendListItem(String uid) {
-//        //FriendDatabase db = FriendDatabase.getSingleton(getApplication());
-//        //FriendListItemDao dao = db.friendListItemDao();
-//        //dao = getDao();
-//        if (dao == null) {
-//            throw new IllegalStateException("dao is null");
-//        }
-//        int order = dao.getOrderForAppend();
-//
-//        //Not done until we do Story 5, "Unknown" should be the name corresponding to UID
-//        //Need to search for the name corresponding to the UID otherwise cannot find the user
-//        //TEST THIS AGAIN AFTER STORY 5
-//        dao.insert(new FriendListItem("Unknown", uid, order));
-//        Log.i("tag", "Size is " + dao.getAll().size());
-//        //System.out.println("Size is: " + dao.getFriendList().size());
-//        if (dao.getAll().size() == 1) {
-//            isInserted = true;
-//        }
-//    }
 
     public static boolean checkInsert() {
         return isInserted;

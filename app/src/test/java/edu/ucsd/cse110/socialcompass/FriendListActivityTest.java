@@ -4,19 +4,26 @@ import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.shadows.ShadowAlertDialog;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.widget.EditText;
 
 import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
@@ -25,91 +32,90 @@ import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 
 
 @RunWith(AndroidJUnit4.class)
+/**
+ * Scenario Tests for Story 1
+ */
 public class FriendListActivityTest {
+<<<<<<< HEAD
     private FriendDao dao;
+=======
+
+    private FriendListItemDao dao;
+>>>>>>> 2d12d414c810ed935f7b761ea34bfbe25809708d
     private FriendDatabase db;
+    ActivityScenario<MainActivity> mainScenario;
+    ActivityScenario<FriendListActivity> friendListScenario;
 
     @Before
-    public void createDb() {
-        var scenario = ActivityScenario.launch(MainActivity.class);
+    public void init() {
         Context context = ApplicationProvider.getApplicationContext();
+
         db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
                 .allowMainThreadQueries()
                 .build();
         dao = db.getDao();
 
+        FriendDatabase.useTestSingleton(getApplicationContext());
+
+        mainScenario = ActivityScenario.launch(MainActivity.class);
+        friendListScenario = ActivityScenario.launch(FriendListActivity.class);
     }
 
     @After
-    public void closeDb() throws IOException {
+    public void closeDb() {
         db.close();
     }
 
-    /*@Test
-    public void testInsertFriendListItem() {
-        String uid = "testUid";
-        FriendListActivity activity = new FriendListActivity();
-        activity.insertFriendListItem(uid);
+    @Test
+    public void testPromptUserForUid() {
+        // Set UID during activity
+        friendListScenario.onActivity(activity -> {
+            String uid = "testUid";
+            activity.uidEditText.setText(uid);
+            assertEquals(uid, activity.uidEditText.getText().toString());
+        });
 
+<<<<<<< HEAD
         List<FriendListItem> items = dao.getFriendList();
         assertTrue(FriendListActivity.checkInsert());
         //assertEquals(1, items.size());
         //ssertEquals(uid, items.get(0).getUid());
     }*/
 /**
+=======
+    }
+
+>>>>>>> 2d12d414c810ed935f7b761ea34bfbe25809708d
     @Test
     public void testInsertFriendListItem() {
+        // Create a test item
         String uid = "testUid";
-        FriendListActivity activity = new FriendListActivity();
-        activity.dao = dao;
-        activity.insertFriendListItem(uid);
+        FriendListItem testItem = new FriendListItem("testName", uid, 0);
+
+        dao.insert(testItem);
 
         List<FriendListItem> items = dao.getAll();
+
         assertEquals(1, items.size());
         assertEquals(uid, items.get(0).getUid());
     }
+<<<<<<< HEAD
     */
     /*@Test
     public void testInsertFriendListItem() {
         String uid = "testUid";
         FriendListActivity activity = new FriendListActivity();
+=======
+>>>>>>> 2d12d414c810ed935f7b761ea34bfbe25809708d
 
-
-        List<FriendListItem> items = dao.getAll();
-        //assertTrue(FriendListActivity.checkInsert());
-        assertEquals(0, items.size());
-
-        activity.insertFriendListItem(uid);
-        assertEquals(uid, items.get(0).getUid());
-    }*/
+    @Test
+    public void testShowUserPromptAlert() {
+        // Show user prompt alert
+        friendListScenario.onActivity(activity -> {
+            //Making sure dialog appears
+            AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull(alertDialog);
+            assertTrue(alertDialog.isShowing());
+        });
+    }
 }
-//@RunWith(AndroidJUnit4.class)
-//public class FriendListActivityTest {
-//    private FriendDatabase db;
-//    private FriendListItemDao dao;
-//
-//    @Before
-//    public void createDb() {
-//        db = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(),
-//                FriendDatabase.class).build();
-//        dao = db.friendListItemDao();
-//    }
-//
-//    @After
-//    public void closeDb() throws IOException {
-//        db.close();
-//    }
-//
-//    @Test
-//    public void insertFriendListItem() throws Exception {
-//        FriendListActivity activity = new FriendListActivity();
-//        activity.db = db;
-//        activity.dao = dao;
-//
-//        String testUid = "1234";
-//        activity.insertFriendListItem(testUid);
-//
-//        FriendListItem returnedItem = dao.getFriendListItem(testUid);
-//        assertEquals(testUid, returnedItem.getUid());
-//    }
-//}
