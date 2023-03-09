@@ -26,11 +26,23 @@ import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
  */
 public class Utilities {
     static String uniqueID;
+
     /**
-     * Alert that shows when the
-     * @param activity
-     * @param message
+     * Alert to display an error when adding a UID that does not exist.
+     * @param message to display
      */
+    public static void showErrorAlert(FriendListActivity activity, String message) {
+        android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
+        alertBuilder
+                .setTitle("Error")
+                .setMessage(message)
+                .setPositiveButton("Okay", (dialog, id) -> {
+                    dialog.dismiss();
+                })
+                .setCancelable(false);
+        android.app.AlertDialog alertDialog = alertBuilder.create();
+        alertDialog.show();
+    }
 
     public static void showUserNamePromptAlert(MainActivity activity, String message, FriendDatabase db) {
 

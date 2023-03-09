@@ -125,6 +125,10 @@ public class FriendListActivity extends AppCompatActivity {
         });
     }
 
+    private void verifyUIDExists(FriendListViewModel viewModel) {
+
+    }
+
     private void onFriendClicked(Friend friend, FriendListViewModel viewModel) {
         Log.d("FriendAdapter", "Opened friend " + friend.name);
         var intent = FriendActivity.intentFor(this, friend);
