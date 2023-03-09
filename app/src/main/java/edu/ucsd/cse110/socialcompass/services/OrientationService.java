@@ -1,4 +1,4 @@
-package edu.ucsd.cse110.socialcompass;
+package edu.ucsd.cse110.socialcompass.services;
 
 import android.app.Activity;
 import android.content.Context;
