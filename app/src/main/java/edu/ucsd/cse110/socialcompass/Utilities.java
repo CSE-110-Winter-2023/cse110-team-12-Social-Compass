@@ -30,12 +30,12 @@ import edu.ucsd.cse110.socialcompass.db.Location;
  */
 public class Utilities {
     static String uniqueID;
+
     /**
      * Alert that shows when the
      * @param activity
      * @param message
      */
-
     public static void showUserNamePromptAlert(MainActivity activity, String message, FriendDatabase db) {
 
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);

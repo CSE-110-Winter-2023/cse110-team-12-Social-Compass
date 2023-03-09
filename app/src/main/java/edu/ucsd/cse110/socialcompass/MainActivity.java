@@ -13,6 +13,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static FriendDatabase db;
     private static FriendListItemDao dao;
+    private boolean isStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,10 +21,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Context context = this.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
-        var dao = db.friendListItemDao();
-        List<FriendListItem> users = dao.getAll();
-        if (users.size() == 0) {
+        dao = db.friendListItemDao();
+        if (!isStarted) {
             initNewUser();
+            isStarted = true;
         }
 
     }
