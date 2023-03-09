@@ -12,6 +12,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static FriendDatabase db;
+    private static FriendListItemDao dao;
+    private boolean isStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,19 +21,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Context context = this.getApplicationContext();
         db = FriendDatabase.getSingleton(context);
-        var dao = db.friendListItemDao();
-        List<FriendListItem> users = dao.getAll();
-
-        if (users.size() == 0) {
+        dao = db.friendListItemDao();
+        if (!isStarted) {
             initNewUser();
+            isStarted = true;
         }
+
     }
+
+    public static FriendListItemDao getDao()
+    {
+        return db.friendListItemDao();
+    }
+
+
 
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
         //TODO: Ask for location permission and build initial HashMap for storing data
         Utilities.showUserNamePromptAlert(this, "Please enter your name",db);
-
     }
 
     public void onSeeFriendsClicked(View view) {
