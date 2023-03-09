@@ -31,10 +31,6 @@ public class TestShareFeature {
         scenario = ActivityScenario.launch(MainActivity.class);
     }
 
-    @After
-    public void tearDown(){
-        scenario.close();
-    }
 
     @Test
     public void test_copy_button_copies_UID(){
