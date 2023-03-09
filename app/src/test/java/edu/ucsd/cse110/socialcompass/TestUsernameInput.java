@@ -91,6 +91,7 @@ public class TestUsernameInput {
         });
     }
 
+    @Test
     public void testCopyUid() {
         scenario.onActivity(activity -> {
 
