@@ -16,7 +16,7 @@ import android.widget.EditText;
 public class FriendListActivity extends AppCompatActivity {
     public RecyclerView recyclerView;
     private FriendListViewModel viewModel;
-    private EditText uidEditText;
+    EditText uidEditText;
     private Button addButton;
 
     FriendDatabase db;
