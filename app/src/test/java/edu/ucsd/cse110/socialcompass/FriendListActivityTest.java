@@ -27,14 +27,15 @@ import android.widget.EditText;
 
 
 @RunWith(AndroidJUnit4.class)
+/**
+ * Scenario Tests for Story 1
+ */
 public class FriendListActivityTest {
 
     private FriendListItemDao dao;
     private FriendDatabase db;
     ActivityScenario<MainActivity> mainScenario;
     ActivityScenario<FriendListActivity> friendListScenario;
-
-
 
     @Before
     public void init() {
@@ -83,7 +84,6 @@ public class FriendListActivityTest {
 
     @Test
     public void testShowUserPromptAlert() {
-
         // Show user prompt alert
         friendListScenario.onActivity(activity -> {
             //Making sure dialog appears
