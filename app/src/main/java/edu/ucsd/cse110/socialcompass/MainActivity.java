@@ -12,6 +12,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static FriendDatabase db;
+    private static FriendListItemDao dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,20 +22,23 @@ public class MainActivity extends AppCompatActivity {
         db = FriendDatabase.getSingleton(context);
         var dao = db.friendListItemDao();
         List<FriendListItem> users = dao.getAll();
-        if (true) {
+        if (users.size() == 0) {
             initNewUser();
         }
+
     }
+
+    public static FriendListItemDao getDao()
+    {
+        return db.friendListItemDao();
+    }
+
+
 
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
-//        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-
         //TODO: Ask for location permission and build initial HashMap for storing data
         Utilities.showUserNamePromptAlert(this, "Please enter your name",db);
-//        editor.putBoolean("newUser", false); // update newUser status to false.
-//        editor.apply();
     }
 
     public void onSeeFriendsClicked(View view) {
