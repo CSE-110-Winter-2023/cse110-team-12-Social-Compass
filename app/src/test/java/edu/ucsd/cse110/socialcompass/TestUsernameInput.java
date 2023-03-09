@@ -6,33 +6,29 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.AlertDialog;
-import android.app.Instrumentation;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
-import androidx.room.Room;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.UUID;
 
+/**
+ * Tests for Milestone 2, Stories 2 and 3
+ */
 @RunWith(RobolectricTestRunner.class)
 public class TestUsernameInput {
     FriendDatabase db;
@@ -51,7 +47,7 @@ public class TestUsernameInput {
     }
 
     @Test
-    public void testValidUsernameID() {
+    public void testValidUsernameIDAndCopy() {
         scenario.onActivity(activity -> {
             Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
 
@@ -92,6 +88,26 @@ public class TestUsernameInput {
             assertEquals("Sam", db.friendListItemDao().getAll().get(0).name);
             assertEquals(Utilities.getUID(), db.friendListItemDao().getAll().get(0).uid);
             assertEquals(-1, db.friendListItemDao().getAll().get(0).order);
+        });
+    }
+
+    public void testCopyUid() {
+        scenario.onActivity(activity -> {
+
+            String uniqueID = UUID.randomUUID().toString();
+
+            //Open the alert console with a given uid and make sure the console has popped up
+            Utilities.showCopyUIDAlert(activity, "Copy UID", uniqueID);
+            AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull(alertDialog);
+
+            // find the copy button and simulate a click
+            TextView copyButton = alertDialog.findViewById(R.id.copy);
+            copyButton.performClick();
+
+            //Check if the data in the clipboard matches the uid
+            final ClipboardManager manager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            manager.addPrimaryClipChangedListener(() -> assertEquals(manager.getPrimaryClip().toString(), uniqueID));
         });
     }
 }

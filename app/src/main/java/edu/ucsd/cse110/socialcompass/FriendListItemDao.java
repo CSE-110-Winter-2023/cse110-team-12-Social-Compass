@@ -26,7 +26,8 @@ public interface FriendListItemDao {
     @Query("SELECT * FROM `friend_list_items` ORDER BY `order`")
     List<FriendListItem> getAll();
 
-    @Query("SELECT `order` + 1 FROM `friend_list_items` ORDER BY `order` DESC LIMIT 1")
+    //@Query("SELECT `order` + 1 FROM `friend_list_items` ORDER BY `order` DESC LIMIT 1")
+    @Query("SELECT `order` FROM `friend_list_items` ORDER BY `order` DESC LIMIT 1")
     int getOrderForAppend();
 
     @Update
@@ -34,4 +35,5 @@ public interface FriendListItemDao {
 
     @Delete
     int delete(FriendListItem friendListItem);
+
 }
