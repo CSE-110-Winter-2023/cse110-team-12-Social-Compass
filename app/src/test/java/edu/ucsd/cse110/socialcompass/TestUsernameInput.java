@@ -3,8 +3,10 @@ package edu.ucsd.cse110.socialcompass;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -19,6 +21,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
+
+import java.util.UUID;
 
 @RunWith(RobolectricTestRunner.class)
 public class TestUsernameInput {
@@ -55,25 +59,21 @@ public class TestUsernameInput {
     @Test
     public void testCopyUid() {
         scenario.onActivity(activity -> {
+
+            String uniqueID = UUID.randomUUID().toString();
+
             //Open the alert console with a given uid and make sure the console has popped up
-            Utilities.showCopyUIDAlert((MainActivity) activity, "", "12345");
+            Utilities.showCopyUIDAlert(activity, "Copy UID", uniqueID);
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
             assertNotNull(alertDialog);
 
-            //Click the copy button
-            LayoutInflater inflater = LayoutInflater.from(activity);
-            View copyUIDView = inflater.inflate(R.layout.copy_uid_prompt, null);
-            TextView copy = (TextView) copyUIDView.findViewById(R.id.copy);
-            copy.performClick();
+            // find the copy button and simulate a click
+            TextView copyButton = alertDialog.findViewById(R.id.copy);
+            copyButton.performClick();
 
-            //Check if the data in the clipboard matches the uid which is "12345"
+            //Check if the data in the clipboard matches the uid
             final ClipboardManager manager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            manager.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
-                @Override
-                public void onPrimaryClipChanged() {
-                    assertEquals(manager.getPrimaryClip().toString(), "12345");
-                }
-            });
+            manager.addPrimaryClipChangedListener(() -> assertEquals(manager.getPrimaryClip().toString(), uniqueID));
         });
     }
 
