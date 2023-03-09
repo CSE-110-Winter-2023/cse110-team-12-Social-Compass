@@ -57,6 +57,7 @@ public class TestShareFeature {
             // check that the text on the clipboard is the same as the UID generated for this test
             assertEquals(uniqueID, text);
         });
+        scenario.close();
     }
 
 }
