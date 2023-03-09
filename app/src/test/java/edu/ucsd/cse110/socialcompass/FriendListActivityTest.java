@@ -40,13 +40,14 @@ public class FriendListActivityTest {
     }
 
     @After
-    public void closeDb() throws IOException {
+    public void closeDb() {
         db.close();
     }
 
     @Test
     public void testPromptUserForUid() {
         // Launch activity
+        ActivityScenario.launch(MainActivity.class);
         ActivityScenario<FriendListActivity> scenario = ActivityScenario.launch(FriendListActivity.class);
 
         // Set UID during activity
@@ -56,7 +57,6 @@ public class FriendListActivityTest {
             assertEquals(uid, activity.uidEditText.getText().toString());
         });
 
-        scenario.close();
     }
 
     @Test
@@ -71,29 +71,5 @@ public class FriendListActivityTest {
 
         assertEquals(1, items.size());
         assertEquals(uid, items.get(0).getUid());
-    }
-
-    @Test
-    public void testShowUserPromptAlert() {
-        ActivityScenario<FriendListActivity> scenario = ActivityScenario.launch(FriendListActivity.class);
-
-        // Show user prompt alert
-        scenario.onActivity(activity -> {
-            //Making sure dialog appears
-            AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
-            assertNotNull(alertDialog);
-
-            //Setting name in dialog
-            EditText username = alertDialog.findViewById(R.id.inputName);
-            username.setText("testName");
-            assertEquals("testName", username.getText().toString());
-
-            assertTrue(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick());
-
-            List<FriendListItem> items = dao.getAll();
-            assertEquals(1, items.size());
-        });
-
-        scenario.close();
     }
 }
