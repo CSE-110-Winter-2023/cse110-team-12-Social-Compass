@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -22,9 +25,19 @@ import java.util.UUID;
 
 @RunWith(RobolectricTestRunner.class)
 public class TestShareFeature {
+    ActivityScenario<MainActivity> scenario;
+    @Before
+    public void setup(){
+        scenario = ActivityScenario.launch(MainActivity.class);
+    }
+
+    @After
+    public void tearDown(){
+        scenario.close();
+    }
+
     @Test
     public void test_copy_button_copies_UID(){
-        var scenario = ActivityScenario.launch(MainActivity.class);
 
         scenario.onActivity(activity -> {
             // Create UID and call the AlertDialog that contains the copy button
