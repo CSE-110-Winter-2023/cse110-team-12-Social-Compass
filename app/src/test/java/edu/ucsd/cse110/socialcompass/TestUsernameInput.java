@@ -3,35 +3,22 @@ package edu.ucsd.cse110.socialcompass;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import android.app.AlertDialog;
-import android.app.Instrumentation;
+import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.widget.EditText;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.room.DatabaseConfiguration;
-import androidx.room.InvalidationTracker;
-import androidx.room.Room;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
-
-import java.io.IOException;
-import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
 public class TestUsernameInput {
@@ -52,7 +39,7 @@ public class TestUsernameInput {
     }
 
     @Test
-    public void testValidUsernameID() {
+    public void testValidUsernameIDAndCopy() {
         scenario.onActivity(activity -> {
             Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
 
@@ -62,6 +49,31 @@ public class TestUsernameInput {
 
             // check that the UID is created
             assertNotNull(Utilities.getUID());
+        });
+    }
+
+    @Test
+    public void testCopyUid() {
+        scenario.onActivity(activity -> {
+            //Open the alert console with a given uid and make sure the console has popped up
+            Utilities.showCopyUIDAlert((MainActivity) activity, "", "12345");
+            AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull(alertDialog);
+
+            //Click the copy button
+            LayoutInflater inflater = LayoutInflater.from(activity);
+            View copyUIDView = inflater.inflate(R.layout.copy_uid_prompt, null);
+            TextView copy = (TextView) copyUIDView.findViewById(R.id.copy);
+            copy.performClick();
+
+            //Check if the data in the clipboard matches the uid which is "12345"
+            final ClipboardManager manager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            manager.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
+                @Override
+                public void onPrimaryClipChanged() {
+                    assertEquals(manager.getPrimaryClip().toString(), "12345");
+                }
+            });
         });
     }
 
