@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
@@ -44,7 +45,7 @@ public class Utilities {
         alertDialog.show();
     }
 
-    public static void showUserNamePromptAlert(MainActivity activity, String message, FriendDatabase db) {
+    public static void showUserNamePromptAlert(MainActivity activity, String message) {
 
         android.app.AlertDialog.Builder alertBuilder = new android.app.AlertDialog.Builder(activity);
 
@@ -169,5 +170,11 @@ public class Utilities {
 
     public static String getUID(){
         return uniqueID;
+    }
+
+    public static String formatLocation(double latitude, double longitude) {
+        return String.format(Locale.US, "%.0f° %.0f' %.0f\" N, %.0f° %.0f' %.0f\" W",
+                Math.abs(latitude), Math.abs(latitude % 1) * 60, Math.abs(latitude % 1 % 1) * 60,
+                Math.abs(longitude), Math.abs(longitude % 1) * 60, Math.abs(longitude % 1 % 1) * 60);
     }
 }
