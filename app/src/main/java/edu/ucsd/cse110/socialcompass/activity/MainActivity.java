@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
         boolean newUser = preferences.getBoolean("newUser", true);
-        if (newUser==true) {
+        if (newUser) {
             initNewUser();
         }
     }
