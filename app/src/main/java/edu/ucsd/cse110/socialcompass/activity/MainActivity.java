@@ -3,6 +3,7 @@ package edu.ucsd.cse110.socialcompass.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationService locationService;
     private String UID; // The user's unique UID
+    private LiveData<Friend> user;
 
 
     @Override
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         // Setup location service
         locationService = LocationService.singleton(this);
         this.reobserveLocation();
+
     }
 
     private MainActivityViewModel setupViewModel() {
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private FriendAdapter setupAdapter(MainActivityViewModel viewModel) {
         FriendAdapter adapter = new FriendAdapter();
         adapter.setHasStableIds(true);
-        viewModel.getLocation(UID).observe(this, adapter::setUserLocation);
+        viewModel.getFriends().observe(this, adapter::setFriends);
         return adapter;
     }
 
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
 //        TextView locationText = findViewById(R.id.location_text);
 //        locationText.setText(Utilities.formatLocation(latLong.first, latLong.second));
-        //3e353229-9e6f-4ff4-8359-3f416e405ac0
+        System.out.println("Location: " + Utilities.formatLocation(latLong.first, latLong.second));
     }
 
     // This method should only be called one time EVER - for initializing brand new users.

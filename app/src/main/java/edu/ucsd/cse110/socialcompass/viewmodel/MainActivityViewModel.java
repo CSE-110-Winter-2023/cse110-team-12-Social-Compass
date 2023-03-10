@@ -16,6 +16,8 @@ import edu.ucsd.cse110.socialcompass.model.FriendRepository;
 
 public class MainActivityViewModel extends AndroidViewModel {
 
+    private LiveData<List<Friend>> friends;
+
     private final FriendRepository repo;
 
     public MainActivityViewModel(@NonNull Application application) {
@@ -26,7 +28,23 @@ public class MainActivityViewModel extends AndroidViewModel {
         this.repo = new FriendRepository(dao);
     }
 
-    public LiveData<Friend> getLocation(String uid) {
+    /**
+     * Get a friend from the database
+     * @return a LiveData object that will be updated when the friend's location change.
+     */
+    public LiveData<Friend> getFriend(String uid) {
+
         return repo.getLocal(uid);
+    }
+
+    /**
+     * Load all friends from the database.
+     * @return a LiveData object that will be updated when any friend locations change.
+     */
+    public LiveData<List<Friend>> getFriends() {
+        if (friends == null) {
+            friends = repo.getAllLocal();
+        }
+        return friends;
     }
 }

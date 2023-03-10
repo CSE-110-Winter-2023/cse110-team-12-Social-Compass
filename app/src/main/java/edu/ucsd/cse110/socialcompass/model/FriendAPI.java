@@ -69,6 +69,8 @@ public class FriendAPI {
             assert response.body() != null;
             var body = response.body().string();
             Log.i("PUT FRIEND", body);
+            System.out.println("Request Body: " + requestBody.toString());
+            System.out.println("Response body: " + body);
         } catch (Exception e) {
             e.printStackTrace();
         }

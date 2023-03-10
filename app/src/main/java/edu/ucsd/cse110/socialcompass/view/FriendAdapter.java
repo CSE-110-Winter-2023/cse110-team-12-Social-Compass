@@ -16,8 +16,6 @@ import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
-
-    private Friend user; // Friend object to store the user's data
     private List<Friend> friends = Collections.emptyList();
     private Consumer<Friend> onFriendClicked;
 
@@ -47,11 +45,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
             itemView.setOnClickListener(v -> onFriendClicked.accept(friend));
         }
-    }
-
-    public void setUserLocation(Friend friend) {
-        this.user = friend;
-        notifyDataSetChanged();
     }
 
     public void setFriends(List<Friend> friends) {
