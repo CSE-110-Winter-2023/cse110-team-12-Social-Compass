@@ -15,7 +15,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
+import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,6 +29,12 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
 
 import java.util.UUID;
+import java.util.concurrent.Executors;
+
+import edu.ucsd.cse110.socialcompass.activity.MainActivity;
+import edu.ucsd.cse110.socialcompass.model.Friend;
+import edu.ucsd.cse110.socialcompass.model.FriendDao;
+import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 
 /**
  * Tests for Milestone 2, Stories 2 and 3
@@ -32,13 +42,17 @@ import java.util.UUID;
 @RunWith(RobolectricTestRunner.class)
 public class TestUsernameInput {
     FriendDatabase db;
+    private FriendDao dao;
     ActivityScenario<MainActivity> scenario;
 
     @Before
     public void init() {
-        FriendDatabase.useTestSingleton(getApplicationContext());
-        db = FriendDatabase.getSingleton(getApplicationContext());
         scenario = ActivityScenario.launch(MainActivity.class);
+        Context context = ApplicationProvider.getApplicationContext();
+        db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
+                .allowMainThreadQueries()
+                .build();
+        dao = db.getDao();
     }
 
     @After
@@ -78,16 +92,36 @@ public class TestUsernameInput {
             assertEquals("Sam", username.getText().toString());
             assertTrue(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick());
 
-            FriendListItem user = new FriendListItem(name, Utilities.getUID(), -1);
-            db.friendListItemDao().insert(user);
+            String uid = Utilities.getUID();
+//            var user = new MediatorLiveData<Friend>();
+//            Friend friend = new Friend(name, uid, -1);
+//            user.postValue(friend);
+//
+//            Observer<Friend> obs = actualUser -> {
+//                var localUser = user.getValue();
+//                if (actualUser == null) return; // do nothing
+//                if (localUser == null) {
+//                    dao.upsert(actualUser);
+//                }
+//            };
+//            user.addSource(dao.get(uid), user::postValue);
+//            db.noti
 
+            var executor = Executors.newSingleThreadExecutor();
+            executor.execute( () -> {
+                Friend friend = new Friend(name, uid, -1);
+                dao.upsert(friend);
+            });
 
-            assertEquals(1, db.friendListItemDao().getAll().size());
+            assertNotNull(dao.get(uid));
+            //assertNotNull(dao.getAll().getValue());
+
+            assertEquals(1, dao.getAll().getValue().size());
 
             // check that the user is stored in the database
-            assertEquals("Sam", db.friendListItemDao().getAll().get(0).name);
-            assertEquals(Utilities.getUID(), db.friendListItemDao().getAll().get(0).uid);
-            assertEquals(-1, db.friendListItemDao().getAll().get(0).order);
+            assertEquals("Sam", dao.get(uid).getValue().name);
+            assertEquals(Utilities.getUID(), dao.get(uid).getValue().uid);
+            assertEquals(-1, dao.get(uid).getValue().order);
         });
     }
 
