@@ -20,7 +20,7 @@ public class FriendActivity extends AppCompatActivity {
     /** Utility method to create an intent for this activity. */
     public static Intent intentFor(Context context, Friend friend) {
         var intent = new Intent(context, FriendActivity.class);
-        intent.putExtra("friend_name", friend.name);
+        intent.putExtra("friend_name", friend.getLabel());
         return intent;
     }
 }

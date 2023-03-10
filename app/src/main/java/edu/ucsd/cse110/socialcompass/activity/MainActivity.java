@@ -1,7 +1,9 @@
 package edu.ucsd.cse110.socialcompass.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,24 +21,49 @@ import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDao;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
+import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
+import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
+import edu.ucsd.cse110.socialcompass.viewmodel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private LocationService locationService;
+    private String UID; // The user's unique UID
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        locationService = LocationService.singleton(this);
-        this.reobserveLocation();
-
+        // Check if user is new
         SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
         boolean newUser = preferences.getBoolean("newUser", true);
         if (newUser==true) {
             initNewUser();
         }
+        // TODO: add test to make sure UID will always pull correctly from shared preferences
+        UID = preferences.getString("myUID", "Default UID");
+
+        // Setup ViewModel and Adapter
+        var viewModel = setupViewModel();
+        var adapter = setupAdapter(viewModel);
+
+        // Setup location service
+        locationService = LocationService.singleton(this);
+        this.reobserveLocation();
+    }
+
+    private MainActivityViewModel setupViewModel() {
+        return new ViewModelProvider(this).get(MainActivityViewModel.class);
+    }
+
+    @NonNull
+    private FriendAdapter setupAdapter(MainActivityViewModel viewModel) {
+        FriendAdapter adapter = new FriendAdapter();
+        adapter.setHasStableIds(true);
+        viewModel.getLocation(UID).observe(this, adapter::setUserLocation);
+        return adapter;
     }
 
     private void reobserveLocation() {
@@ -45,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
-        TextView locationText = findViewById(R.id.location_text);
-        //locationText.setText(Utilities.formatLocation(latLong.first, latLong.second));
+//        TextView locationText = findViewById(R.id.location_text);
+//        locationText.setText(Utilities.formatLocation(latLong.first, latLong.second));
+        //3e353229-9e6f-4ff4-8359-3f416e405ac0
     }
 
     // This method should only be called one time EVER - for initializing brand new users.

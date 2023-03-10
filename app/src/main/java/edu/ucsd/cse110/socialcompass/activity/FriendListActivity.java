@@ -15,22 +15,20 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 
+import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.R;
-import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
-import edu.ucsd.cse110.socialcompass.model.FriendDao;
-import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
 public class FriendListActivity extends AppCompatActivity {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
 
     private String UserName, UserUID;
+    private double latitude, longitude;
     static boolean isInserted = false;
 
 
@@ -49,9 +47,10 @@ public class FriendListActivity extends AppCompatActivity {
         var adapter = setupAdapter(viewModel);
         setupViews(viewModel, adapter);
 
+
         // if this is a new user, add them to the database
         if (newUser==true) {
-            var self = new Friend(UserName, UserUID, -1);
+            var self = new Friend(UserName, UserUID, 0,0,-1);
             viewModel.save(self);
 
             SharedPreferences.Editor editor = preferences.edit();
@@ -117,21 +116,17 @@ public class FriendListActivity extends AppCompatActivity {
         addUIDButton.setOnClickListener((View v) -> {
             String uid = input.getText().toString();
             var friend = viewModel.getFriend(uid).getValue();
-            //TODO: if friend is null, catch and display an alertidalog error to user
-            assert friend != null;
 
-            friend.uid = uid;
-
-            viewModel.save(friend);
+            if(friend==null){
+                Utilities.showErrorAlert(this, "User does not exist");
+            } else{
+                viewModel.save(friend);
+            }
         });
     }
 
-    private void verifyUIDExists(FriendListViewModel viewModel) {
-
-    }
-
     private void onFriendClicked(Friend friend, FriendListViewModel viewModel) {
-        Log.d("FriendAdapter", "Opened friend " + friend.name);
+        Log.d("FriendAdapter", "Opened friend " + friend.getLabel());
         var intent = FriendActivity.intentFor(this, friend);
         startActivity(intent);
     }

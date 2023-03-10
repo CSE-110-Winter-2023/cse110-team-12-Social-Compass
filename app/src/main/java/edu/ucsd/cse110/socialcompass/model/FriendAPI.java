@@ -57,7 +57,7 @@ public class FriendAPI {
     @WorkerThread
     public void putFriend(Friend friend) {
 
-        String uid = friend.uid;
+        String uid = friend.getUid();
 
         var requestBody = RequestBody.create(friend.toJSON(), JSON);
         var request = new Request.Builder()

@@ -1,56 +1,60 @@
 package edu.ucsd.cse110.socialcompass.model;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.List;
-
-import edu.ucsd.cse110.socialcompass.Utilities;
 
 @Entity(tableName = "friends")
 public class Friend {
     // Public fields
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     public long id; // id for database
 
-    @NonNull
-    public String name, uid;
-    public boolean isFriend;
+    @ColumnInfo(name = "label")
+    private String label;
+
+    @ColumnInfo(name = "uid")
+    private String uid;
+
+    @ColumnInfo(name = "latitude")
+    private double latitude;
+
+    @ColumnInfo(name = "longitude")
+    private double longitude;
     public int order;
 
     // Constructor matching fields above
-    public Friend(@NonNull String name, @NonNull String uid, int order) {
-        this.name = name;
+    public Friend(@NonNull String label, @NonNull String uid, double latitude, double longitude, int order) {
+        this.label = label;
         this.uid = uid;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.order = order;
-        this.isFriend = !uid.equals(Utilities.getUID());
     }
 
-    // Factory method for loading our JSON
-    public static List<Friend> loadJSON(Context context, String path) {
-        try {
-            InputStream input = context.getAssets().open(path);
-            Reader reader = new InputStreamReader(input);
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Friend>>(){}.getType();
-            return gson.fromJson(reader, type);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
-    }
+    public long getId() { return id; }
+
+    public void setId(long id) { this.id = id; }
+
+    public String getUid() { return uid; }
+
+    public void setUID(String uid) { this.uid = uid; }
+
+    public String getLabel() { return label; }
+
+    public void setLabel(String name) { this.label = name; }
+
+    public double getLatitude() { return latitude; }
+
+    public double getLongitude() { return longitude; }
+
+    public void setLatitude(double latitude) { this.latitude = latitude; }
+
+    public void setLongitude(double longitude) { this.longitude = longitude; }
 
     // Factory method for creating Friend from JSON file
     public static Friend fromJSON(String json) { return new Gson().fromJson(json, Friend.class);}
@@ -63,13 +67,9 @@ public class Friend {
     @Override
     public String toString() {
         return "FriendListItem{" +
-                "name='" + name + '\'' +
+                "name='" + label + '\'' +
                 ", uid=" + uid +
                 ", order=" + order +
                 '}';
-    }
-
-    public String getUid() {
-        return this.uid;
     }
 }
