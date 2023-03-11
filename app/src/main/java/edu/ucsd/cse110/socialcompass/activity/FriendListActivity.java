@@ -18,7 +18,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 
+import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
+import edu.ucsd.cse110.socialcompass.model.FriendAPI;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.R;
@@ -32,7 +34,6 @@ public class FriendListActivity extends AppCompatActivity {
 
     private String UserName, UserUID;
     static boolean isInserted = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class FriendListActivity extends AppCompatActivity {
         setupViews(viewModel, adapter);
 
         // if this is a new user, add them to the database
-        if (newUser==true) {
+        if (newUser) {
             var self = new Friend(UserName, UserUID, -1);
             viewModel.save(self);
 
@@ -118,11 +119,13 @@ public class FriendListActivity extends AppCompatActivity {
             String uid = input.getText().toString();
             var friend = viewModel.getFriend(uid).getValue();
             //TODO: if friend is null, catch and display an alertidalog error to user
-            assert friend != null;
-
-            friend.uid = uid;
-
-            viewModel.save(friend);
+            FriendAPI api = new FriendAPI();
+            if (api.getFriend(uid) == null || friend == null) {
+                Utilities.showErrorAlert(this, "Error: Cannot find friend");
+            } else {
+                friend.uid = uid;
+                viewModel.save(friend);
+            }
         });
     }
 
@@ -139,5 +142,6 @@ public class FriendListActivity extends AppCompatActivity {
     public static boolean checkInsert() {
         return isInserted;
     }
+
 
 }

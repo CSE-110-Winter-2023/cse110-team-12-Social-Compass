@@ -15,10 +15,12 @@ public class FriendRepository {
     private final FriendDao dao;
     private final FriendAPI api;
     private ScheduledFuture<?> poller;
+    private LiveData<List<Friend>> friendList;
 
     public FriendRepository(FriendDao dao) {
         api = FriendAPI.provide();
         this.dao = dao;
+        this.friendList = dao.getAll();
     }
 
     // Synced Methods
