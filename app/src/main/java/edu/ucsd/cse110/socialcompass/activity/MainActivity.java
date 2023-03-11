@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         // Check if user is new
         SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
         boolean newUser = preferences.getBoolean("newUser", true);
-        if (newUser==true) {
+        if (newUser) {
             initNewUser();
         }
         // TODO: add test to make sure UID will always pull correctly from shared preferences

@@ -20,6 +20,7 @@ import android.widget.EditText;
 
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
+import edu.ucsd.cse110.socialcompass.model.FriendAPI;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.R;
@@ -31,7 +32,6 @@ public class FriendListActivity extends AppCompatActivity {
     private String UserName, UserUID;
     private double latitude, longitude;
     static boolean isInserted = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,10 +117,12 @@ public class FriendListActivity extends AppCompatActivity {
         addUIDButton.setOnClickListener((View v) -> {
             String uid = input.getText().toString();
             var friend = viewModel.getFriend(uid).getValue();
-
-            if(friend==null){
-                Utilities.showErrorAlert(this, "User does not exist");
-            } else{
+            //TODO: if friend is null, catch and display an alertidalog error to user
+            FriendAPI api = new FriendAPI();
+            if (api.getFriend(uid) == null || friend == null) {
+                Utilities.showErrorAlert(this, "Error: Cannot find friend");
+            } else {
+                friend.uid = uid;
                 viewModel.save(friend);
             }
         });
@@ -135,5 +137,6 @@ public class FriendListActivity extends AppCompatActivity {
     public static boolean checkInsert() {
         return isInserted;
     }
+
 
 }
