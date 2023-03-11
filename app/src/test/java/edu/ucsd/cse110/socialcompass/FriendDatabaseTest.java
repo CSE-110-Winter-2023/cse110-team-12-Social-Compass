@@ -5,9 +5,11 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import android.app.AlertDialog;
 import android.content.Context;
 
 import androidx.room.Room;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -15,13 +17,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.shadows.ShadowAlertDialog;
 
 import java.io.IOException;
 
+import edu.ucsd.cse110.socialcompass.activity.MainActivity;
+import edu.ucsd.cse110.socialcompass.model.Friend;
+import edu.ucsd.cse110.socialcompass.model.FriendDao;
+import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+
 @RunWith(AndroidJUnit4.class)
 public class FriendDatabaseTest {
-    private FriendListItemDao dao;
+    private FriendDao dao;
     private FriendDatabase db;
+    ActivityScenario<MainActivity> scenario;
 
     @Before
     public void createDb() {
@@ -29,7 +38,7 @@ public class FriendDatabaseTest {
         db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
                 .allowMainThreadQueries()
                 .build();
-        dao = db.friendListItemDao();
+        dao = db.getDao();
     }
 
     @After
@@ -39,11 +48,11 @@ public class FriendDatabaseTest {
 
     @Test
     public void testImport() {
-        FriendListItem item1 = new FriendListItem("Josephina", "253647", 0);
-        FriendListItem item2 = new FriendListItem("Jackson", "125690", 1);
+        Friend item1 = new Friend("Josephina", "253647", 0);
+        Friend item2 = new Friend("Jackson", "125690", 1);
 
-        long id1 = dao.insert(item1);
-        long id2 = dao.insert(item2);
+        long id1 = dao.upsert(item1);
+        long id2 = dao.upsert(item2);
 
         // Check that these have all been inserted with unique IDs.
         assertNotEquals(id1, id2);
@@ -51,10 +60,11 @@ public class FriendDatabaseTest {
 
     @Test
     public void testGet() {
-        FriendListItem insertedItem = new FriendListItem("Josephina", "253647", 0);
-        long id = dao.insert(insertedItem);
+        String uid = "253647";
+        Friend insertedItem = new Friend("Josephina", uid, 0);
+        long id = dao.upsert(insertedItem);
 
-        FriendListItem item = dao.get(id);
+        Friend item = dao.get(uid).getValue();
         assertEquals(id, item.id);
         assertEquals(insertedItem.name, item.name);
         assertEquals(insertedItem.uid, item.uid);
@@ -63,27 +73,43 @@ public class FriendDatabaseTest {
 
     @Test
     public void testUpdate() {
-        FriendListItem item = new FriendListItem("Josephina", "253647", 0);
-        long id = dao.insert(item);
+        String uid = "253647";
+        Friend item = new Friend("Josephina", uid, 0);
+        long id = dao.upsert(item);
 
-        item = dao.get(id);
+        item = dao.get(uid).getValue();
         item.name = "Lindsey";
-        int itemsUpdated = dao.update(item);
+        long itemsUpdated = dao.upsert(item);
         assertEquals(1, itemsUpdated);
 
-        item = dao.get(id);
+        item = dao.get(uid).getValue();
         assertNotNull(item);
         assertEquals("Lindsey", item.name);
     }
 
     @Test
     public void testDelete() {
-        FriendListItem item = new FriendListItem("Josephina", "253647", 0);
-        long id = dao.insert(item);
+        String uid = "253647";
+        Friend item = new Friend("Josephina", uid, 0);
+        long id = dao.upsert(item);
 
-        item = dao.get(id);
+        item = dao.get(uid).getValue();
         int itemsDeleted = dao.delete(item);
         assertEquals(1, itemsDeleted);
-        assertNull(dao.get(id));
+        assertNull(dao.get(uid).getValue());
+    }
+
+    @Test
+    public void testValidUsernameID() {
+        scenario.onActivity(activity -> {
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
+
+            // make sure that the alert has popped up
+            AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+            assertNotNull(alertDialog);
+
+            // check that the UID is created
+            assertNotNull(Utilities.getUID());
+        });
     }
 }
