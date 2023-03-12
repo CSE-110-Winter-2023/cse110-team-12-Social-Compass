@@ -51,7 +51,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     }
 
     /**
-     * Load all friends from the database.
+     *
      * @return a LiveData object that will be updated when any friend locations change.
      */
     public LiveData<List<Friend>> getFriendsWithinZone(Double inner, Double outer) {

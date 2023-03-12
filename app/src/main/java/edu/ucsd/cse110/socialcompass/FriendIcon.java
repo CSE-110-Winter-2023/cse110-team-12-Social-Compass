@@ -1,6 +1,7 @@
 package edu.ucsd.cse110.socialcompass;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -32,6 +33,11 @@ public class FriendIcon {
 
     }
 
+    public TextView getFriendIcon() {
+        return username_icon;
+    }
+
+
 
     public void updateAngle(float bearingAngle) {
         this.bearingAngle = bearingAngle;
@@ -53,18 +59,18 @@ public class FriendIcon {
         username_icon = new TextView(activity);
         username_icon.setId(View.generateViewId());
 
-        //username_icon.setBackground(ContextCompat.getDrawable(activity, R.drawable.house_icon));
-
+        ConstraintLayout.LayoutParams layout;
         if (isWithinRange){
             username_icon.setText(userName);
+            layout = new ConstraintLayout.LayoutParams(
+                    150, 150
+            );
         } else{
             username_icon.setBackground(ContextCompat.getDrawable(activity, R.drawable.dot));
+            layout = new ConstraintLayout.LayoutParams(
+                    45, 45
+            );
         }
-
-        //might be different bc we are changing icon
-        ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
-                150, 150
-        );
 
         // Add null checks to avoid NullPointerException
         View outerCircle = activity.findViewById(R.id.outer_circle);
@@ -73,8 +79,9 @@ public class FriendIcon {
             float outerCircleRadius = (float) outerCircle.getHeight() / 2;
             float innerCircleRadius = (float) innerCircle.getHeight() / 2;
             //dynamicRadius is for diff devices
-            //float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
+           // float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
 
+//            layout.circleRadius = Math.round(radius);
             layout.circleRadius = Math.round(radius);
             layout.circleConstraint = R.id.location_icon;
             layout.circleAngle = bearingAngle;
