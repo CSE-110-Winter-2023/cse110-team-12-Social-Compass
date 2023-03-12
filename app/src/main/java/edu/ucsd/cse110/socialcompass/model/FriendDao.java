@@ -28,4 +28,6 @@ public abstract class FriendDao {
     @Delete
     public abstract int delete(Friend friend);
 
+
+
 }
