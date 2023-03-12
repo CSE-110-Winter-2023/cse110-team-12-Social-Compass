@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -29,15 +30,21 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 
+import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDao;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.model.FriendRepository;
+import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
+import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
 /**
@@ -50,6 +57,8 @@ public class TestUsernameInput {
     ActivityScenario<MainActivity> scenario;
     FriendViewModel friendViewModel;
     FriendRepository friendRepository;
+    FriendListViewModel friendListViewModel;
+    ActivityScenario<FriendListActivity> scenario1;
 
     @Before
     public void init() {
@@ -61,6 +70,7 @@ public class TestUsernameInput {
         dao = db.getDao();
         friendViewModel = new FriendViewModel(getApplicationContext());
         this.friendRepository = new FriendRepository(dao);
+        this.friendListViewModel = new FriendListViewModel(getApplicationContext());
     }
 
     @After
@@ -71,7 +81,7 @@ public class TestUsernameInput {
     @Test
     public void testValidUsernameIDAndCopy() {
         scenario.onActivity(activity -> {
-            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name");
 
             // make sure that the alert has popped up
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
@@ -86,7 +96,7 @@ public class TestUsernameInput {
     public void testStoredUsernameAndUID() {
         scenario.onActivity(activity -> {
             // create the database and call the Alert Dialog
-            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name");
 
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
             assertNotNull(alertDialog);
@@ -101,29 +111,21 @@ public class TestUsernameInput {
             assertTrue(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick());
 
             String uid = Utilities.getUID();
-//            var user = new MediatorLiveData<Friend>();
-//            Friend friend = new Friend(name, uid, -1);
-//            user.postValue(friend);
-//
-//            Observer<Friend> obs = actualUser -> {
-//                var localUser = user.getValue();
-//                if (actualUser == null) return; // do nothing
-//                if (localUser == null) {
-//                    dao.upsert(actualUser);
-//                }
-//            };
-//            user.addSource(dao.get(uid), user::postValue);
-//            db.noti
 
-            Friend friend = new Friend(name, uid, -1);
+            Friend friend = new Friend(name, uid, 0, 0, -1);
             dao.upsert(friend);
 
-            assertEquals(friend.uid, dao.getAll().getValue().size());
-            //dao.get(uid).equals()
-            // check that the user is stored in the database
-            //assertEquals("Sam", dao.get(uid).name);
-            //assertEquals(Utilities.getUID(), dao.get(uid).getValue().uid);
-            //assertEquals(-1, dao.get(uid).getValue().order);
+            LiveData<List<Friend>> liveDataFriends = friendListViewModel.getAll();
+
+            CountDownLatch latch = new CountDownLatch(1);
+            liveDataFriends.observeForever(friendList -> {
+                if (friendList != null) {
+                    assertEquals(1, friendList.size());
+                    assertEquals("Sam", friendList.get(0).getLabel());
+                    assertEquals(Utilities.getUID(), friendList.get(0).getUid());
+                    assertEquals(-1, friendList.get(0).order);
+                }
+            });
         });
     }
 

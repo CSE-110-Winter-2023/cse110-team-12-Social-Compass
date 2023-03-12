@@ -4,8 +4,11 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
@@ -19,7 +22,6 @@ public class FriendViewModel extends AndroidViewModel {
     private final FriendRepository repo;
     private FriendDatabase db;
     private FriendDao dao;
-
 
     public FriendViewModel(@NonNull Application application) {
         super(application);
@@ -39,4 +41,5 @@ public class FriendViewModel extends AndroidViewModel {
         }
         return friend;
     }
+
 }

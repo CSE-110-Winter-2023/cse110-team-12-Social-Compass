@@ -48,8 +48,8 @@ public class FriendDatabaseTest {
 
     @Test
     public void testImport() {
-        Friend item1 = new Friend("Josephina", "253647", 0);
-        Friend item2 = new Friend("Jackson", "125690", 1);
+        Friend item1 = new Friend("Josephina", "253647", 0, 0, 1);
+        Friend item2 = new Friend("Jackson", "125690", 1, 1, 2);
 
         long id1 = dao.upsert(item1);
         long id2 = dao.upsert(item2);
@@ -61,36 +61,36 @@ public class FriendDatabaseTest {
     @Test
     public void testGet() {
         String uid = "253647";
-        Friend insertedItem = new Friend("Josephina", uid, 0);
+        Friend insertedItem = new Friend("Josephina", uid, 0, 0, 1);
         long id = dao.upsert(insertedItem);
 
         Friend item = dao.get(uid).getValue();
         assertEquals(id, item.id);
-        assertEquals(insertedItem.name, item.name);
-        assertEquals(insertedItem.uid, item.uid);
+        assertEquals(insertedItem.getLabel(), item.getLabel());
+        assertEquals(insertedItem.getUid(), item.getUid());
         assertEquals(insertedItem.order, item.order);
     }
 
     @Test
     public void testUpdate() {
         String uid = "253647";
-        Friend item = new Friend("Josephina", uid, 0);
+        Friend item = new Friend("Josephina", uid, 0, 0, 1);
         long id = dao.upsert(item);
 
         item = dao.get(uid).getValue();
-        item.name = "Lindsey";
+        item.setLabel("Lindsey");
         long itemsUpdated = dao.upsert(item);
         assertEquals(1, itemsUpdated);
 
         item = dao.get(uid).getValue();
         assertNotNull(item);
-        assertEquals("Lindsey", item.name);
+        assertEquals("Lindsey", item.getLabel());
     }
 
     @Test
     public void testDelete() {
         String uid = "253647";
-        Friend item = new Friend("Josephina", uid, 0);
+        Friend item = new Friend("Josephina", uid, 0, 0, 1);
         long id = dao.upsert(item);
 
         item = dao.get(uid).getValue();
@@ -102,7 +102,7 @@ public class FriendDatabaseTest {
     @Test
     public void testValidUsernameID() {
         scenario.onActivity(activity -> {
-            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name", db);
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name");
 
             // make sure that the alert has popped up
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
