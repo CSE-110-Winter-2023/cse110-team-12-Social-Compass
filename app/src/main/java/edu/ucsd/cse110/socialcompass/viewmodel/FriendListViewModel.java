@@ -47,6 +47,10 @@ public class FriendListViewModel extends AndroidViewModel {
         return friends;
     }
 
+    public boolean existsLocal(String uid) { return repo.existsLocal(uid); }
+
+    public boolean existsRemote(String uid) { return repo.existsRemote(uid); }
+
     public void save(Friend friend) {repo.upsertSynced(friend);}
 
     public LiveData<List<Friend>> getAll() {

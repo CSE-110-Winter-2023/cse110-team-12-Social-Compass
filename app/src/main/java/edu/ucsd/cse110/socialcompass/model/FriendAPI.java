@@ -51,6 +51,27 @@ public class FriendAPI {
     }
 
     /**
+     * Background thread for getting the response code for a GET request to the server.
+     * Called to check that the UID being added by the user is valid.
+     */
+    @WorkerThread
+    public int getFriendCode(String uid) {
+        int code = 0;
+        var request = new Request.Builder()
+                .url(URL + uid)
+                .build();
+
+        try (var response = client.newCall(request).execute()) {
+            assert response.body() != null;
+            code = response.code();
+            Log.i("GET FRIEND CODE", String.valueOf(code));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return code;
+    }
+
+    /**
      * Background thread for putting friend location to server
      * @require FriendDao.exists(friend.uid) == true
      */

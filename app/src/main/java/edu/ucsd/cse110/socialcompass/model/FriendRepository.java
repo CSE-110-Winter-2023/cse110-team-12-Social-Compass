@@ -77,6 +77,14 @@ public class FriendRepository {
     // Remote Methods
     // ==============
 
+    public boolean existsRemote(String uid) {
+        int code = api.getFriendCode(uid);
+        if (code == 200){
+            return true;
+        }
+        return false;
+    }
+
     public LiveData<Friend> getRemote(String uid) {
         // Cancel any previous poller if it exists.
         if (this.poller != null && !this.poller.isCancelled()) {

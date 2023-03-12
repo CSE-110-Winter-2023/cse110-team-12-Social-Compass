@@ -148,34 +148,32 @@ public class FriendListActivity extends AppCompatActivity {
         var addUIDButton = findViewById(R.id.addUID_btn);
         addUIDButton.setOnClickListener((View v) -> {
             String uid = input.getText().toString();
-            var friendLiveData = viewModel.getFriend(uid);
 
+            // Check if this user already exists on the user's local database
+            if (viewModel.existsLocal(uid)) {
+                Utilities.showErrorAlert(FriendListActivity.this, "Friend already added");
+                return;
+            }
+
+            // Check if the user exists in the remote database
+            if (!viewModel.existsRemote(uid)) {
+                Utilities.showErrorAlert(FriendListActivity.this, "Error: Cannot find friend");
+                return;
+            }
+
+            // Otherwise, create the livedata for the remote friend object and set an observer
+            var friendLiveData = viewModel.getFriend(uid);
             friendLiveData.observe(this, new Observer<Friend>() {
                 @Override
                 public void onChanged(Friend friend) {
                     // Remove the observer after the first update
                     friendLiveData.removeObserver(this);
-
-                    //TODO: if friend is null, catch and display an alertidalog error to user
-                    //FriendAPI api = new FriendAPI();
-                    if (friend == null) {
-                        Utilities.showErrorAlert(FriendListActivity.this, "Error: Cannot find friend");
-                    } else {
-                        friend.uid = uid;
-                        friend.setUID(uid);
-                        viewModel.save(friend);
-                    }
+                    // save the friend to the viewModel
+                    viewModel.save(friend);
                 }
             });
         });
     }
-
-    //            friendLiveData.observeForever(new Observer<Friend>() {
-//                @Override
-//                public void onChanged(Friend friend) {
-//                    newFriend = friend;
-//                }
-//            });
 
     private void onFriendClicked(Friend friend, FriendListViewModel viewModel) {
         Log.d("FriendAdapter", "Opened friend " + friend.name);
