@@ -29,5 +29,5 @@ public abstract class FriendDao {
     public abstract int delete(Friend friend);
 
     @Query("SELECT * FROM 'friends' WHERE 'distance' > :inner AND 'distance' <= :outer")
-    public abstract LiveData<Friend> users_within_zone(double inner, double outer);
+    public abstract LiveData<List<Friend>> get_users_within_zone(double inner, double outer);
 }

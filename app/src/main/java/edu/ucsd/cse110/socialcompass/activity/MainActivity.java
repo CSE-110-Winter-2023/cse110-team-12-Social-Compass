@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import edu.ucsd.cse110.socialcompass.Constants;
+import edu.ucsd.cse110.socialcompass.FriendIcon;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
@@ -55,7 +57,37 @@ public class MainActivity extends AppCompatActivity {
         locationService = LocationService.singleton(this);
         this.reobserveLocation();
 
+        //Zone 1
+        int radius = Constants.ZONE1_2;
+        for(double i = 0.0; i <= 1; i += 0.2){
+            displayFriends(viewModel, i, i+0.2 , radius, true);
+            radius += 39;
+        }
 
+        //Zone 2
+        for(double i = 1.0; i <= 10; i += 1.8){
+            displayFriends(viewModel, i, i+1.8 , radius,true);
+            radius += 39;
+        }
+
+        //beyond Zone 2
+        displayFriends(viewModel, 10.0, Double.POSITIVE_INFINITY, 390, false);
+    }
+
+    private void displayFriends(MainActivityViewModel viewModel, double inner, double outer, int radius, boolean isWithinRange){
+        // .getValue() seems to return null for live data, so this implementation assumes it doesnt return null
+        LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner,outer);
+        List<Friend> friends = liveDataFriends.getValue();
+
+        // hardcoded
+        double distance = 0.3;
+        float bearingAngle = 90;
+
+        for(Friend friend : friends){
+
+            FriendIcon friendIcon = new FriendIcon(this,friend.getLabel(), bearingAngle,radius, distance,isWithinRange);
+            friendIcon.createIcon();
+        }
     }
 
     private MainActivityViewModel setupViewModel() {

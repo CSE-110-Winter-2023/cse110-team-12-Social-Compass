@@ -16,16 +16,17 @@ public class FriendIcon {
     private String userName;
     private TextView username_icon;
     private int id;
+    boolean isWithinRange;
 
-    int distance;   //in miles
+    double distance;   //in miles
     // Constructor; passes in the activity you want the button,
     // label of the button, and the corresponding bearing angle
-    public FriendIcon(Activity activity, String userName, float bearingAngle, int radius, int distance) {
+    public FriendIcon(Activity activity, String userName, float bearingAngle, int radius, double distance, boolean isWithinRange) {
         this.activity = activity;
 
         this.bearingAngle = bearingAngle;
         this.userName = userName;
-
+        this.isWithinRange = isWithinRange;
         this.radius = radius;
         this.distance = distance;
 
@@ -47,42 +48,47 @@ public class FriendIcon {
     public int getId() { return this.id;}
 
 
+    //Creates a new button in the activity and sets ints constraints
+    public void createIcon() {
+        username_icon = new TextView(activity);
+        username_icon.setId(View.generateViewId());
 
+        //username_icon.setBackground(ContextCompat.getDrawable(activity, R.drawable.house_icon));
 
+        if (isWithinRange){
+            username_icon.setText(userName);
+        } else{
+            username_icon.setBackground(ContextCompat.getDrawable(activity, R.drawable.dot));
+        }
 
-    // Creates a new button in the activity and sets ints constraints
-//    public void createButton() {
-//        button = new Button(activity);
-//        button.setId(View.generateViewId());
-//        button.setBackground(ContextCompat.getDrawable(activity, R.drawable.house_icon));
-//        ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
-//                150, 150
-//        );
-//
-//        // Add null checks to avoid NullPointerException
-//        View outerCircle = activity.findViewById(R.id.outer_circle);
-//        View innerCircle = activity.findViewById(R.id.inner_circle);
-//        if (outerCircle != null && innerCircle != null) {
-//            float outerCircleRadius = (float) outerCircle.getHeight() / 2;
-//            float innerCircleRadius = (float) innerCircle.getHeight() / 2;
-//            float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
-//
-//            layout.circleRadius = Math.round(dynamicRadius);
-//            layout.circleConstraint = R.id.location_icon;
-//            layout.circleAngle = bearingAngle;
-//            layout.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-//            layout.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-//            layout.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
-//            layout.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-//            button.setLayoutParams(layout);
-//            id = button.getId();
-//
-//            // Add OnClickListener to the button
-//            button.setOnClickListener(view -> LabelWindow.showLabel(activity, label));
-//        } else {
-//            Toast.makeText(activity, "Error creating button: outer_circle or inner_circle not found", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+        //might be different bc we are changing icon
+        ConstraintLayout.LayoutParams layout = new ConstraintLayout.LayoutParams(
+                150, 150
+        );
+
+        // Add null checks to avoid NullPointerException
+        View outerCircle = activity.findViewById(R.id.outer_circle);
+        View innerCircle = activity.findViewById(R.id.inner_circle);
+        if (outerCircle != null && innerCircle != null) {
+            float outerCircleRadius = (float) outerCircle.getHeight() / 2;
+            float innerCircleRadius = (float) innerCircle.getHeight() / 2;
+            //dynamicRadius is for diff devices
+            //float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
+
+            layout.circleRadius = Math.round(radius);
+            layout.circleConstraint = R.id.location_icon;
+            layout.circleAngle = bearingAngle;
+            layout.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+            layout.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+            layout.endToEnd = ConstraintLayout.LayoutParams.PARENT_ID;
+            layout.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
+            username_icon.setLayoutParams(layout);
+            id = username_icon.getId();
+
+        } else {
+            Toast.makeText(activity, "Error creating button: outer_circle or inner_circle not found", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 
     // Unused for now
