@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Social Compass</string>
+    <string name="close_icon">✕</string>
 </resources>

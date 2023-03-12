@@ -18,9 +18,14 @@ import edu.ucsd.cse110.socialcompass.model.Friend;
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
     private List<Friend> friends = Collections.emptyList();
     private Consumer<Friend> onFriendClicked;
+    private Consumer<Friend> onFriendDeleteClicked;
 
     public void setOnFriendClickListener(Consumer<Friend> onFriendClicked) {
         this.onFriendClicked = onFriendClicked;
+    }
+
+    public void setOnFriendDeleteClickListener(Consumer<Friend> onFriendDeleteClicked) {
+        this.onFriendDeleteClicked = onFriendDeleteClicked;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -28,6 +33,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         public final TextView nameView;
         public final TextView uidView;
         public final TextView locationView;
+        public final View deleteButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -37,16 +43,15 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
             this.nameView = itemView.findViewById(R.id.name_text);
             this.uidView = itemView.findViewById(R.id.uid_text);
             this.locationView = itemView.findViewById(R.id.location_text);
+            this.deleteButton = itemView.findViewById(R.id.friend_delete);
         }
 
         public void bind(Friend friend) {
             nameView.setText(friend.name);
             uidView.setText(friend.getUid());
-
-            // Show the latitude and longitude of the user
             locationView.setText(friend.latitude + "," + friend.longitude);
-
             itemView.setOnClickListener(v -> onFriendClicked.accept(friend));
+            itemView.setOnClickListener(v -> onFriendDeleteClicked.accept(friend));
         }
     }
 

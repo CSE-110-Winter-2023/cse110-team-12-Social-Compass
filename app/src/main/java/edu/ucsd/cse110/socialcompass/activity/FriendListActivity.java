@@ -32,9 +32,8 @@ import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
 import java.util.List;
 public class FriendListActivity extends AppCompatActivity {
-    FriendListViewModel friendListViewModel;
-    FriendViewModel friendViewModel;
 
+    public FriendListViewModel viewModel;
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
     private LocationService locationService;
@@ -57,9 +56,9 @@ public class FriendListActivity extends AppCompatActivity {
         UserUID = preferences.getString("myUID", "Error getting UID");
         boolean newUser = preferences.getBoolean("newUser", true);
 
-        var friendListViewModel = setupViewModel();
-        var adapter = setupAdapter(friendListViewModel);
-        setupViews(friendListViewModel, adapter);
+        viewModel = setupViewModel();
+        var adapter = setupAdapter(viewModel);
+        setupViews(viewModel, adapter);
 
         // Get the updated latitude and longitude of the user
         locationService = LocationService.singleton(this);
@@ -69,14 +68,14 @@ public class FriendListActivity extends AppCompatActivity {
         if (newUser) {
             var self = new Friend(UserName, UserUID, latitude, longitude,-1);
             Log.d("USER", self.name);
-            friendListViewModel.save(self);
+            viewModel.save(self);
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newUser", false);
             editor.apply();
         }
 
-        friendListViewModel.getAll().observe(this, new Observer<List<Friend>>() {
+        viewModel.getAll().observe(this, new Observer<List<Friend>>() {
             @Override
             public void onChanged(List<Friend> friendList) {
                 if (friendList != null) {
@@ -93,8 +92,7 @@ public class FriendListActivity extends AppCompatActivity {
 
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
         @SuppressLint("RestrictedApi") TextView locationText = recyclerView.findViewById(R.id.location_text);
-        locationText.setText(Utilities.formatLocation(latLong.first, latLong.second));
-        System.out.println("Location: " + Utilities.formatLocation(latLong.first, latLong.second));
+        locationText.setText(latLong.first + ", " + latLong.second);
     }
 
     private FriendListViewModel setupViewModel() {
@@ -106,6 +104,7 @@ public class FriendListActivity extends AppCompatActivity {
         FriendAdapter adapter = new FriendAdapter();
         adapter.setHasStableIds(true);
         adapter.setOnFriendClickListener(friend -> onFriendClicked(friend, viewModel));
+        adapter.setOnFriendDeleteClickListener(friend -> onFriendDeleteClicked(friend, viewModel));
         viewModel.getFriends().observe(this, adapter::setFriends);
         return adapter;
     }
@@ -184,6 +183,12 @@ public class FriendListActivity extends AppCompatActivity {
         Log.d("FriendAdapter", "Opened friend " + friend.name);
         var intent = FriendActivity.intentFor(this, friend);
         startActivity(intent);
+    }
+
+    private void onFriendDeleteClicked(Friend friend, FriendListViewModel viewModel) {
+        // Delete the friend
+        Log.d("FriendAdapter", "Deleted friend " + friend.name);
+        viewModel.delete(friend);
     }
 
     public static boolean checkInsert() {

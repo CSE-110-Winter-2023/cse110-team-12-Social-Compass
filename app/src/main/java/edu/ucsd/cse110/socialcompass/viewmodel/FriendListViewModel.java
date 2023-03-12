@@ -56,8 +56,5 @@ public class FriendListViewModel extends AndroidViewModel {
     public LiveData<List<Friend>> getAll() {
         return dao.getAll();
     }
-
-    public long upsert(Friend friend) {
-        return dao.upsert(friend);
-    }
+    public void delete(Friend friend) {repo.deleteLocal(friend);}
 }
