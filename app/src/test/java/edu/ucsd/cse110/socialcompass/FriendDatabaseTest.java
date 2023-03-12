@@ -28,12 +28,14 @@ import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDao;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 
 @RunWith(AndroidJUnit4.class)
 public class FriendDatabaseTest {
     private FriendDao dao;
     private FriendDatabase db;
     ActivityScenario<MainActivity> scenario;
+    private FriendListViewModel friendListViewModel;
 
     @Before
     public void createDb() {
@@ -43,6 +45,7 @@ public class FriendDatabaseTest {
                 .allowMainThreadQueries()
                 .build();
         dao = db.getDao();
+        friendListViewModel = new FriendListViewModel(ApplicationProvider.getApplicationContext());
     }
 
     @After

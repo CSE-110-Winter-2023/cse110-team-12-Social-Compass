@@ -59,7 +59,6 @@ public class TestUsernameInput {
     FriendViewModel friendViewModel;
     FriendRepository friendRepository;
     FriendListViewModel friendListViewModel;
-    ActivityScenario<FriendListActivity> scenario1;
 
     @Before
     public void init() {
