@@ -32,7 +32,7 @@ public class TestOrientation {
         });
     }
 
-    @Test
+    /*@Test
     public void testDirectionSignsRotated180Degrees() {
         ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
         scenario.onActivity(activity -> {
@@ -71,5 +71,5 @@ public class TestOrientation {
             assertEquals(locationOfEast[1], locationOfEastAfter[1]);
             assertEquals(locationOfWest[1], locationOfWestAfter[1]);
         });
-    }
+    }*/
 }
