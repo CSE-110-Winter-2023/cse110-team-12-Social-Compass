@@ -41,6 +41,7 @@ public class FriendListActivity extends AppCompatActivity {
     private String UserName, UserUID;
     private double latitude, longitude;
     static boolean isInserted = false;
+    private Friend newFriend;
 
     private int friendListSize;
 
@@ -55,9 +56,9 @@ public class FriendListActivity extends AppCompatActivity {
         UserUID = preferences.getString("myUID", "Error getting UID");
         boolean newUser = preferences.getBoolean("newUser", true);
 
-        var viewModel = setupViewModel();
-        var adapter = setupAdapter(viewModel);
-        setupViews(viewModel, adapter);
+        var friendListViewModel = setupViewModel();
+        var adapter = setupAdapter(friendListViewModel);
+        setupViews(friendListViewModel, adapter);
 
         // Get the updated latitude and longitude of the user
         locationService = LocationService.singleton(this);
@@ -68,6 +69,7 @@ public class FriendListActivity extends AppCompatActivity {
         // if this is a new user, add them to the database
         if (newUser) {
             var self = new Friend(UserName, UserUID, latitude, longitude,-1);
+            Log.d("USER", self.name);
             friendListViewModel.save(self);
 
             SharedPreferences.Editor editor = preferences.edit();
@@ -146,19 +148,34 @@ public class FriendListActivity extends AppCompatActivity {
         var addUIDButton = findViewById(R.id.addUID_btn);
         addUIDButton.setOnClickListener((View v) -> {
             String uid = input.getText().toString();
-            var friend = viewModel.getFriend(uid).getValue();
+            var friendLiveData = viewModel.getFriend(uid);
 
-            //TODO: if friend is null, catch and display an alertidalog error to user
-            //FriendAPI api = new FriendAPI();
-            if (friend == null) {
-                Utilities.showErrorAlert(this, "Error: Cannot find friend");
-            } else {
-                friend.uid = uid;
-                friend.setUID(uid);
-                viewModel.save(friend);
-            }
+            friendLiveData.observe(this, new Observer<Friend>() {
+                @Override
+                public void onChanged(Friend friend) {
+                    // Remove the observer after the first update
+                    friendLiveData.removeObserver(this);
+
+                    //TODO: if friend is null, catch and display an alertidalog error to user
+                    //FriendAPI api = new FriendAPI();
+                    if (friend == null) {
+                        Utilities.showErrorAlert(FriendListActivity.this, "Error: Cannot find friend");
+                    } else {
+                        friend.uid = uid;
+                        friend.setUID(uid);
+                        viewModel.save(friend);
+                    }
+                }
+            });
         });
     }
+
+    //            friendLiveData.observeForever(new Observer<Friend>() {
+//                @Override
+//                public void onChanged(Friend friend) {
+//                    newFriend = friend;
+//                }
+//            });
 
     private void onFriendClicked(Friend friend, FriendListViewModel viewModel) {
         Log.d("FriendAdapter", "Opened friend " + friend.name);

@@ -14,7 +14,7 @@ public class FriendAPI {
     private volatile static FriendAPI instance = null;
     private OkHttpClient client;
     // URL for Social Compass server API
-    private static final String URL = "https://socialcompass.goto.ucsd.edu/docs/location/";
+    private static final String URL = "https://socialcompass.goto.ucsd.edu/location/";
     // MediaType specification for putFriend
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
@@ -58,6 +58,7 @@ public class FriendAPI {
     public void putFriend(Friend friend) {
 
         String uid = friend.getUid();
+        Log.d("UID",uid);
 
         var requestBody = RequestBody.create(friend.toJSON(), JSON);
         var request = new Request.Builder()

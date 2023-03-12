@@ -10,6 +10,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "friends")
 public class Friend {
@@ -19,9 +20,11 @@ public class Friend {
     public long id; // id for database
 
     @ColumnInfo(name = "name")
+    @SerializedName("label")
     public String name;
 
     @ColumnInfo(name = "uid")
+    @SerializedName("private_code")
     public String uid;
 
     @ColumnInfo(name = "latitude")
