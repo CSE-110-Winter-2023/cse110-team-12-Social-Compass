@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
         this.reobserveLocation();
 
 
-
-
     }
 
     private MainActivityViewModel setupViewModel() {
