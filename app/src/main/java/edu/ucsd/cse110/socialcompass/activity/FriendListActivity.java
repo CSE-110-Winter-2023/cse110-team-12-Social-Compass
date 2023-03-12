@@ -52,8 +52,8 @@ public class FriendListActivity extends AppCompatActivity {
         // Get the updated latitude and longitude of the user
         locationService = LocationService.singleton(this);
         var locationData = locationService.getLocation();
-        latitude = locationData.getValue().first;
-        longitude = locationData.getValue().second;
+//        latitude = locationData.getValue().first;
+//        longitude = locationData.getValue().second;
 
         // if this is a new user, add them to the database
         if (newUser) {
@@ -65,11 +65,11 @@ public class FriendListActivity extends AppCompatActivity {
             editor.apply();
         }
 
-        locationService.getLocation().observe(this, loc -> {
-            self.setLatitude(locationService.getLocation().getValue().first);
-            self.setLongitude(locationService.getLocation().getValue().second);
-            Log.i("Location", self.latitude + "," + self.longitude);
-        });
+//        locationService.getLocation().observe(this, loc -> {
+//            self.setLatitude(locationService.getLocation().getValue().first);
+//            self.setLongitude(locationService.getLocation().getValue().second);
+//            Log.i("Location", self.latitude + "," + self.longitude);
+//        });
     }
 
     private FriendListViewModel setupViewModel() {
@@ -131,8 +131,8 @@ public class FriendListActivity extends AppCompatActivity {
             var friend = viewModel.getFriend(uid).getValue();
 
             //TODO: if friend is null, catch and display an alertidalog error to user
-            FriendAPI api = new FriendAPI();
-            if (api.getFriend(uid) == null || friend == null) {
+            //FriendAPI api = new FriendAPI();
+            if (friend == null) {
                 Utilities.showErrorAlert(this, "Error: Cannot find friend");
             } else {
                 friend.uid = uid;
