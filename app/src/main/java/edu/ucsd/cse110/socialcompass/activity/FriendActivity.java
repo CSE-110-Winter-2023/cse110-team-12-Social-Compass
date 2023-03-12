@@ -15,8 +15,6 @@ import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
 public class FriendActivity extends AppCompatActivity {
-    FriendListViewModel friendListViewModel;
-    FriendViewModel friendViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
