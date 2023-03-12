@@ -73,6 +73,7 @@ public class Utilities {
                     //add a new "Friend" for self in onCreate of FriendListActivity
                     editor.putString("myName", name);
                     editor.apply();
+                    //Friend friend = new Friend(name, uniqueID, )
 
                     dialog.cancel();
                     showCopyUIDAlert(activity, "User UID", uniqueID);

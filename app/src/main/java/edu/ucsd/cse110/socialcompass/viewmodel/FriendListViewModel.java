@@ -30,7 +30,6 @@ public class FriendListViewModel extends AndroidViewModel {
      * @return a LiveData object that will be updated when the friend's location change.
      */
     public LiveData<Friend> getFriend(String uid) {
-
         return repo.getLocal(uid);
     }
 
@@ -46,4 +45,6 @@ public class FriendListViewModel extends AndroidViewModel {
     }
 
     public void save(Friend friend) {repo.upsertSynced(friend);}
+
+
 }
