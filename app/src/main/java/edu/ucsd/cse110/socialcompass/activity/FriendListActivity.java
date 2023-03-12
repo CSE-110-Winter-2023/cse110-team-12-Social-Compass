@@ -122,7 +122,7 @@ public class FriendListActivity extends AppCompatActivity {
             if (api.getFriend(uid) == null || friend == null) {
                 Utilities.showErrorAlert(this, "Error: Cannot find friend");
             } else {
-                friend.uid = uid;
+                friend.setUID(uid);
                 viewModel.save(friend);
             }
         });
