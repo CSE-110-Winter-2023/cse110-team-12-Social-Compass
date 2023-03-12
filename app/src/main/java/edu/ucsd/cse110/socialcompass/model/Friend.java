@@ -14,22 +14,22 @@ public class Friend {
     @ColumnInfo(name = "id")
     public long id; // id for database
 
-    @ColumnInfo(name = "label")
-    private String label;
+    @ColumnInfo(name = "name")
+    public String name;
 
     @ColumnInfo(name = "uid")
-    private String uid;
+    public String uid;
 
     @ColumnInfo(name = "latitude")
-    private double latitude;
+    public double latitude;
 
     @ColumnInfo(name = "longitude")
-    private double longitude;
+    public double longitude;
     public int order;
 
     // Constructor matching fields above
-    public Friend(@NonNull String label, @NonNull String uid, double latitude, double longitude, int order) {
-        this.label = label;
+    public Friend(@NonNull String name, @NonNull String uid, double latitude, double longitude, int order) {
+        this.name = name;
         this.uid = uid;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -44,9 +44,9 @@ public class Friend {
 
     public void setUID(String uid) { this.uid = uid; }
 
-    public String getLabel() { return label; }
+    public String getName() { return name; }
 
-    public void setLabel(String name) { this.label = name; }
+    public void setName(String name) { this.name = name; }
 
     public double getLatitude() { return latitude; }
 
@@ -67,7 +67,7 @@ public class Friend {
     @Override
     public String toString() {
         return "FriendListItem{" +
-                "name='" + label + '\'' +
+                "name='" + name + '\'' +
                 ", uid=" + uid +
                 ", order=" + order +
                 '}';

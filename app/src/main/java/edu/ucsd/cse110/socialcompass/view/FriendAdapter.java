@@ -40,7 +40,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         }
 
         public void bind(Friend friend) {
-            nameView.setText(friend.getLabel());
+            nameView.setText(friend.name);
             uidView.setText(friend.getUid());
 
             itemView.setOnClickListener(v -> onFriendClicked.accept(friend));
