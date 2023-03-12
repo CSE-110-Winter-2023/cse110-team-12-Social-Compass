@@ -55,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
         locationService = LocationService.singleton(this);
         this.reobserveLocation();
 
+
+
+
     }
 
     private MainActivityViewModel setupViewModel() {
