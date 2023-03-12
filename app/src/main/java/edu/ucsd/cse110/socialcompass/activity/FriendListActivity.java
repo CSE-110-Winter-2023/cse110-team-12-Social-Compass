@@ -12,6 +12,8 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,6 +47,8 @@ public class FriendListActivity extends AppCompatActivity {
         UserUID = preferences.getString("myUID", "Error getting UID");
         boolean newUser = preferences.getBoolean("newUser", true);
 
+        System.out.println(newUser);
+
         var viewModel = setupViewModel();
         var adapter = setupAdapter(viewModel);
         setupViews(viewModel, adapter);
@@ -52,8 +56,8 @@ public class FriendListActivity extends AppCompatActivity {
         // Get the updated latitude and longitude of the user
         locationService = LocationService.singleton(this);
         var locationData = locationService.getLocation();
-        latitude = locationData.getValue().first;
-        longitude = locationData.getValue().second;
+//        latitude = locationData.getValue().first;
+//        longitude = locationData.getValue().second;
 
         // if this is a new user, add them to the database
         if (newUser) {
@@ -65,11 +69,11 @@ public class FriendListActivity extends AppCompatActivity {
             editor.apply();
         }
 
-        locationService.getLocation().observe(this, loc -> {
-            self.setLatitude(locationService.getLocation().getValue().first);
-            self.setLongitude(locationService.getLocation().getValue().second);
-            Log.i("Location", self.latitude + "," + self.longitude);
-        });
+//        locationService.getLocation().observe(this, loc -> {
+//            self.setLatitude(locationService.getLocation().getValue().first);
+//            self.setLongitude(locationService.getLocation().getValue().second);
+//            Log.i("Location", self.latitude + "," + self.longitude);
+//        });
     }
 
     private FriendListViewModel setupViewModel() {
@@ -128,16 +132,32 @@ public class FriendListActivity extends AppCompatActivity {
         var addUIDButton = findViewById(R.id.addUID_btn);
         addUIDButton.setOnClickListener((View v) -> {
             String uid = input.getText().toString();
-            var friend = viewModel.getFriend(uid).getValue();
+            //var friend = viewModel.getFriend(uid).getValue();
+            LiveData<Friend> liveFriend = viewModel.getFriend(uid);
 
-            //TODO: if friend is null, catch and display an alertidalog error to user
-            FriendAPI api = new FriendAPI();
-            if (api.getFriend(uid) == null || friend == null) {
-                Utilities.showErrorAlert(this, "Error: Cannot find friend");
-            } else {
-                friend.uid = uid;
-                viewModel.save(friend);
-            }
+
+            liveFriend.observe(this, new Observer<Friend>() {
+                @Override
+                public void onChanged(Friend friend) {
+                    if (friend == null) {
+//                        Utilities.showErrorAlert(this, "Error: Cannot find friend");
+                        System.out.println("error");
+                    } else {
+                        friend.uid = uid;
+                        viewModel.save(friend);
+                    }
+                }
+            });
+
+
+//            //TODO: if friend is null, catch and display an alertidalog error to user
+//            FriendAPI api = new FriendAPI();
+//            if (api.getFriend(uid) == null || friend == null) {
+//                Utilities.showErrorAlert(this, "Error: Cannot find friend");
+//            } else {
+//                friend.uid = uid;
+//                viewModel.save(friend);
+//            }
         });
     }
 

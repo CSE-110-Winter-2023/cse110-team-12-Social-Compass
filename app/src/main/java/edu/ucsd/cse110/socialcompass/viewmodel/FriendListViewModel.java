@@ -10,18 +10,20 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 
 import edu.ucsd.cse110.socialcompass.model.Friend;
+import edu.ucsd.cse110.socialcompass.model.FriendDao;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.model.FriendRepository;
 
 public class FriendListViewModel extends AndroidViewModel {
     private LiveData<List<Friend>> friends;
     private final FriendRepository repo;
+    private final FriendDao dao;
 
     public FriendListViewModel(@NonNull Application application) {
         super(application);
         var context = application.getApplicationContext();
         var db = FriendDatabase.provide(context);
-        var dao = db.getDao();
+        this.dao = db.getDao();
         this.repo = new FriendRepository(dao);
     }
 
@@ -31,7 +33,8 @@ public class FriendListViewModel extends AndroidViewModel {
      */
     public LiveData<Friend> getFriend(String uid) {
 
-        return repo.getLocal(uid);
+//        return repo.getLocal(uid);
+        return this.dao.get(uid);
     }
 
     /**
@@ -46,4 +49,9 @@ public class FriendListViewModel extends AndroidViewModel {
     }
 
     public void save(Friend friend) {repo.upsertSynced(friend);}
+
+//    public LiveData<Friend> getFriend(String uid) {
+//
+//    }
+
 }

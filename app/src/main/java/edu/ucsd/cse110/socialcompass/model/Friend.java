@@ -61,6 +61,7 @@ public class Friend {
 
     // Factory method for converting Friend content to JSON file
     public String toJSON() {
+        System.out.println(new Gson().toJson(this));
         return new Gson().toJson(this);
     }
 

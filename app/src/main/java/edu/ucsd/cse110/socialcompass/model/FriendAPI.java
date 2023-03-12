@@ -63,6 +63,7 @@ public class FriendAPI {
         var request = new Request.Builder()
                 .url(URL + uid)
                 .put(requestBody)
+                // 49b97323-e99d-485b-8380-96fb6e32c56a
                 .build();
 
         try (var response = client.newCall(request).execute()) {
@@ -72,6 +73,7 @@ public class FriendAPI {
             System.out.println("Request Body: " + requestBody.toString());
             System.out.println("Response body: " + body);
         } catch (Exception e) {
+            System.out.println("ERROR HERE!!!!");
             e.printStackTrace();
         }
     }
