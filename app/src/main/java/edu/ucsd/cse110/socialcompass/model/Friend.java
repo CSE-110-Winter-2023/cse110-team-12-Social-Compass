@@ -32,9 +32,11 @@ public class Friend {
     public int order;
 
     // Constructor matching fields above
-    public Friend(@NonNull String name, @NonNull String uid, int order) {
+    public Friend(@NonNull String name, @NonNull String uid, double latitude, double longitude, int order) {
         this.name = name;
         this.uid = uid;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.order = order;
     }
 
@@ -55,11 +57,7 @@ public class Friend {
     public double getLongitude() { return longitude; }
 
     public void setLatitude(double latitude) {
-        locationService.getLocation().observe(this, loc -> {
-            self.setLatitude(locationService.getLocation().getValue().first);
-            self.setLongitude(locationService.getLocation().getValue().second);
-            Log.i("Location", self.latitude + "," + self.longitude);
-        });
+        this.latitude = latitude;
     }
 
     public void setLongitude(double longitude) {
