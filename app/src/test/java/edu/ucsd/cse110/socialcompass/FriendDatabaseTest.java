@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import android.app.AlertDialog;
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -20,6 +21,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.shadows.ShadowAlertDialog;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
@@ -34,6 +37,7 @@ public class FriendDatabaseTest {
 
     @Before
     public void createDb() {
+        scenario = ActivityScenario.launch(MainActivity.class);
         Context context = ApplicationProvider.getApplicationContext();
         db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
                 .allowMainThreadQueries()
@@ -94,6 +98,17 @@ public class FriendDatabaseTest {
         long id = dao.upsert(item);
 
         item = dao.get(uid).getValue();
+        LiveData<List<Friend>> liveDataFriends = friendListViewModel.getAll();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        liveDataFriends.observeForever(friendList -> {
+            if (friendList != null) {
+                assertEquals(1, friendList.size());
+                assertEquals("Sam", friendList.get(0).getLabel());
+                assertEquals(Utilities.getUID(), friendList.get(0).getUid());
+                assertEquals(-1, friendList.get(0).order);
+            }
+        });
         int itemsDeleted = dao.delete(item);
         assertEquals(1, itemsDeleted);
         assertNull(dao.get(uid).getValue());
