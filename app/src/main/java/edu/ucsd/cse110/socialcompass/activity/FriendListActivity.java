@@ -1,4 +1,15 @@
 package edu.ucsd.cse110.socialcompass.activity;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -9,14 +20,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
@@ -24,8 +27,13 @@ import edu.ucsd.cse110.socialcompass.model.FriendAPI;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
+import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
+import java.util.List;
 public class FriendListActivity extends AppCompatActivity {
+    FriendListViewModel friendListViewModel;
+    FriendViewModel friendViewModel;
+
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
     private LocationService locationService;
@@ -33,6 +41,8 @@ public class FriendListActivity extends AppCompatActivity {
     private String UserName, UserUID;
     private double latitude, longitude;
     static boolean isInserted = false;
+
+    private int friendListSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +67,8 @@ public class FriendListActivity extends AppCompatActivity {
 
         // if this is a new user, add them to the database
         if (newUser) {
-            self = new Friend(UserName, UserUID, latitude, longitude, -1);
-            viewModel.save(self);
+            var self = new Friend(UserName, UserUID, latitude, longitude,-1);
+            friendListViewModel.save(self);
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newUser", false);
@@ -70,6 +80,14 @@ public class FriendListActivity extends AppCompatActivity {
 //            self.setLongitude(locationService.getLocation().getValue().second);
 //            Log.i("Location", self.latitude + "," + self.longitude);
 //        });
+        friendListViewModel.getAll().observe(this, new Observer<List<Friend>>() {
+            @Override
+            public void onChanged(List<Friend> friendList) {
+                if (friendList != null) {
+                    friendListSize = friendList.size();
+                }
+            }
+        });
     }
 
     private FriendListViewModel setupViewModel() {
@@ -136,6 +154,7 @@ public class FriendListActivity extends AppCompatActivity {
                 Utilities.showErrorAlert(this, "Error: Cannot find friend");
             } else {
                 friend.uid = uid;
+                friend.setUID(uid);
                 viewModel.save(friend);
             }
         });
@@ -151,5 +170,7 @@ public class FriendListActivity extends AppCompatActivity {
         return isInserted;
     }
 
-
+    public int getFriendListSize() {
+        return this.friendListSize;
+    }
 }
