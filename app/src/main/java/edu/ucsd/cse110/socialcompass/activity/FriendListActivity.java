@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
@@ -37,7 +38,7 @@ public class FriendListActivity extends AppCompatActivity {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
     private LocationService locationService;
-    private Friend self;
+    private LiveData<Friend> self;
     private String UserName, UserUID;
     private double latitude, longitude;
     static boolean isInserted = false;
@@ -62,9 +63,7 @@ public class FriendListActivity extends AppCompatActivity {
 
         // Get the updated latitude and longitude of the user
         locationService = LocationService.singleton(this);
-        var locationData = locationService.getLocation();
-//        latitude = locationData.getValue().first;
-//        longitude = locationData.getValue().second;
+        reobserveLocation();
 
         // if this is a new user, add them to the database
         if (newUser) {
@@ -77,11 +76,6 @@ public class FriendListActivity extends AppCompatActivity {
             editor.apply();
         }
 
-//        locationService.getLocation().observe(this, loc -> {
-//            self.setLatitude(locationService.getLocation().getValue().first);
-//            self.setLongitude(locationService.getLocation().getValue().second);
-//            Log.i("Location", self.latitude + "," + self.longitude);
-//        });
         friendListViewModel.getAll().observe(this, new Observer<List<Friend>>() {
             @Override
             public void onChanged(List<Friend> friendList) {
@@ -90,6 +84,17 @@ public class FriendListActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void reobserveLocation() {
+        var locationData = locationService.getLocation();
+        locationData.observe(this, this::onLocationChanged);
+    }
+
+    private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
+        @SuppressLint("RestrictedApi") TextView locationText = recyclerView.findViewById(R.id.location_text);
+        locationText.setText(Utilities.formatLocation(latLong.first, latLong.second));
+        System.out.println("Location: " + Utilities.formatLocation(latLong.first, latLong.second));
     }
 
     private FriendListViewModel setupViewModel() {
