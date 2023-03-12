@@ -39,10 +39,8 @@ public class LocationService implements LocationListener {
     public static LocationService singleton(AppCompatActivity activity){
         if (instance == null){
             instance = new LocationService(activity);
-
         }
         return instance;
-
     }
 
     /**

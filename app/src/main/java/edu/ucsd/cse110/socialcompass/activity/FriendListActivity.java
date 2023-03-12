@@ -61,7 +61,7 @@ public class FriendListActivity extends AppCompatActivity {
 
         // if this is a new user, add them to the database
         if (newUser) {
-            self = new Friend(UserName, UserUID, latitude, longitude,-1);
+            self = new Friend(UserName, UserUID, latitude, longitude, -1);
             viewModel.save(self);
 
             SharedPreferences.Editor editor = preferences.edit();

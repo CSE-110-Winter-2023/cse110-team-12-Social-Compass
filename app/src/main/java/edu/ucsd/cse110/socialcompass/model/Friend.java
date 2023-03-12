@@ -1,6 +1,10 @@
 package edu.ucsd.cse110.socialcompass.model;
 
+import android.util.Log;
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -28,11 +32,9 @@ public class Friend {
     public int order;
 
     // Constructor matching fields above
-    public Friend(@NonNull String name, @NonNull String uid, double latitude, double longitude, int order) {
+    public Friend(@NonNull String name, @NonNull String uid, int order) {
         this.name = name;
         this.uid = uid;
-        this.latitude = latitude;
-        this.longitude = longitude;
         this.order = order;
     }
 
@@ -52,9 +54,17 @@ public class Friend {
 
     public double getLongitude() { return longitude; }
 
-    public void setLatitude(double latitude) { this.latitude = latitude; }
+    public void setLatitude(double latitude) {
+        locationService.getLocation().observe(this, loc -> {
+            self.setLatitude(locationService.getLocation().getValue().first);
+            self.setLongitude(locationService.getLocation().getValue().second);
+            Log.i("Location", self.latitude + "," + self.longitude);
+        });
+    }
 
-    public void setLongitude(double longitude) { this.longitude = longitude; }
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
     // Factory method for creating Friend from JSON file
     public static Friend fromJSON(String json) { return new Gson().fromJson(json, Friend.class);}

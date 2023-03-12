@@ -32,9 +32,13 @@ public class FriendListViewModel extends AndroidViewModel {
      * @return a LiveData object that will be updated when the friend's location change.
      */
     public LiveData<Friend> getFriend(String uid) {
+<<<<<<< HEAD
 
 //        return repo.getLocal(uid);
         return this.dao.get(uid);
+=======
+        return repo.getLocal(uid);
+>>>>>>> bf46ac79f35c32cfd4d493cff56832d0f99dc2c1
     }
 
     /**
@@ -50,8 +54,11 @@ public class FriendListViewModel extends AndroidViewModel {
 
     public void save(Friend friend) {repo.upsertSynced(friend);}
 
+<<<<<<< HEAD
 //    public LiveData<Friend> getFriend(String uid) {
 //
 //    }
+=======
+>>>>>>> bf46ac79f35c32cfd4d493cff56832d0f99dc2c1
 
 }
