@@ -29,6 +29,7 @@ public class FriendListActivity extends AppCompatActivity {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
     private LocationService locationService;
+    private Friend self;
     private String UserName, UserUID;
     private double latitude, longitude;
     static boolean isInserted = false;
@@ -50,19 +51,25 @@ public class FriendListActivity extends AppCompatActivity {
 
         // Get the updated latitude and longitude of the user
         locationService = LocationService.singleton(this);
-        var LocationData = locationService.getLocation();
-        latitude = LocationData.getValue().first;
-        longitude = LocationData.getValue().second;
+        var locationData = locationService.getLocation();
+        latitude = locationData.getValue().first;
+        longitude = locationData.getValue().second;
 
         // if this is a new user, add them to the database
         if (newUser) {
-            var self = new Friend(UserName, UserUID, latitude, longitude,-1);
+            self = new Friend(UserName, UserUID, latitude, longitude,-1);
             viewModel.save(self);
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newUser", false);
             editor.apply();
         }
+
+        locationService.getLocation().observe(this, loc -> {
+            self.setLatitude(locationService.getLocation().getValue().first);
+            self.setLongitude(locationService.getLocation().getValue().second);
+            Log.i("Location", self.latitude + "," + self.longitude);
+        });
     }
 
     private FriendListViewModel setupViewModel() {
