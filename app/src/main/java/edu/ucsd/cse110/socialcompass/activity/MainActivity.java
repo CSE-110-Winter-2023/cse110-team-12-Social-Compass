@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         //beyond Zone 2
-        displayFriends(viewModel, 10.0, Double.POSITIVE_INFINITY, 455, false);
+        displayFriends(viewModel, 10.0, Double.POSITIVE_INFINITY, 480, true);
 
     }
 
@@ -85,30 +85,30 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayFriends(MainActivityViewModel viewModel, double inner, double outer, int radius, boolean isWithinRange){
         // .getValue() seems to return null for live data, so this implementation assumes it doesnt return null
-        LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner,outer);
-        List<Friend> friends = new ArrayList<>();
-        liveDataFriends.observeForever(new Observer<List<Friend>>() {
-            @Override
-            public void onChanged(List<Friend> friendsWithinZone) {
-                if(friendsWithinZone != null){
-                    setFriends(friends, friendsWithinZone);
-                }
-            }
-        });
-
-
-//        Friend friendOne = new Friend("Sam", "123", 12.3, 12.3, 1);
-//        Friend friendTwo = new Friend("Jason", "321", 10.3, 10.3, 2);
-//        Friend friendThree = new Friend("Gordon", "000", 112.3, 112.3, 3);
-//
+//        LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner,outer);
 //        List<Friend> friends = new ArrayList<>();
-//        friends.add(friendOne);
-////        friends.add(friendTwo);
+//        liveDataFriends.observeForever(new Observer<List<Friend>>() {
+//            @Override
+//            public void onChanged(List<Friend> friendsWithinZone) {
+//                if(friendsWithinZone != null){
+//                    setFriends(friends, friendsWithinZone);
+//                }
+//            }
+//        });
+
+
+        Friend friendOne = new Friend("Sam", "123", 12.3, 12.3, 1);
+        Friend friendTwo = new Friend("Jason", "321", 10.3, 10.3, 2);
+        Friend friendThree = new Friend("Gordon", "000", 112.3, 112.3, 3);
+
+        List<Friend> friends = new ArrayList<>();
+        friends.add(friendOne);
+//        friends.add(friendTwo);
 //        friends.add(friendThree);
 
         // hardcoded
         double distance = 0.3;
-        float bearingAngle = 90;
+        float bearingAngle = 0;
 
         for(Friend friend : friends){
             ConstraintLayout mainLayout = findViewById(R.id.main_layout);

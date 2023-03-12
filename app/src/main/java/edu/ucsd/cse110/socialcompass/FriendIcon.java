@@ -1,7 +1,10 @@
 package edu.ucsd.cse110.socialcompass;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -62,6 +65,10 @@ public class FriendIcon {
         ConstraintLayout.LayoutParams layout;
         if (isWithinRange){
             username_icon.setText(userName);
+            username_icon.setGravity(Gravity.CENTER);
+            username_icon.setTextColor(Color.BLACK);
+            username_icon.setTextSize(20);
+            username_icon.setTypeface(Typeface.DEFAULT_BOLD);
             layout = new ConstraintLayout.LayoutParams(
                     150, 150
             );
