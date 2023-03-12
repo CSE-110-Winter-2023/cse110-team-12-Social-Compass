@@ -1,14 +1,5 @@
 package edu.ucsd.cse110.socialcompass.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,17 +9,26 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendAPI;
+import edu.ucsd.cse110.socialcompass.services.LocationService;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
-import edu.ucsd.cse110.socialcompass.R;
 
 public class FriendListActivity extends AppCompatActivity {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
-
+    private LocationService locationService;
     private String UserName, UserUID;
     private double latitude, longitude;
     static boolean isInserted = false;
@@ -48,10 +48,15 @@ public class FriendListActivity extends AppCompatActivity {
         var adapter = setupAdapter(viewModel);
         setupViews(viewModel, adapter);
 
+        // Get the updated latitude and longitude of the user
+        locationService = LocationService.singleton(this);
+        var LocationData = locationService.getLocation();
+        latitude = LocationData.getValue().first;
+        longitude = LocationData.getValue().second;
 
         // if this is a new user, add them to the database
         if (newUser) {
-            var self = new Friend(UserName, UserUID, 0,0,-1);
+            var self = new Friend(UserName, UserUID, latitude, longitude,-1);
             viewModel.save(self);
 
             SharedPreferences.Editor editor = preferences.edit();

@@ -43,6 +43,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
             nameView.setText(friend.name);
             uidView.setText(friend.getUid());
 
+            // Show the latitude and longitude of the user
+            locationView.setText(friend.latitude + "," + friend.longitude);
+
             itemView.setOnClickListener(v -> onFriendClicked.accept(friend));
         }
     }
