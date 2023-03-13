@@ -63,10 +63,9 @@ public class FriendListActivity extends AppCompatActivity {
         locationService = LocationService.singleton(this);
         reobserveLocation();
 
-//        UserLatitude = preferences.getFloat("myLatitude", 0);
-//        UserLongitude = preferences.getFloat("myLongitude", 0);
 
         // if this is a new user, add them to the database
+        System.out.println("new user " + newUser);
         if (newUser) {
             self = new Friend(UserName, UserUID, UserLatitude, UserLongitude,-1);
             viewModel.save(self);
@@ -77,10 +76,10 @@ public class FriendListActivity extends AppCompatActivity {
             editor.apply();
         }
 
-        TextView selfName = (TextView) this.findViewById(R.id.selfName);
+        TextView selfName = this.findViewById(R.id.selfName);
         selfName.setText(UserName);
 
-        TextView selfUID = (TextView) this.findViewById(R.id.selfUID);
+        TextView selfUID = this.findViewById(R.id.selfUID);
         selfUID.setText(UserUID);
 
         viewModel.getAll().observe(this, new Observer<List<Friend>>() {
@@ -122,10 +121,7 @@ public class FriendListActivity extends AppCompatActivity {
                 self.setLongitude(latLong.second);
                 viewModel.save(self);
             }
-
         }
-
-
     }
 
     private FriendListViewModel setupViewModel() {
@@ -181,10 +177,9 @@ public class FriendListActivity extends AppCompatActivity {
     }
 
     private void setupAddUIDButton(FriendListViewModel viewModel) {
-
+        var input = (EditText) findViewById(R.id.UID_text);
         var addUIDButton = findViewById(R.id.addUID_btn);
         addUIDButton.setOnClickListener((View v) -> {
-            var input = (EditText) findViewById(R.id.UID_text);
             String uid = input.getText().toString();
 
             // Check if this user already exists on the user's local database
@@ -199,6 +194,7 @@ public class FriendListActivity extends AppCompatActivity {
                 return;
             }
 
+            System.out.println("Made it through");
             // Otherwise, create the livedata for the remote friend object and set an observer
             var friendLiveData = viewModel.getFriend(uid);
             friendLiveData.observe(this, new Observer<>() {
@@ -209,7 +205,6 @@ public class FriendListActivity extends AppCompatActivity {
                     friendLiveData.removeObserver(this);
                     // save the friend to the viewModel
                     viewModel.saveLocal(friend);
-
                 }
             });
         });

@@ -15,16 +15,18 @@ import com.google.gson.annotations.SerializedName;
 @Entity(tableName = "friends")
 public class Friend {
     // Public fields
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
+    @ColumnInfo(name = "public_code")
+    @SerializedName("public_code")
     public long id; // id for database
 
     @ColumnInfo(name = "name")
     @SerializedName("label")
     public String name;
 
+    @NonNull
+    @PrimaryKey
     @ColumnInfo(name = "uid")
-    @SerializedName("public_code")
+    @SerializedName("private_code")
     public String uid;
 
     @ColumnInfo(name = "latitude")
