@@ -84,10 +84,7 @@ public class FriendRepository {
     public boolean existsRemote(String uid) throws ExecutionException, InterruptedException {
         var executor = Executors.newSingleThreadExecutor();
         var code = executor.submit(() -> api.getFriendCode(uid));
-        if (code.get().intValue() == 200){
-            return true;
-        }
-        return false;
+        return code.get() == 200;
     }
 
     public LiveData<Friend> getRemote(String uid) {

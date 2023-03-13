@@ -71,4 +71,8 @@ public class FriendListViewModel extends AndroidViewModel {
         repo.upsertLocal(friend);
     }
 
+    public void syncLocal(Friend friend) {
+        repo.getSynced(friend.getUid());
+    }
+
 }

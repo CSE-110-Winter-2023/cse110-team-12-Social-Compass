@@ -69,14 +69,13 @@ public class FriendListActivity extends AppCompatActivity {
         // if this is a new user, add them to the database
         if (newUser) {
             self = new Friend(UserName, UserUID, UserLatitude, UserLongitude,-1);
+            viewModel.save(self);
             Log.d("USER", self.name);
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newUser", false);
             editor.apply();
         }
-
-        viewModel.save(self);
 
         TextView selfName = (TextView) this.findViewById(R.id.selfName);
         selfName.setText(UserName);
@@ -89,6 +88,13 @@ public class FriendListActivity extends AppCompatActivity {
             public void onChanged(List<Friend> friendList) {
                 if (friendList != null) {
                     friendListSize = friendList.size();
+
+//                    System.out.println(friendListSize);
+//                    for (Friend f : friendList) {
+//                        viewModel.syncLocal(f);
+//
+//                    }
+
                 }
             }
         });
@@ -174,11 +180,11 @@ public class FriendListActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("RestrictedApi")
     private void setupAddUIDButton(FriendListViewModel viewModel) {
-        var input = (EditText) findViewById(R.id.UID_text);
+
         var addUIDButton = findViewById(R.id.addUID_btn);
         addUIDButton.setOnClickListener((View v) -> {
+            var input = (EditText) findViewById(R.id.UID_text);
             String uid = input.getText().toString();
 
             // Check if this user already exists on the user's local database
@@ -195,13 +201,15 @@ public class FriendListActivity extends AppCompatActivity {
 
             // Otherwise, create the livedata for the remote friend object and set an observer
             var friendLiveData = viewModel.getFriend(uid);
-            friendLiveData.observe(this, new Observer<Friend>() {
+            friendLiveData.observe(this, new Observer<>() {
                 @Override
                 public void onChanged(Friend friend) {
+
                     // Remove the observer after the first update
                     friendLiveData.removeObserver(this);
                     // save the friend to the viewModel
                     viewModel.saveLocal(friend);
+
                 }
             });
         });
