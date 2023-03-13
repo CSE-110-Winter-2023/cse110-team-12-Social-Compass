@@ -47,7 +47,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         }
 
         public void bind(Friend friend) {
-
             nameView.setText(friend.name);
             uidView.setText(friend.getUid());
             locationView.setText(friend.latitude + "," + friend.longitude);

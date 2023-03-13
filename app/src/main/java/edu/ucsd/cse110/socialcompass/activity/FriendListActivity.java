@@ -64,6 +64,8 @@ public class FriendListActivity extends AppCompatActivity {
         reobserveLocation();
 
 
+        System.out.println(newUser);
+
         // if this is a new user, add them to the database
         System.out.println("new user " + newUser);
         if (newUser) {
@@ -77,6 +79,8 @@ public class FriendListActivity extends AppCompatActivity {
         }
 
         TextView selfName = this.findViewById(R.id.selfName);
+        System.out.println(newUser);
+
         selfName.setText(UserName);
 
         TextView selfUID = this.findViewById(R.id.selfUID);
@@ -87,12 +91,6 @@ public class FriendListActivity extends AppCompatActivity {
             public void onChanged(List<Friend> friendList) {
                 if (friendList != null) {
                     friendListSize = friendList.size();
-
-//                    System.out.println(friendListSize);
-//                    for (Friend f : friendList) {
-//                        viewModel.syncLocal(f);
-//
-//                    }
 
                 }
             }
