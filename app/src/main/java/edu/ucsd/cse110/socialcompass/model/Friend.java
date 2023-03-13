@@ -24,7 +24,7 @@ public class Friend {
     public String name;
 
     @ColumnInfo(name = "uid")
-    @SerializedName("public_code")
+    @SerializedName("private_code")
     public String uid;
 
     @ColumnInfo(name = "latitude")
