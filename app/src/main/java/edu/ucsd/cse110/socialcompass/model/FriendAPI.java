@@ -65,9 +65,11 @@ public class FriendAPI {
             assert response.body() != null;
             code = response.code();
             Log.i("GET FRIEND CODE", String.valueOf(code));
+            System.out.println(response.body().string());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("Code: " + code);
         return code;
     }
 
@@ -78,7 +80,7 @@ public class FriendAPI {
     @WorkerThread
     public void putFriend(Friend friend) {
 
-        String uid = friend.getUid();
+        String uid = friend.uid;
         Log.d("UID",uid);
 
         var requestBody = RequestBody.create(friend.toJSON(), JSON);

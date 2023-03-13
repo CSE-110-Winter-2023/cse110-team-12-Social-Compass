@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDao;
@@ -49,9 +50,17 @@ public class FriendListViewModel extends AndroidViewModel {
 
     public boolean existsLocal(String uid) { return repo.existsLocal(uid); }
 
-    public boolean existsRemote(String uid) { return repo.existsRemote(uid); }
+    public boolean existsRemote(String uid) {
+        try {
+            return repo.existsRemote(uid);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    public void save(Friend friend) {repo.upsertSynced(friend);}
+    public void save(Friend friend) {repo.upsertLocal(friend);}
 
     public LiveData<List<Friend>> getAll() {
         return dao.getAll();

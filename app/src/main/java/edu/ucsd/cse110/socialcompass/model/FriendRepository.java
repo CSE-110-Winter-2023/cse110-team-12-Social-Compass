@@ -1,12 +1,15 @@
 package edu.ucsd.cse110.socialcompass.model;
 
+import androidx.annotation.AnyThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -77,9 +80,11 @@ public class FriendRepository {
     // Remote Methods
     // ==============
 
-    public boolean existsRemote(String uid) {
-        int code = api.getFriendCode(uid);
-        if (code == 200){
+    @AnyThread
+    public boolean existsRemote(String uid) throws ExecutionException, InterruptedException {
+        var executor = Executors.newSingleThreadExecutor();
+        var code = executor.submit(() -> api.getFriendCode(uid));
+        if (code.get().intValue() == 200){
             return true;
         }
         return false;
