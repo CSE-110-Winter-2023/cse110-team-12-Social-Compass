@@ -75,7 +75,6 @@ public class Utilities {
                     //add a new "Friend" for self in onCreate of FriendListActivity
                     editor.putString("myName", name);
                     editor.apply();
-                    //Friend friend = new Friend(name, uniqueID, )
 
                     dialog.cancel();
                     showCopyUIDAlert(activity, "User UID", uniqueID);
@@ -146,11 +145,10 @@ public class Utilities {
                 .setView(copyUIDView)
                 .setTitle("Welcome!")
                 .setMessage(message)
-                //.setPositiveButton("Continue", (dialog, id) -> {
                 .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        showInitFriendAlert(activity, "Make FRiend");
+                        showInitFriendAlert(activity, "Make Friend");
                     }
                 })
                 .setCancelable(false);

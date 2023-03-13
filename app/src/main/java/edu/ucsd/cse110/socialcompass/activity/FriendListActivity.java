@@ -37,11 +37,10 @@ public class FriendListActivity extends AppCompatActivity {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
     private LocationService locationService;
-    private LiveData<Friend> self;
+    private Friend self;
     private String UserName, UserUID;
-    private double latitude, longitude;
+    private double UserLatitude, UserLongitude;
     static boolean isInserted = false;
-    private Friend newFriend;
 
     private int friendListSize;
 
@@ -64,16 +63,20 @@ public class FriendListActivity extends AppCompatActivity {
         locationService = LocationService.singleton(this);
         reobserveLocation();
 
+//        UserLatitude = preferences.getFloat("myLatitude", 0);
+//        UserLongitude = preferences.getFloat("myLongitude", 0);
+
         // if this is a new user, add them to the database
         if (newUser) {
-            var self = new Friend(UserName, UserUID, latitude, longitude,-1);
+            self = new Friend(UserName, UserUID, UserLatitude, UserLongitude,-1);
             Log.d("USER", self.name);
-            viewModel.save(self);
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newUser", false);
             editor.apply();
         }
+
+        viewModel.save(self);
 
         TextView selfName = (TextView) this.findViewById(R.id.selfName);
         selfName.setText(UserName);
@@ -99,6 +102,24 @@ public class FriendListActivity extends AppCompatActivity {
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
         @SuppressLint("RestrictedApi") TextView locationText = this.findViewById(R.id.selfLocation);
         locationText.setText(latLong.first + ", " + latLong.second);
+        SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putFloat("myLatitude", latLong.first.floatValue());
+        editor.putFloat("myLongitude", latLong.second.floatValue());
+        editor.apply();
+        UserLatitude = preferences.getFloat("myLatitude", 0);
+        UserLongitude = preferences.getFloat("myLongitude", 0);
+
+        if (self != null) {
+            if (self.getLatitude() != latLong.first || self.getLongitude() != latLong.second) {
+                self.setLatitude(latLong.first);
+                self.setLongitude(latLong.second);
+                viewModel.save(self);
+            }
+
+        }
+
+
     }
 
     private FriendListViewModel setupViewModel() {
