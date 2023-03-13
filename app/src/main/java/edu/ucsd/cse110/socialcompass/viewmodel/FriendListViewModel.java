@@ -60,10 +60,15 @@ public class FriendListViewModel extends AndroidViewModel {
         }
     }
 
-    public void save(Friend friend) {repo.upsertLocal(friend);}
+    public void save(Friend friend) {repo.upsertSynced(friend);}
 
     public LiveData<List<Friend>> getAll() {
         return dao.getAll();
     }
     public void delete(Friend friend) {repo.deleteLocal(friend);}
+
+    public void saveLocal(Friend friend) {
+        repo.upsertLocal(friend);
+    }
+
 }

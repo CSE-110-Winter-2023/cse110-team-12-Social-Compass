@@ -75,6 +75,12 @@ public class FriendListActivity extends AppCompatActivity {
             editor.apply();
         }
 
+        TextView selfName = (TextView) this.findViewById(R.id.selfName);
+        selfName.setText(UserName);
+
+        TextView selfUID = (TextView) this.findViewById(R.id.selfUID);
+        selfUID.setText(UserUID);
+
         viewModel.getAll().observe(this, new Observer<List<Friend>>() {
             @Override
             public void onChanged(List<Friend> friendList) {
@@ -91,7 +97,7 @@ public class FriendListActivity extends AppCompatActivity {
     }
 
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
-        @SuppressLint("RestrictedApi") TextView locationText = recyclerView.findViewById(R.id.location_text);
+        @SuppressLint("RestrictedApi") TextView locationText = this.findViewById(R.id.selfLocation);
         locationText.setText(latLong.first + ", " + latLong.second);
     }
 
@@ -147,6 +153,7 @@ public class FriendListActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("RestrictedApi")
     private void setupAddUIDButton(FriendListViewModel viewModel) {
         var input = (EditText) findViewById(R.id.UID_text);
         var addUIDButton = findViewById(R.id.addUID_btn);
@@ -173,7 +180,7 @@ public class FriendListActivity extends AppCompatActivity {
                     // Remove the observer after the first update
                     friendLiveData.removeObserver(this);
                     // save the friend to the viewModel
-                    viewModel.save(friend);
+                    viewModel.saveLocal(friend);
                 }
             });
         });

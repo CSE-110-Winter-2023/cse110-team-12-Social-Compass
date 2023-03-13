@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import edu.ucsd.cse110.socialcompass.R;
+import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
@@ -47,6 +48,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         }
 
         public void bind(Friend friend) {
+
             nameView.setText(friend.name);
             uidView.setText(friend.getUid());
             locationView.setText(friend.latitude + "," + friend.longitude);

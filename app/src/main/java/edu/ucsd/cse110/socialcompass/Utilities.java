@@ -27,6 +27,7 @@ import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
  */
 public class Utilities {
     static String uniqueID;
+    static String uniqueName;
 
     /**
      * Alert to display an error when adding a UID that does not exist.
@@ -68,6 +69,7 @@ public class Utilities {
                 .setMessage(message)
                 .setPositiveButton("Submit", (dialog, id) -> {
                     String name = userName.getText().toString();
+                    uniqueName = name;
 
                     //save name to user's shared preferences
                     //add a new "Friend" for self in onCreate of FriendListActivity
@@ -201,5 +203,9 @@ public class Utilities {
 
         // calculate the result
         return(c * r);
+    }
+
+    public static String getName() {
+        return uniqueName;
     }
 }
