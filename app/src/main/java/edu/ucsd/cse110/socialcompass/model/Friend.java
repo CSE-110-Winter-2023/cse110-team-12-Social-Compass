@@ -15,8 +15,6 @@ import com.google.gson.annotations.SerializedName;
 @Entity(tableName = "friends")
 public class Friend {
     // Public fields
-    @ColumnInfo(name = "public_code")
-    @SerializedName("public_code")
     public long id; // id for database
 
     @ColumnInfo(name = "name")
@@ -25,6 +23,11 @@ public class Friend {
 
     @NonNull
     @PrimaryKey
+    @ColumnInfo(name = "public_code")
+    @SerializedName("public_code")
+    public String public_code;
+
+    @NonNull
     @ColumnInfo(name = "uid")
     @SerializedName("private_code")
     public String uid;
@@ -40,6 +43,7 @@ public class Friend {
     public Friend(@NonNull String name, @NonNull String uid, double latitude, double longitude, int order) {
         this.name = name;
         this.uid = uid;
+        this.public_code = uid;
         this.latitude = latitude;
         this.longitude = longitude;
         this.order = order;

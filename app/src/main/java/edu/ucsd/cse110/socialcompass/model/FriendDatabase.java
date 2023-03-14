@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 //@Database(entities = {FriendListItem.class}, version=1)
-@Database(entities = {Friend.class}, version=4, exportSchema = false)
+@Database(entities = {Friend.class}, version=7, exportSchema = false)
 public abstract class FriendDatabase extends RoomDatabase {
     //private static FriendDatabase singleton = null;
     private volatile static FriendDatabase instance = null;

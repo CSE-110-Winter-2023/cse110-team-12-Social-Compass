@@ -197,7 +197,7 @@ public class Utilities {
 
         // Radius of earth in kilometers. Use 3956
         // for miles
-        double r = 6371;
+        double r = 3956;
 
         // calculate the result
         return(c * r);
