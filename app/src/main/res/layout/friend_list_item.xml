@@ -20,7 +20,7 @@
         tools:ignore="TextViewEdits" />
 
     <TextView
-        android:id="@+id/uid_text"
+        android:id="@+id/location_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -29,10 +29,10 @@
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/location_text" />
+        app:layout_constraintTop_toBottomOf="@+id/uid_text" />
 
     <TextView
-        android:id="@+id/location_text"
+        android:id="@+id/uid_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
