@@ -14,12 +14,15 @@ import androidx.room.Room;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
@@ -38,7 +41,7 @@ public class FriendListActivity extends AppCompatActivity {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
     private LocationService locationService;
-    private Friend self;
+    private Friend self;    // adding any new user to list of friends
     private String UserName, UserUID;
     private double UserLatitude, UserLongitude;
     static boolean isInserted = false;
@@ -64,9 +67,6 @@ public class FriendListActivity extends AppCompatActivity {
         locationService = LocationService.singleton(this);
         reobserveLocation();
 
-
-        System.out.println(newUser);
-
         // if this is a new user, add them to the database
         System.out.println("new user " + newUser);
         if (newUser) {
@@ -77,8 +77,15 @@ public class FriendListActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newUser", false);
             editor.apply();
+
+            Gson gson = new Gson();
+            String json = gson.toJson(self);
+            editor.putString("self", json);
+            editor.commit();
+
         }
 
+        // self info
         TextView selfName = this.findViewById(R.id.selfName);
         System.out.println(newUser);
 
@@ -99,6 +106,7 @@ public class FriendListActivity extends AppCompatActivity {
             public void onChanged(List<Friend> friendList) {
                 friendsLiveData.removeObserver(this);
                 if (friendList != null) {
+                    System.out.println("I AM HERE INSIDE FRIENDLIST");
                     friendListSize = friendList.size();
                     //for each friend, if its not the user then grabs its live data and poll from it
                     for(Friend friend : friendList){
@@ -108,6 +116,11 @@ public class FriendListActivity extends AppCompatActivity {
                                 @Override
                                 public void onChanged(Friend friend) {
                                     friendLiveData.removeObserver(this);
+                                    double friendLat = friend.getLatitude();
+                                    double friendLong = friend.getLongitude();
+                                    double newDist = recalculateDistance(friendLat, friendLong);
+                                    friend.setDistance(newDist);
+                                    System.out.println(newDist + "INSIDE FRIENDITEM");
                                     viewModel.saveLocal(friend);
                                 }
                             });
@@ -116,6 +129,13 @@ public class FriendListActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private double recalculateDistance(double friendLat, double friendLong) {
+        float[] results = new float[2];
+        Location.distanceBetween(UserLatitude, UserLongitude,
+                friendLat, friendLong, results);
+        return LocationService.metersToMiles(results[0]);
     }
 
     private void reobserveLocation() {
@@ -134,10 +154,16 @@ public class FriendListActivity extends AppCompatActivity {
         UserLatitude = preferences.getFloat("myLatitude", 0);
         UserLongitude = preferences.getFloat("myLongitude", 0);
 
+        Gson gson = new Gson();
+        String json = preferences.getString("self", "");
+        self = gson.fromJson(json, Friend.class);
+
         if (self != null) {
             if (self.getLatitude() != latLong.first || self.getLongitude() != latLong.second) {
                 self.setLatitude(latLong.first);
                 self.setLongitude(latLong.second);
+                // if your distance changed, recompute distance for all friends
+                startPollingFriends();
                 viewModel.save(self);
             }
         }
@@ -183,7 +209,6 @@ public class FriendListActivity extends AppCompatActivity {
 
             // Otherwise, create a new note, persist it...
             var uid = input.getText().toString();
-            System.out.println("First");
             var friend = viewModel.getFriend(uid);
 
             // ...wait for the database to finish persisting it...
@@ -214,7 +239,6 @@ public class FriendListActivity extends AppCompatActivity {
                 return;
             }
 
-            System.out.println("Made it through");
             // Otherwise, create the livedata for the remote friend object and set an observer
             var friendLiveData = viewModel.getFriend(uid);
             //friendLiveData.observe(this,this::onFriendLocationChanged);
@@ -223,7 +247,9 @@ public class FriendListActivity extends AppCompatActivity {
                 public void onChanged(Friend friend) {
                     // Remove the observer after the first update
                     friendLiveData.removeObserver(this);
-                    // save the friend to the viewModel
+                    double friendLat = friend.getLatitude();
+                    double friendLong = friend.getLongitude();
+                    friend.setDistance(recalculateDistance(friendLat, friendLong));
                     viewModel.saveLocal(friend);
                 }
             });

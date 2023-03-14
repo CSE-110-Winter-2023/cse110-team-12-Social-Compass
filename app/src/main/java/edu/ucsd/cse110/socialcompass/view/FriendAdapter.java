@@ -82,7 +82,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         var friend = friends.get(position);
         holder.bind(friend);
-
     }
 
     @Override
