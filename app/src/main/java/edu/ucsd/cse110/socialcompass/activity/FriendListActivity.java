@@ -87,20 +87,35 @@ public class FriendListActivity extends AppCompatActivity {
         TextView selfUID = this.findViewById(R.id.selfUID);
         selfUID.setText(UserUID);
 
+        startPollingFriends();
+    }
+
+    private void startPollingFriends(){
+        // live updating for friends already in the database (when you rerun the program)
         LiveData<List<Friend>> friendsLiveData = viewModel.getAll();
         friendsLiveData.observe(this, new Observer<List<Friend>>() {
+            //grabs the list of friends
             @Override
             public void onChanged(List<Friend> friendList) {
                 friendsLiveData.removeObserver(this);
                 if (friendList != null) {
                     friendListSize = friendList.size();
+                    //for each friend, if its not the user then grabs its live data and poll from it
+                    for(Friend friend : friendList){
+                        if (friend.order != -1) {
+                            LiveData<Friend> friendLiveData = viewModel.getFriend(friend.getUid());
+                            friendLiveData.observe(FriendListActivity.this, new Observer<Friend>() {
+                                @Override
+                                public void onChanged(Friend friend) {
+                                    friendLiveData.removeObserver(this);
+                                    viewModel.saveLocal(friend);
+                                }
+                            });
+                        }
+                    }
                 }
             }
         });
-    }
-
-    private void onFriendLocationChanged(Friend friend){
-        viewModel.saveLocal(friend);
     }
 
     private void reobserveLocation() {
