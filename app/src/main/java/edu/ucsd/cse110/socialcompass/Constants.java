@@ -15,5 +15,5 @@ public class Constants {
 
     public static final int ZONE3_1 = 390; // (8.2, 10] 530
 
-
+    public static final double MILES_CONVERSION = 0.00062137119;
 }

@@ -37,7 +37,11 @@ public class Friend {
 
     @ColumnInfo(name = "longitude")
     public double longitude;
+
     public int order;
+
+    @ColumnInfo(name = "distance")
+    public double distance;
 
     // Constructor matching fields above
     public Friend(@NonNull String name, @NonNull String uid, double latitude, double longitude, int order) {
@@ -71,6 +75,12 @@ public class Friend {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public void setDistance(double distance) { this.distance = distance; }
+
+    public double getDistance() {
+        return this.distance;
     }
 
     // Factory method for creating Friend from JSON file
