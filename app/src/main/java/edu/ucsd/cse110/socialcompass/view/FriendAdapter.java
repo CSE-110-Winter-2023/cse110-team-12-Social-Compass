@@ -49,13 +49,23 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         public void bind(Friend friend) {
             nameView.setText(friend.name);
             uidView.setText(friend.getUid());
-            locationView.setText(friend.latitude + "," + friend.longitude);
+            locationView.setText(friend.latitude + ", " + friend.longitude);
             itemView.setOnClickListener(v -> onFriendClicked.accept(friend));
             itemView.setOnClickListener(v -> onFriendDeleteClicked.accept(friend));
+
         }
     }
 
     public void setFriends(List<Friend> friends) {
+        int index = -1;
+        for(int i = 0; i < friends.size(); i++){
+            if((friends.get(i)).order == -1){
+                index = i;
+            }
+        }
+        if(index != -1){
+            friends.remove(index);
+        }
         this.friends = friends;
         notifyDataSetChanged();
     }
@@ -72,6 +82,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         var friend = friends.get(position);
         holder.bind(friend);
+
     }
 
     @Override

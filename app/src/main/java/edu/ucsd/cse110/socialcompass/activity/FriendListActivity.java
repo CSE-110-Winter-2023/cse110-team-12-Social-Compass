@@ -30,6 +30,7 @@ import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 public class FriendListActivity extends AppCompatActivity {
 
@@ -86,15 +87,20 @@ public class FriendListActivity extends AppCompatActivity {
         TextView selfUID = this.findViewById(R.id.selfUID);
         selfUID.setText(UserUID);
 
-        viewModel.getAll().observe(this, new Observer<List<Friend>>() {
+        LiveData<List<Friend>> friendsLiveData = viewModel.getAll();
+        friendsLiveData.observe(this, new Observer<List<Friend>>() {
             @Override
             public void onChanged(List<Friend> friendList) {
+                friendsLiveData.removeObserver(this);
                 if (friendList != null) {
                     friendListSize = friendList.size();
-
                 }
             }
         });
+    }
+
+    private void onFriendLocationChanged(Friend friend){
+        viewModel.saveLocal(friend);
     }
 
     private void reobserveLocation() {
@@ -162,6 +168,7 @@ public class FriendListActivity extends AppCompatActivity {
 
             // Otherwise, create a new note, persist it...
             var uid = input.getText().toString();
+            System.out.println("First");
             var friend = viewModel.getFriend(uid);
 
             // ...wait for the database to finish persisting it...
@@ -195,10 +202,10 @@ public class FriendListActivity extends AppCompatActivity {
             System.out.println("Made it through");
             // Otherwise, create the livedata for the remote friend object and set an observer
             var friendLiveData = viewModel.getFriend(uid);
+            //friendLiveData.observe(this,this::onFriendLocationChanged);
             friendLiveData.observe(this, new Observer<>() {
                 @Override
                 public void onChanged(Friend friend) {
-
                     // Remove the observer after the first update
                     friendLiveData.removeObserver(this);
                     // save the friend to the viewModel

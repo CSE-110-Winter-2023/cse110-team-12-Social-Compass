@@ -17,7 +17,7 @@ import edu.ucsd.cse110.socialcompass.model.FriendRepository;
 
 public class FriendListViewModel extends AndroidViewModel {
     private LiveData<List<Friend>> friends;
-    private final FriendRepository repo;
+    public final FriendRepository repo;
     private FriendDao dao;
 
     public FriendListViewModel(@NonNull Application application) {
