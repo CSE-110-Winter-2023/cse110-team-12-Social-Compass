@@ -67,7 +67,6 @@ public class FriendRepository {
     public void upsertLocal(Friend friend) {
         //TODO: update the time that friend was last updated (similar to incrementVersion)
         dao.upsert(friend);
-        System.out.println("upsertLocal" + friend.name);
     }
 
     public void deleteLocal(Friend friend) {
@@ -102,6 +101,9 @@ public class FriendRepository {
             //TODO: change this part to update location values for friend
             Friend getFriend = Friend.fromJSON(api.getFriend(uid));
             getFriend.uid = getFriend.public_code;
+            if(friend.getValue() == null || getFriend.latitude != friend.getValue().latitude || getFriend.longitude != friend.getValue().longitude){
+                upsertLocal(getFriend);
+            }
             friend.postValue(getFriend);
         }, 0, 1000, TimeUnit.MILLISECONDS);
         return friend;
