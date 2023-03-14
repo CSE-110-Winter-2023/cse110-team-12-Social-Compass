@@ -1,7 +1,10 @@
 package edu.ucsd.cse110.socialcompass;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -53,8 +56,8 @@ public class FriendIcon {
 
     public int getId() { return this.id;}
 
-
-    //Creates a new button in the activity and sets ints constraints
+//
+//    Creates a new button in the activity and sets ints constraints
     public void createIcon() {
         username_icon = new TextView(activity);
         username_icon.setId(View.generateViewId());
@@ -62,8 +65,12 @@ public class FriendIcon {
         ConstraintLayout.LayoutParams layout;
         if (isWithinRange){
             username_icon.setText(userName);
+            username_icon.setGravity(Gravity.CENTER);
+            username_icon.setTextColor(Color.BLACK);
+            username_icon.setTextSize(20);
+            username_icon.setTypeface(Typeface.DEFAULT_BOLD);
             layout = new ConstraintLayout.LayoutParams(
-                    150, 150
+                    200, 200
             );
         } else{
             username_icon.setBackground(ContextCompat.getDrawable(activity, R.drawable.dot));
@@ -78,10 +85,7 @@ public class FriendIcon {
         if (outerCircle != null && innerCircle != null) {
             float outerCircleRadius = (float) outerCircle.getHeight() / 2;
             float innerCircleRadius = (float) innerCircle.getHeight() / 2;
-            //dynamicRadius is for diff devices
-           // float dynamicRadius = ((outerCircleRadius - innerCircleRadius) / 2) + innerCircleRadius;
 
-//            layout.circleRadius = Math.round(radius);
             layout.circleRadius = Math.round(radius);
             layout.circleConstraint = R.id.location_icon;
             layout.circleAngle = bearingAngle;
@@ -96,16 +100,6 @@ public class FriendIcon {
             Toast.makeText(activity, "Error creating button: outer_circle or inner_circle not found", Toast.LENGTH_SHORT).show();
         }
     }
-
-
-    // Unused for now
-//    public void updateButtonLayout() {
-//        ConstraintLayout.LayoutParams layout = (ConstraintLayout.LayoutParams) button.getLayoutParams();
-//        layout.circleAngle = bearingAngle;
-//        button.setLayoutParams(layout);
-//    }
-
-
 
 }
 
