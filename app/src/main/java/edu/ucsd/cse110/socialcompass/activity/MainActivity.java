@@ -1,50 +1,90 @@
 package edu.ucsd.cse110.socialcompass.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.util.Pair;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.ucsd.cse110.socialcompass.Constants;
 import edu.ucsd.cse110.socialcompass.FriendIcon;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
-import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
-import edu.ucsd.cse110.socialcompass.model.FriendDao;
-import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
-import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.MainActivityViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Animation.AnimationListener {
 
     private LocationService locationService;
     private String UID; // The user's unique UID
     private LiveData<Friend> user;
-
+    private int scaleOfCircles = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Find views for zooming
+        var firstCircle = (TextView)findViewById(R.id.first_circle);
+        var secondCircle = (TextView)findViewById(R.id.second_circle);
+        var zoomIn = (TextView)findViewById(R.id.zoom_in);
+        var zoomOut = (TextView)findViewById(R.id.zoom_out);
+
+        // Set up animations
+        var zoomInFirstFrom50Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_first_circle_from_50);
+        var zoomInFirstFrom100Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_first_circle_from_100);
+        var zoomOutFirstFrom100Animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_first_circle_from_100);
+        var zoomOutFirstFrom150Animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_first_circle_from_150);
+        var zoomInSecondFrom50Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_50);
+        var zoomInSecondFrom100Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_100);
+        var zoomOutSecondFrom100Animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_100);
+        var zoomOutSecondFrom150Animation= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_150);
+        zoomInFirstFrom50Animation.setAnimationListener(this);
+
+        // Run animations
+        zoomIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(scaleOfCircles == 50) {
+                    firstCircle.startAnimation(zoomInFirstFrom50Animation);
+                    secondCircle.startAnimation(zoomInSecondFrom50Animation);
+                    scaleOfCircles = 100;
+                } else if(scaleOfCircles == 100) {
+                    firstCircle.startAnimation(zoomInFirstFrom100Animation);
+                    secondCircle.startAnimation(zoomInSecondFrom100Animation);
+                    scaleOfCircles = 150;
+                }
+            }
+        });
+        zoomOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(scaleOfCircles == 100) {
+                    firstCircle.startAnimation(zoomOutFirstFrom100Animation);
+                    secondCircle.startAnimation(zoomOutSecondFrom100Animation);
+                    scaleOfCircles = 50;
+                } else if(scaleOfCircles == 150) {
+                    firstCircle.startAnimation(zoomOutFirstFrom150Animation);
+                    secondCircle.startAnimation(zoomOutSecondFrom150Animation);
+                    scaleOfCircles = 100;
+                }
+            }
+        });
 
         // Check if user is new
         SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
@@ -64,7 +104,18 @@ public class MainActivity extends AppCompatActivity {
         this.reobserveLocation();
 
         displayFriends(viewModel, 10.0, Double.POSITIVE_INFINITY, 480, true);
+    }
 
+    @Override
+    public void onAnimationStart(Animation animation) {
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation) {
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {
     }
 
     private void setFriends(List<Friend> friends1,List<Friend> friends2){
@@ -84,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // hardcoded
         double distance = 0.1;
         float bearingAngle = 180;
@@ -96,8 +146,6 @@ public class MainActivity extends AppCompatActivity {
             mainLayout.addView(friendIcon.getFriendIcon());
         }
     }
-
-
 
     private MainActivityViewModel setupViewModel() {
         return new ViewModelProvider(this).get(MainActivityViewModel.class);
