@@ -2,18 +2,30 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id = "@+id/main_layout"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.ucsd.cse110.socialcompass.activity.MainActivity">
+
+    <TextView
+        android:id="@+id/zoom_out"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:text=" -"
+        android:textSize="35sp"
+        app:layout_constraintBottom_toTopOf="@id/see_friends_btn"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/see_friends_btn"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginBottom="12dp"
-        android:text="Add Friends"
         android:onClick="onSeeFriendsClicked"
+        android:text="Add Friends"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -35,29 +47,53 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.022" />
 
-
     <TextView
-        android:id="@+id/outer_circle"
+        android:id="@+id/fourth_circle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/outer_circle"
+        android:background="@drawable/fourth_circle"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.476"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5085"/>
+        app:layout_constraintVertical_bias="0.5" />
 
     <TextView
-        android:id="@+id/inner_circle"
+        android:id="@+id/third_circle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/inner_circle"
+        android:background="@drawable/third_circle"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
 
+    <TextView
+        android:id="@+id/second_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/second_circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <TextView
+        android:id="@+id/first_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/first_circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
 
     <TextView
         android:id="@+id/location_icon"
@@ -70,9 +106,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-
-
-
+    <TextView
+        android:id="@+id/zoom_in"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="60dp"
+        android:clickable="true"
+        android:text=" +"
+        android:textSize="35sp"
+        app:layout_constraintBottom_toTopOf="@id/see_friends_btn"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
