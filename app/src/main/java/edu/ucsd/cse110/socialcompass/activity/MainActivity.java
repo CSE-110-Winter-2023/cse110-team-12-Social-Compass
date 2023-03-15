@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private int range = 10;
     private HashMap<String, FriendIcon> friendIcons;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,20 +113,46 @@ public class MainActivity extends AppCompatActivity {
                                         friend.setBearingAngle(bearingAngle);
                                         friendListViewModel.saveLocal(friend);
 
+
                                         boolean isWithinRange = newDist < range;
 
                                         // check if there is a friendIcon with the UID on the screen, if so delete it
                                         if (friendIcons != null && friendIcons.containsKey(friend.getUid())) {
+                                            FriendIcon icon = friendIcons.get(friend.getUid());
+
+                                            if(icon != null && icon.getOverlapIconUID() != null){
+                                                FriendIcon overlapIcon = friendIcons.get(icon.getOverlapIconUID());
+                                                int offset = overlapIcon.getOverlapIsCloser() ? 100 : -100;
+                                                if(zone == overlapIcon.getRadius() + offset && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10){
+                                                    return;
+                                                }
+                                                else{
+                                                    overlapIcon.setOverlapIconUID(null);
+                                                }
+                                            }
+
                                             mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
                                         }
 
+                                        // offset for stacking, moving the friendIcon
+                                        String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,bearingAngle) : "";
+
+                                        int offset = overlapIconUID.equals("") ? 0 : 100;
+
                                         // create a new friendIcon with updated bearing, zone, and distance
-                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this, friend.getName(), bearingAngle, zone, newDist, isWithinRange);
+                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this, friend.getName(), bearingAngle, zone + offset, newDist, isWithinRange);
+
+                                        if(offset > 0){
+                                            friendIcon.setOverlapIconUID(overlapIconUID);
+                                            friendIcon.setOverlapIsCloser(false);
+                                        }
                                         friendIcon.createIcon();
                                         mainLayout.addView(friendIcon.getFriendIcon());
 
                                         // add friendIcon to map
                                         friendIcons.put(friend.getUid(), friendIcon);
+
+//
                                     }
                                 }
                             });
@@ -134,6 +161,38 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private String stackLabels(ConstraintLayout mainLayout, String overlapIconUID, int zone, float bearingAngle){
+        FriendIcon friend = null;
+        String uid = "";
+        for (HashMap.Entry<String, FriendIcon> friendIcon : friendIcons.entrySet()) {
+            String friendUID = friendIcon.getKey();
+            FriendIcon value = friendIcon.getValue();
+            if (value.getRadius() == zone && Math.abs(value.getBearingAngle() - bearingAngle) <= 10){
+                friend = value;
+                uid = friendUID;
+                break;
+            }
+        }
+
+        if(friend == null || uid.equals("") || uid.equals(overlapIconUID)){
+            return "";
+        }
+
+        mainLayout.removeView(friend.getFriendIcon());
+
+        friend.setRadius(friend.getRadius() - 100);
+
+        friend.setOverlapIconUID(overlapIconUID);
+
+        friend.setOverlapIsCloser(true);
+
+        mainLayout.addView(friend.getFriendIcon());
+
+        friendIcons.put(uid, friend);
+
+        return uid;
     }
 
     private MainActivityViewModel setupMainViewModel() {
