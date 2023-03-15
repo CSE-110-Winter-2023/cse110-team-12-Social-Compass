@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,15 +40,16 @@ public class MainActivity extends AppCompatActivity {
     private LocationService locationService;
     private String UID; // The user's unique UID
     private LiveData<Friend> user;
-
-
+    private MainActivityViewModel mainViewModel;
+    private FriendListViewModel friendListViewModel;
+    private double UserLatitude, UserLongitude;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Check if user is new
-        SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         boolean newUser = preferences.getBoolean("newUser", true);
         if (newUser) {
             initNewUser();
@@ -56,17 +58,140 @@ public class MainActivity extends AppCompatActivity {
         UID = preferences.getString("myUID", "Default UID");
 
         // Setup ViewModel and Adapter
-        var viewModel = setupViewModel();
-        var adapter = setupAdapter(viewModel);
+        mainViewModel = setupMainViewModel();
+        friendListViewModel = setupFriendListViewModel();
+        var adapter = setupAdapter(mainViewModel);
 
         // Setup location service
         locationService = LocationService.singleton(this);
         this.reobserveLocation();
 
-        displayFriends(viewModel, 10.0, Double.POSITIVE_INFINITY, 480, true);
+        // Start polling friends
+        startPollingFriends();
+
+        // ... (rest of the code)
+        displayFriends(mainViewModel, 10.0, Double.POSITIVE_INFINITY, 480, true);
 
     }
 
+//    private void startPollingFriends() {
+//        // live updating for friends already in the database (when you rerun the program)
+//        LiveData<List<Friend>> friendsLiveData = friendListViewModel.getAll();
+//        friendsLiveData.observe(this, new Observer<List<Friend>>() {
+//            //grabs the list of friends
+//            @Override
+//            public void onChanged(List<Friend> friendList) {
+//                friendsLiveData.removeObserver(this);
+//                if (friendList != null) {
+//                    //for each friend, if its not the user then grabs its live data and poll from it
+//                    for (Friend friend : friendList) {
+//                        if (!friend.getUid().equals(UID)) {
+//                            LiveData<Friend> friendLiveData = friendListViewModel.getFriend(friend.getUid());
+//                            friendLiveData.observe(MainActivity.this, new Observer<Friend>() {
+//                                @Override
+//                                public void onChanged(Friend friend) {
+////                                    double newDist = recalculateDistance(friendLat, friendLong);
+////                                    friend.setDistance(newDist);
+////                                    friendLiveData.removeObserver(this);
+////                                    friendListViewModel.saveLocal(friend);
+//
+//                                    friendLiveData.removeObserver(this);
+//                                    double friendLat = friend.getLatitude();
+//                                    double friendLong = friend.getLongitude();
+//                                    double newDist = recalculateDistance(friendLat, friendLong);
+//                                    friend.setDistance(newDist);
+//                                    System.out.println(newDist + "INSIDE FRIENDITEM");
+//                                    friendListViewModel.saveLocal(friend);
+//                                }
+//                            });
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//    }
+
+
+    private void startPollingFriends() {
+        // live updating for friends already in the database (when you rerun the program)
+        LiveData<List<Friend>> friendsLiveData = friendListViewModel.getAll();
+        friendsLiveData.observe(this, new Observer<List<Friend>>() {
+            //grabs the list of friends
+            @Override
+            public void onChanged(List<Friend> friendList) {
+                friendsLiveData.removeObserver(this);
+                if (friendList != null) {
+                    //for each friend, if its not the user then grabs its live data and poll from it
+                    for (Friend friend : friendList) {
+                        if (friend.order != -1) {
+                            LiveData<Friend> friendLiveData = friendListViewModel.getFriend(friend.getUid());
+                            friendLiveData.observe(MainActivity.this, new Observer<Friend>() {
+                                @Override
+                                public void onChanged(Friend friend) {
+                                    friendLiveData.removeObserver(this);
+                                    double friendLat = friend.getLatitude();
+                                    double friendLong = friend.getLongitude();
+                                    double newDist = recalculateDistance(friendLat, friendLong);
+                                    friend.setDistance(newDist);
+                                    friendListViewModel.saveLocal(friend);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+
+    private double recalculateDistance(double friendLat, double friendLong) {
+        float[] results = new float[2];
+        Location.distanceBetween(UserLatitude, UserLongitude,
+                friendLat, friendLong, results);
+        return LocationService.metersToMiles(results[0]);
+    }
+
+//        private void startPollingFriends(){
+//        // live updating for friends already in the database (when you rerun the program)
+//        LiveData<List<Friend>> friendsLiveData = friendListViewModel.getAll();
+//        friendsLiveData.observe(this, new Observer<List<Friend>>() {
+//            //grabs the list of friends
+//            @Override
+//            public void onChanged(List<Friend> friendList) {
+//                friendsLiveData.removeObserver(this);
+//                if (friendList != null) {
+//                    System.out.println("I AM HERE INSIDE FRIENDLIST");
+//                    friendListSize = friendList.size();
+//                    //for each friend, if its not the user then grabs its live data and poll from it
+//                    for(Friend friend : friendList){
+//                        if (friend.order != -1) {
+//                            LiveData<Friend> friendLiveData = friendListViewModel.getFriend(friend.getUid());
+//                            friendLiveData.observe(FriendListActivity.this, new Observer<Friend>() {
+//                                @Override
+//                                public void onChanged(Friend friend) {
+//                                    friendLiveData.removeObserver(this);
+//                                    double friendLat = friend.getLatitude();
+//                                    double friendLong = friend.getLongitude();
+//                                    double newDist = recalculateDistance(friendLat, friendLong);
+//                                    friend.setDistance(newDist);
+//                                    System.out.println(newDist + "INSIDE FRIENDITEM");
+//                                    viewModel.saveLocal(friend);
+//                                }
+//                            });
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//    }
+    private MainActivityViewModel setupMainViewModel() {
+        return new ViewModelProvider(this).get(MainActivityViewModel.class);
+    }
+
+    private FriendListViewModel setupFriendListViewModel() {
+        return new ViewModelProvider(this).get(FriendListViewModel.class);
+    }
     private void setFriends(List<Friend> friends1,List<Friend> friends2){
         friends1 = friends2;
     }
@@ -117,6 +242,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
+
+//        UserLatitude = preferences.getFloat("myLatitude", 0);
+//        UserLongitude = preferences.getFloat("myLongitude", 0);
+
         System.out.println("Location: " + Utilities.formatLocation(latLong.first, latLong.second));
     }
 
@@ -129,4 +258,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FriendListActivity.class);
         startActivity(intent);
     }
+
+
 }
