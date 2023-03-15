@@ -120,9 +120,13 @@ public class MainActivity extends AppCompatActivity {
                                         if (friendIcons != null && friendIcons.containsKey(friend.getUid())) {
                                             FriendIcon icon = friendIcons.get(friend.getUid());
 
+                                            // check if there is overlap
                                             if(icon != null && icon.getOverlapIconUID() != null){
                                                 FriendIcon overlapIcon = friendIcons.get(icon.getOverlapIconUID());
+                                                // check whether the the overlapIcon was shifted closer to the center or further and set offset to it
                                                 int offset = overlapIcon.getOverlapIsCloser() ? 75 : -75;
+
+                                                // if there is still overlap, return and don't update the icons, otherwise remove overlap
                                                 if(zone == overlapIcon.getRadius() + offset && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10){
                                                     return;
                                                 }
@@ -135,9 +139,10 @@ public class MainActivity extends AppCompatActivity {
                                             mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
                                         }
 
-                                        // offset for stacking, moving the friendIcon
+                                        // if the icon is within range, then check if there is any overlap, if so grab the uid of the icon that it is overlapping
                                         String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,bearingAngle) : "";
 
+                                        // offset to shift the icon further from the circle if there is overlap
                                         int offset = overlapIconUID.equals("") ? 0 : 75;
 
                                         // create a new friendIcon with updated bearing, zone, and distance
@@ -145,10 +150,13 @@ public class MainActivity extends AppCompatActivity {
 
                                         boolean truncate = false;
 
+                                        // if there is overlap, we want to make note of that
                                         if(offset > 0){
                                             friendIcon.setOverlapIconUID(overlapIconUID);
                                             friendIcon.setOverlapIsCloser(false);
-                                            truncate = bearingAngle > 225 && bearingAngle < 315;
+
+                                            // check if we want to truncate the icon
+                                            truncate = bearingAngle > 225 && bearingAngle < 315 ;
                                         }
                                         friendIcon.createIcon(truncate);
                                         mainLayout.addView(friendIcon.getFriendIcon());
@@ -167,12 +175,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // function to check if there are any overlaps, if so shift overlapIcon closer to the circle and return its UID
     private String stackLabels(ConstraintLayout mainLayout, String overlapIconUID, int zone, float bearingAngle){
         FriendIcon friend = null;
         String uid = "";
+
+        // iterate through all of the friendIcons on the screen and check for overlap
         for (HashMap.Entry<String, FriendIcon> friendIcon : friendIcons.entrySet()) {
             String friendUID = friendIcon.getKey();
             FriendIcon value = friendIcon.getValue();
+
+            // check if the icons are in the same zone and the difference of their bearingAngle is within 10 degrees
             if (value.getRadius() == zone && Math.abs(value.getBearingAngle() - bearingAngle) <= 10){
                 friend = value;
                 uid = friendUID;
@@ -180,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // if there is no overlap, return ""
         if(friend == null || uid.equals("") || uid.equals(overlapIconUID)){
             return "";
         }
