@@ -51,9 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private int range = 10;
     private HashMap<String, FriendIcon> friendIcons;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,11 +152,7 @@ public class MainActivity extends AppCompatActivity {
                                         friend.setBearingAngle(bearingAngle);
                                         friendListViewModel.saveLocal(friend);
 
-
-                                        boolean isWithinRange = false;
-                                        if (newDist < range) {
-                                            isWithinRange = true;
-                                        }
+                                        boolean isWithinRange = newDist < range;
 
                                         if (friendIcons != null && friendIcons.containsKey(friend.getUid())) {
                                             mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
@@ -179,8 +172,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
     private double recalculateDistance(double friendLat, double friendLong) {
         float[] results = new float[2];
@@ -259,8 +250,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     private MainActivityViewModel setupViewModel() {
         return new ViewModelProvider(this).get(MainActivityViewModel.class);
     }
@@ -319,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
         Utilities.showUserNamePromptAlert(this, "Please enter your name");
@@ -329,6 +317,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FriendListActivity.class);
         startActivity(intent);
     }
-
 
 }
