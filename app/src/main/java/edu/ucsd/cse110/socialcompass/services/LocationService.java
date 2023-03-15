@@ -38,6 +38,8 @@ public class LocationService implements LocationListener {
     private MutableLiveData<Pair<Double,Double>> locationValue;
     private final LocationManager locationManager;
 
+    private long lastActiveTime = 0;
+
     public static LocationService singleton(AppCompatActivity activity){
         if (instance == null){
             instance = new LocationService(activity);
@@ -98,7 +100,19 @@ public class LocationService implements LocationListener {
     @Override
     public void onLocationChanged(@NonNull Location location) {
         this.locationValue.postValue(new Pair<Double,Double>(location.getLatitude(),location.getLongitude()));
+
     }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+
+    }
+
 
     private void unregisterLocationListener(){locationManager.removeUpdates(this);}
 
@@ -108,5 +122,14 @@ public class LocationService implements LocationListener {
         unregisterLocationListener();
         this.locationValue = mockDataSource;
     }
+
+    public long getLastActiveTime() {
+        return lastActiveTime;
+    }
+
+    public void setLastActiveTime(long time) {
+        lastActiveTime = time;
+    }
+
 }
 
