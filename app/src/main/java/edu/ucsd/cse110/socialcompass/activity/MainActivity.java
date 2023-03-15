@@ -1,18 +1,26 @@
 package edu.ucsd.cse110.socialcompass.activity;
 
+import static android.os.Looper.getMainLooper;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.app.ActivityCompat;
 import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -25,6 +33,11 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import edu.ucsd.cse110.socialcompass.Bearing;
 import edu.ucsd.cse110.socialcompass.Constants;
@@ -51,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private Friend self;    // adding any new user to list of friends
     private int range = 10;
     private HashMap<String, FriendIcon> friendIcons;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +89,18 @@ public class MainActivity extends AppCompatActivity {
         locationService = LocationService.singleton(this);
         this.reobserveLocation();
 
-        friendIcons = new HashMap<>();
+        // GPS sensor
+        boolean isGPSDisabled = preferences.getBoolean("isGPSDisabled", true);
+        long inactiveDuration = preferences.getLong("inactiveDuration", 0);
 
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("isGPSDisabled", locationService.getIsGPSEnabled());
+        editor.putLong("inactiveDuration", locationService.getInactiveDuration());
+        editor.apply();
+
+        friendIcons = new HashMap<>();
+        handler = new Handler();
+        handler.postDelayed(myRunnable, 100);
         // Start polling friends
         startPollingFriends();
 
@@ -225,6 +249,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void reobserveGPSSignal() {
+        //LocationManager manager = new LocationManager()
+        var locationData = locationService;
+        //locationData.observe(this, this::onLocationChanged);
+    }
+
+    private void onSignalChanged(boolean changedSignal, long changedDuration) {
+        SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("isGPSDisabled", changedSignal);
+        editor.putLong("inactiveDuration", changedDuration);
+        editor.apply();
+    }
+
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
         Utilities.showUserNamePromptAlert(this, "Please enter your name");
@@ -235,26 +273,38 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private String getInactiveTime() {
-        //locationService.getInactiveDuration().observe();
-        long seconds = locationService.getInactiveDuration() / 1000;
+    public void getInactiveTimeText() {
+        locationService.putSavedLastDuration(this);
+        long seconds = locationService.getSavedLastDuration(this) / 1000;
         long minutes = seconds / 60;
         long hours = minutes / 60;
         String timeStr;
         if (hours > 0) {
             timeStr = hours + "h";
-        } else if (minutes > 3) {
+        } else if (minutes > 1) {
             timeStr = minutes + "m";
         } else {
-            timeStr = "<3m";
+            timeStr = "<1m";
         }
         // Display the inactive time using a Handler on the UI thread
         new Handler(getMainLooper()).post(() -> {
             // Display the inactive time in a TextView
-            //textView.setText(timeStr);
+            TextView lastActiveTimeText = this.findViewById(R.id.gps_status);
+            if (!locationService.getIsGPSEnabled()) {
+                lastActiveTimeText.setText(timeStr + " ago");
+            } else {
+                lastActiveTimeText.setText("LIVE");
+            }
         });
-        //SharedPreferences.Editor editor = preferences.edit();
-
-        return timeStr;
     }
+
+    Runnable myRunnable = new Runnable() {
+        @Override
+        public void run() {
+            getInactiveTimeText();
+            handler.postDelayed(this, 1000);
+        }
+    };
+
+
 }

@@ -104,7 +104,6 @@ public class FriendRepository {
         // Set up a ScheduledThreadPoolExecutor that will poll the server every second.
         var executor = new ScheduledThreadPoolExecutor(1);
         ScheduledFuture<?> poller = executor.scheduleAtFixedRate(() -> {
-            //TODO: change this part to update location values for friend
             Friend getFriend = Friend.fromJSON(api.getFriend(uid));
             getFriend.uid = getFriend.public_code;
             if(friend.getValue() == null || getFriend.latitude != friend.getValue().latitude

@@ -2,17 +2,21 @@ package edu.ucsd.cse110.socialcompass.services;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.os.Looper.getMainLooper;
 
 import static edu.ucsd.cse110.socialcompass.Constants.MILES_CONVERSION;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.util.Pair;
+import android.widget.TextView;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -25,6 +29,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +50,7 @@ public class LocationService implements LocationListener {
     private MutableLiveData<Pair<Double,Double>> locationValue;
     private final LocationManager locationManager;
 
-    private long lastActiveTime = 0;    // time at which GPS loses signal
+    private long lastActiveTime = 0;
 
     public static LocationService singleton(AppCompatActivity activity){
         if (instance == null){
@@ -114,7 +119,7 @@ public class LocationService implements LocationListener {
         if (provider.equals(LocationManager.GPS_PROVIDER)) {
             // GPS signal is disabled
             setLastActiveTime(System.currentTimeMillis());
-            //updateDuration();
+            System.out.println("Provider disabled");
         }
     }
 
@@ -123,7 +128,7 @@ public class LocationService implements LocationListener {
         if (provider.equals(LocationManager.GPS_PROVIDER)) {
             /* GPS signal is enabled. If it was previously disabled, erase the last active time from screen,
              * change dot from red to green, and stop the executor from listening. */
-
+            System.out.println("Provider enabled");
         }
     }
 
@@ -145,10 +150,25 @@ public class LocationService implements LocationListener {
     }
 
     public void updateDuration() {
-        Executor backgroundExecutor = Executors.newSingleThreadExecutor();
-        backgroundExecutor.execute(()-> {
+        ScheduledExecutorService backgroundExecutor = Executors.newSingleThreadScheduledExecutor();
+        backgroundExecutor.scheduleAtFixedRate(() -> {
             setLastActiveTime(getInactiveDuration());
-        });
+        }, 0, 1000, TimeUnit.MILLISECONDS);
+    }
 
+    public boolean getIsGPSEnabled() {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    public void putSavedLastDuration(Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("inactiveDuration", this.getInactiveDuration());
+        editor.apply();
+    }
+
+    public long getSavedLastDuration(Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        return preferences.getLong("inactiveDuration", this.getInactiveDuration());
     }
 }
