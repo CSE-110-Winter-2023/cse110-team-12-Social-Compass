@@ -23,6 +23,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.Arrays;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import edu.ucsd.cse110.socialcompass.model.Friend;
 
 public class LocationService implements LocationListener {
 
@@ -100,7 +107,6 @@ public class LocationService implements LocationListener {
     @Override
     public void onLocationChanged(@NonNull Location location) {
         this.locationValue.postValue(new Pair<Double,Double>(location.getLatitude(),location.getLongitude()));
-
     }
 
     @Override
@@ -108,6 +114,7 @@ public class LocationService implements LocationListener {
         if (provider.equals(LocationManager.GPS_PROVIDER)) {
             // GPS signal is disabled
             setLastActiveTime(System.currentTimeMillis());
+            updateDuration();
         }
     }
 
@@ -120,7 +127,6 @@ public class LocationService implements LocationListener {
         }
     }
 
-
     private void unregisterLocationListener(){locationManager.removeUpdates(this);}
 
     public LiveData<Pair<Double,Double>> getLocation(){return this.locationValue;}
@@ -130,15 +136,19 @@ public class LocationService implements LocationListener {
         this.locationValue = mockDataSource;
     }
 
-    public long getLastActiveTime() {
-        return lastActiveTime;
-    }
-
     public void setLastActiveTime(long time) {
         lastActiveTime = time;
     }
 
     public long getInactiveDuration() {
         return System.currentTimeMillis() - lastActiveTime;
+    }
+
+    public void updateDuration() {
+        Executor backgroundExecutor = Executors.newSingleThreadExecutor();
+        backgroundExecutor.execute(()-> {
+            setLastActiveTime(getInactiveDuration());
+        });
+
     }
 }

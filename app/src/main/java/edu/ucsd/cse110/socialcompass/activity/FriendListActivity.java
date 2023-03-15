@@ -81,7 +81,7 @@ public class FriendListActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String json = gson.toJson(self);
             editor.putString("self", json);
-            editor.commit();
+            editor.apply();
 
         }
 

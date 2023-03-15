@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -39,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
     private LocationService locationService;
     private String UID; // The user's unique UID
     private LiveData<Friend> user;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +71,9 @@ public class MainActivity extends AppCompatActivity {
         friends1 = friends2;
     }
 
-    private void displayFriends(MainActivityViewModel viewModel, double inner, double outer, int radius, boolean isWithinRange){
-        // .getValue() seems to return null for live data, so this implementation assumes it doesnt return null
+    private void displayFriends(MainActivityViewModel viewModel, double inner, double outer,
+                                int radius, boolean isWithinRange){
+        // .getValue() seems to return null for live data, so this implementation assumes it doesn't return null
         LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner,outer);
         List<Friend> friends = new ArrayList<>();
         liveDataFriends.observeForever(new Observer<List<Friend>>() {
@@ -84,20 +85,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // hardcoded
         double distance = 0.1;
         float bearingAngle = 180;
 
         for(Friend friend : friends){
             ConstraintLayout mainLayout = findViewById(R.id.main_layout);
-            FriendIcon friendIcon = new FriendIcon(this, friend.getName(), bearingAngle,radius, distance,isWithinRange);
+            FriendIcon friendIcon = new FriendIcon(this, friend.getName(), bearingAngle,
+                    radius, distance, isWithinRange);
             friendIcon.createIcon();
             mainLayout.addView(friendIcon.getFriendIcon());
         }
     }
-
-
 
     private MainActivityViewModel setupViewModel() {
         return new ViewModelProvider(this).get(MainActivityViewModel.class);
@@ -128,5 +127,28 @@ public class MainActivity extends AppCompatActivity {
     public void onSeeFriendsClicked(View view) {
         Intent intent = new Intent(this, FriendListActivity.class);
         startActivity(intent);
+    }
+
+    private String getInactiveTime() {
+        locationService.getInactiveDuration().observe();
+        long seconds = locationService.getInactiveDuration() / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        String timeStr;
+        if (hours > 0) {
+            timeStr = hours + "h";
+        } else if (minutes > 3) {
+            timeStr = minutes + "m";
+        } else {
+            timeStr = "<3m";
+        }
+        // Display the inactive time using a Handler on the UI thread
+        new Handler(getMainLooper()).post(() -> {
+            // Display the inactive time in a TextView
+            //textView.setText(timeStr);
+        });
+        SharedPreferences.Editor editor = preferences.edit();
+
+        return timeStr;
     }
 }
