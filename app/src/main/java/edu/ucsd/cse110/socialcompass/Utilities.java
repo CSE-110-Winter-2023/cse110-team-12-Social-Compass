@@ -183,13 +183,15 @@ public class Utilities {
         return uniqueName;
     }
 
-    // used to calculate which zone the friends lie in
+    // used to calculate which zone the friends lie in, your start value will be the inner zone,
+    // ex: if you want to calculate which zone in between zone 1 and zone 2, start will be 1,
+    // number will be the distance
     public static double roundToLowestMultiple(double start, double number, double multiple) {
         double result =  Math.floor(number / multiple) * multiple;
         return start + Math.round(result * 100.0) / 100.0;
     }
 
-    // used to return the zone
+    // used to return the zone, havent implemented zone 3 and 4 since we don't need it for story 5
     public static int getFriendZone(double distance){
         if(distance >= Constants.ZONE0 & distance < Constants.ZONE1){
             return (Constants.HASHMAPZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));

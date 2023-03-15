@@ -253,8 +253,6 @@ public class FriendListActivity extends AppCompatActivity {
                     double friendLong = friend.getLongitude();
                     double newDist = recalculateDistance(friendLat, friendLong);
                     friend.setDistance(newDist);
-                    int zone = Utilities.getFriendZone(newDist);
-                    Log.d("ZONEE",String.valueOf(zone));
                     float bearingAngle = Bearing.bearing(UserLatitude,UserLongitude,friendLat,friendLong);
                     friend.setBearingAngle(bearingAngle);
                     viewModel.saveLocal(friend);

@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onChanged(Friend friend) {
                                     ConstraintLayout mainLayout = findViewById(R.id.main_layout);
+                                    // check if the user deleted his/her friend, if so remove the friendIcon and stop observing
                                     if (!friendListViewModel.existsLocal(friend.getUid())) {
                                         friendLiveData.removeObserver(this);
                                         mainLayout.removeView(friendIcons.remove(friend.getUid()).getFriendIcon());
@@ -154,14 +155,17 @@ public class MainActivity extends AppCompatActivity {
 
                                         boolean isWithinRange = newDist < range;
 
+                                        // check if there is a friendIcon with the UID on the screen, if so delete it
                                         if (friendIcons != null && friendIcons.containsKey(friend.getUid())) {
                                             mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
                                         }
 
+                                        // create a new friendIcon with updated bearing, zone, and distance
                                         FriendIcon friendIcon = new FriendIcon(MainActivity.this, friend.getName(), bearingAngle, zone, newDist, isWithinRange);
                                         friendIcon.createIcon();
                                         mainLayout.addView(friendIcon.getFriendIcon());
 
+                                        // add friendIcon to map
                                         friendIcons.put(friend.getUid(), friendIcon);
                                     }
                                 }
