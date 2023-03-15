@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
     private MainActivityViewModel mainViewModel;
     private FriendListViewModel friendListViewModel;
     private double UserLatitude, UserLongitude;
+    private Friend self;    // adding any new user to list of friends
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -241,13 +247,47 @@ public class MainActivity extends AppCompatActivity {
         locationData.observe(this, this::onLocationChanged);
     }
 
+//    private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
+//
+////        UserLatitude = preferences.getFloat("myLatitude", 0);
+////        UserLongitude = preferences.getFloat("myLongitude", 0);
+//
+//        System.out.println("Location: " + Utilities.formatLocation(latLong.first, latLong.second));
+//    }
+
+//    private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
+//        UserLatitude = latLong.first;
+//        UserLongitude = latLong.second;
+//
+//        System.out.println("Location: " + Utilities.formatLocation(latLong.first, latLong.second));
+//    }
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
+        SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putFloat("myLatitude", latLong.first.floatValue());
+        editor.putFloat("myLongitude", latLong.second.floatValue());
+        editor.apply();
+        //UserLatitude = preferences.getFloat("myLatitude", 0);
+        //UserLongitude = preferences.getFloat("myLongitude", 0);
 
-//        UserLatitude = preferences.getFloat("myLatitude", 0);
-//        UserLongitude = preferences.getFloat("myLongitude", 0);
+        Gson gson = new Gson();
+        String json = preferences.getString("self", "");
+        self = gson.fromJson(json, Friend.class);
 
-        System.out.println("Location: " + Utilities.formatLocation(latLong.first, latLong.second));
+        UserLatitude = latLong.first;
+        UserLongitude = latLong.second;
+
+        if (self != null) {
+            if (self.getLatitude() != latLong.first || self.getLongitude() != latLong.second) {
+                self.setLatitude(latLong.first);
+                self.setLongitude(latLong.second);
+                // if your distance changed, recompute distance for all friends
+                startPollingFriends();
+                friendListViewModel.saveLocal(self);
+            }
+        }
     }
+
 
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
