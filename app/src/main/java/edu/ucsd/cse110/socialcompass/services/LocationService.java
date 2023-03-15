@@ -114,7 +114,7 @@ public class LocationService implements LocationListener {
         if (provider.equals(LocationManager.GPS_PROVIDER)) {
             // GPS signal is disabled
             setLastActiveTime(System.currentTimeMillis());
-            updateDuration();
+            //updateDuration();
         }
     }
 

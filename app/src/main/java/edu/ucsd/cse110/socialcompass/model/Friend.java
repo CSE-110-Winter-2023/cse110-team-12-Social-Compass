@@ -43,6 +43,9 @@ public class Friend {
     @ColumnInfo(name = "distance")
     public double distance;
 
+    @ColumnInfo(name = "bearingAngle")
+    public float bearingAngle;
+
     // Constructor matching fields above
     public Friend(@NonNull String name, @NonNull String uid, double latitude, double longitude, int order) {
         this.name = name;
@@ -81,6 +84,12 @@ public class Friend {
 
     public double getDistance() {
         return this.distance;
+    }
+
+    public void setBearingAngle(float bearingAngle) { this.bearingAngle = bearingAngle; }
+
+    public float getBearingAngle() {
+        return this.bearingAngle;
     }
 
     // Factory method for creating Friend from JSON file
