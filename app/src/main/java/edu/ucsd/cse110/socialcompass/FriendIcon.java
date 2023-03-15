@@ -76,7 +76,7 @@ public class FriendIcon {
 
 //
 //    Creates a new button in the activity and sets ints constraints
-    public void createIcon() {
+    public void createIcon(boolean truncate) {
         username_icon = new TextView(activity);
         username_icon.setId(View.generateViewId());
 
@@ -87,9 +87,16 @@ public class FriendIcon {
             username_icon.setTextColor(Color.BLACK);
             username_icon.setTextSize(20);
             username_icon.setTypeface(Typeface.DEFAULT_BOLD);
-            layout = new ConstraintLayout.LayoutParams(
-                    200, 200
-            );
+            username_icon.setMaxLines(1);
+            if(truncate){
+                layout = new ConstraintLayout.LayoutParams(
+                        110, 110
+                );
+            } else {
+                layout = new ConstraintLayout.LayoutParams(
+                        200, 200
+                );
+            }
         } else{
             username_icon.setBackground(ContextCompat.getDrawable(activity, R.drawable.dot));
             layout = new ConstraintLayout.LayoutParams(
