@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.ucsd.cse110.socialcompass.Bearing;
 import edu.ucsd.cse110.socialcompass.Constants;
 import edu.ucsd.cse110.socialcompass.FriendIcon;
 import edu.ucsd.cse110.socialcompass.R;
@@ -139,6 +140,8 @@ public class MainActivity extends AppCompatActivity {
                                     double friendLong = friend.getLongitude();
                                     double newDist = recalculateDistance(friendLat, friendLong);
                                     friend.setDistance(newDist);
+                                    float bearingAngle = Bearing.bearing(UserLatitude,UserLongitude,friendLat,friendLong);
+                                    friend.setBearingAngle(bearingAngle);
                                     friendListViewModel.saveLocal(friend);
                                 }
                             });
