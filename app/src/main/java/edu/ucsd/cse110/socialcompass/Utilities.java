@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+import edu.ucsd.cse110.socialcompass.services.LocationService;
 
 /**
  * This class stores all the helper methods for showing alerts and dialogs, as well as taking in
@@ -181,6 +183,13 @@ public class Utilities {
 
     public static String getName() {
         return uniqueName;
+    }
+
+    public static double recalculateDistance(double userLat, double userLong, double friendLat, double friendLong) {
+        float[] results = new float[2];
+        Location.distanceBetween(userLat, userLong,
+                friendLat, friendLong, results);
+        return LocationService.metersToMiles(results[0]);
     }
 
     // used to calculate which zone the friends lie in, your start value will be the inner zone,
