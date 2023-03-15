@@ -106,7 +106,6 @@ public class FriendListActivity extends AppCompatActivity {
             public void onChanged(List<Friend> friendList) {
                 friendsLiveData.removeObserver(this);
                 if (friendList != null) {
-                    System.out.println("I AM HERE INSIDE FRIENDLIST");
                     friendListSize = friendList.size();
                     //for each friend, if its not the user then grabs its live data and poll from it
                     for(Friend friend : friendList){
@@ -120,7 +119,6 @@ public class FriendListActivity extends AppCompatActivity {
                                     double friendLong = friend.getLongitude();
                                     double newDist = recalculateDistance(friendLat, friendLong);
                                     friend.setDistance(newDist);
-                                    System.out.println(newDist + "INSIDE FRIENDITEM");
                                     viewModel.saveLocal(friend);
                                 }
                             });

@@ -38,7 +38,7 @@ public class LocationService implements LocationListener {
     private MutableLiveData<Pair<Double,Double>> locationValue;
     private final LocationManager locationManager;
 
-    private long lastActiveTime = 0;
+    private long lastActiveTime = 0;    // time at which GPS loses signal
 
     public static LocationService singleton(AppCompatActivity activity){
         if (instance == null){
@@ -105,12 +105,19 @@ public class LocationService implements LocationListener {
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
-
+        if (provider.equals(LocationManager.GPS_PROVIDER)) {
+            // GPS signal is disabled
+            setLastActiveTime(System.currentTimeMillis());
+        }
     }
 
     @Override
     public void onProviderEnabled(@NonNull String provider) {
+        if (provider.equals(LocationManager.GPS_PROVIDER)) {
+            /* GPS signal is enabled. If it was previously disabled, erase the last active time from screen,
+             * change dot from red to green, and stop the executor from listening. */
 
+        }
     }
 
 
@@ -131,5 +138,7 @@ public class LocationService implements LocationListener {
         lastActiveTime = time;
     }
 
+    public long getInactiveDuration() {
+        return System.currentTimeMillis() - lastActiveTime;
+    }
 }
-
