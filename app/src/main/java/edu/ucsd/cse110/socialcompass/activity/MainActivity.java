@@ -43,29 +43,20 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         var firstCircle = (TextView)findViewById(R.id.first_circle);
         var secondCircle = (TextView)findViewById(R.id.second_circle);
         var thirdCircle = (TextView)findViewById(R.id.third_circle);
-        var fourthCircle = (TextView)findViewById(R.id.fourth_circle);
         var zoomIn = (TextView)findViewById(R.id.zoom_in);
         var zoomOut = (TextView)findViewById(R.id.zoom_out);
 
         // Set up animations
         var zoomInFirstFrom100Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_first_circle_from_100);
-        var zoomInFirstFrom200Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_first_circle_from_200);
-        var zoomInFirstFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_first_circle_from_300);
+        var zoomInSecondFrom133Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_133);
         var zoomInSecondFrom200Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_200);
-        var zoomInSecondFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_300);
-        var zoomInSecondFrom400Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_400);
-        var zoomInThirdFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_third_circle_from_300);
-        var zoomInThirdFrom400Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_third_circle_from_400);
-        var zoomInFourthFrom400Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_fourth_circle_from_400);
-        var zoomOutFirstFrom200Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_first_circle_from_200);
-        var zoomOutFirstFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_first_circle_from_300);
-        var zoomOutFirstFrom400Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_first_circle_from_400);
-        var zoomOutSecondFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_300);
-        var zoomOutSecondFrom400Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_400);
+        var zoomInThirdFrom267Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_third_circle_from_267);
+        var zoomInThirdBackAnimation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_third_circle_back);
+        var zoomOutFirstFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_first_circle_from_1000);
         var zoomOutSecondFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_1000);
-        var zoomOutThirdFrom400Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_third_circle_from_400);
+        var zoomOutSecondFrom200Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_200);
         var zoomOutThirdFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_third_circle_from_1000);
-        var zoomOutFourthFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_fourth_circle_from_1000);
+        var zoomOutThirdFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_third_circle_from_300);
         zoomInFirstFrom100Animation.setAnimationListener(this);
 
         // Run animations
@@ -74,18 +65,15 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
             public void onClick(View view) {
                 if(scaleOfCircles == 100) {
                     firstCircle.startAnimation(zoomInFirstFrom100Animation);
-                    secondCircle.startAnimation(zoomInSecondFrom200Animation);
-                    thirdCircle.startAnimation(zoomInThirdFrom300Animation);
-                    fourthCircle.startAnimation(zoomInFourthFrom400Animation);
+                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
+                    thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
                     scaleOfCircles = 200;
                 } else if(scaleOfCircles == 200) {
-                    firstCircle.startAnimation(zoomInFirstFrom200Animation);
-                    secondCircle.startAnimation(zoomInSecondFrom300Animation);
-                    thirdCircle.startAnimation(zoomInThirdFrom400Animation);
+                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
+                    thirdCircle.startAnimation(zoomInThirdFrom267Animation);
                     scaleOfCircles = 300;
                 } else if(scaleOfCircles == 300) {
-                    firstCircle.startAnimation(zoomInFirstFrom300Animation);
-                    secondCircle.startAnimation(zoomInSecondFrom400Animation);
+                    secondCircle.startAnimation(zoomInSecondFrom200Animation);
                     scaleOfCircles = 400;
                 }
             }
@@ -94,19 +82,16 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
             @Override
             public void onClick(View view) {
                 if(scaleOfCircles == 400) {
-                    firstCircle.startAnimation(zoomOutFirstFrom400Animation);
                     secondCircle.startAnimation(zoomOutSecondFrom1000Animation);
                     scaleOfCircles = 300;
                 } else if(scaleOfCircles == 300) {
-                    firstCircle.startAnimation(zoomOutFirstFrom300Animation);
-                    secondCircle.startAnimation(zoomOutSecondFrom400Animation);
+                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
                     thirdCircle.startAnimation(zoomOutThirdFrom1000Animation);
                     scaleOfCircles = 200;
                 } else if(scaleOfCircles == 200) {
-                    firstCircle.startAnimation(zoomOutFirstFrom200Animation);
-                    secondCircle.startAnimation(zoomOutSecondFrom300Animation);
-                    thirdCircle.startAnimation(zoomOutThirdFrom400Animation);
-                    fourthCircle.startAnimation(zoomOutFourthFrom1000Animation);
+                    firstCircle.startAnimation(zoomOutFirstFrom1000Animation);
+                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
+                    thirdCircle.startAnimation(zoomInThirdBackAnimation);
                     scaleOfCircles = 100;
                 }
             }

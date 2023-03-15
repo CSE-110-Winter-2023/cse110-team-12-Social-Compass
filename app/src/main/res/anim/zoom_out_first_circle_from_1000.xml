@@ -3,11 +3,11 @@
     android:fillAfter="true" >
     <scale
         android:duration="1000"
-        android:fromYScale="4"
-        android:fromXScale="4"
+        android:fromYScale="10"
+        android:fromXScale="10"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:toXScale="3"
-        android:toYScale="3" >
+        android:toXScale="1"
+        android:toYScale="1" >
     </scale>
 </set>
