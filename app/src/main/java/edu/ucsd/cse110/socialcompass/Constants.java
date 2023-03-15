@@ -18,6 +18,12 @@ public class Constants {
 
     public static final int ZONE3_1 = 530; // (8.2, 10] 390
 
+    public static final int ZONE0 = 0;
+    public static final int ZONE1 = 1;
+    public static final int ZONE2 = 10;
+    public static final int ZONE3 = 500;
+    public static final int ZONE4 = 1000;
+
     //hash maps to map to the inner zones
     public static final HashMap<Double, Integer> HASHMAPZONE1 = new HashMap<>() {{
         put(0.0, 45);

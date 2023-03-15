@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 import edu.ucsd.cse110.socialcompass.Bearing;
 import edu.ucsd.cse110.socialcompass.Constants;
@@ -47,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private FriendListViewModel friendListViewModel;
     private double UserLatitude, UserLongitude;
     private Friend self;    // adding any new user to list of friends
+    private int range = 10;
+    private HashMap<String, FriendIcon> friendIcons;
+
 
 
 
@@ -72,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         // Setup location service
         locationService = LocationService.singleton(this);
         this.reobserveLocation();
+
+        friendIcons = new HashMap<>();
 
         // Start polling friends
         startPollingFriends();
@@ -135,14 +141,36 @@ public class MainActivity extends AppCompatActivity {
                             friendLiveData.observe(MainActivity.this, new Observer<Friend>() {
                                 @Override
                                 public void onChanged(Friend friend) {
-                                    friendLiveData.removeObserver(this);
-                                    double friendLat = friend.getLatitude();
-                                    double friendLong = friend.getLongitude();
-                                    double newDist = recalculateDistance(friendLat, friendLong);
-                                    friend.setDistance(newDist);
-                                    float bearingAngle = Bearing.bearing(UserLatitude,UserLongitude,friendLat,friendLong);
-                                    friend.setBearingAngle(bearingAngle);
-                                    friendListViewModel.saveLocal(friend);
+                                    ConstraintLayout mainLayout = findViewById(R.id.main_layout);
+                                    if (!friendListViewModel.existsLocal(friend.getUid())) {
+                                        friendLiveData.removeObserver(this);
+                                        mainLayout.removeView(friendIcons.remove(friend.getUid()).getFriendIcon());
+                                    } else {
+                                        double friendLat = friend.getLatitude();
+                                        double friendLong = friend.getLongitude();
+                                        double newDist = recalculateDistance(friendLat, friendLong);
+                                        friend.setDistance(newDist);
+                                        int zone = Utilities.getFriendZone(newDist);
+                                        float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat, friendLong);
+                                        friend.setBearingAngle(bearingAngle);
+                                        friendListViewModel.saveLocal(friend);
+
+
+                                        boolean isWithinRange = false;
+                                        if (newDist < range) {
+                                            isWithinRange = true;
+                                        }
+
+                                        if (friendIcons != null && friendIcons.containsKey(friend.getUid())) {
+                                            mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
+                                        }
+
+                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this, friend.getName(), bearingAngle, zone, newDist, isWithinRange);
+                                        friendIcon.createIcon();
+                                        mainLayout.addView(friendIcon.getFriendIcon());
+
+                                        friendIcons.put(friend.getUid(), friendIcon);
+                                    }
                                 }
                             });
                         }

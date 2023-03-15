@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 import edu.ucsd.cse110.socialcompass.Bearing;
+import edu.ucsd.cse110.socialcompass.Constants;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
@@ -250,7 +251,10 @@ public class FriendListActivity extends AppCompatActivity {
                     friendLiveData.removeObserver(this);
                     double friendLat = friend.getLatitude();
                     double friendLong = friend.getLongitude();
-                    friend.setDistance(recalculateDistance(friendLat, friendLong));
+                    double newDist = recalculateDistance(friendLat, friendLong);
+                    friend.setDistance(newDist);
+                    int zone = Utilities.getFriendZone(newDist);
+                    Log.d("ZONEE",String.valueOf(zone));
                     float bearingAngle = Bearing.bearing(UserLatitude,UserLongitude,friendLat,friendLong);
                     friend.setBearingAngle(bearingAngle);
                     viewModel.saveLocal(friend);
@@ -258,6 +262,8 @@ public class FriendListActivity extends AppCompatActivity {
             });
         });
     }
+
+
 
     private void onFriendClicked(Friend friend, FriendListViewModel viewModel) {
         Log.d("FriendAdapter", "Opened friend " + friend.name);
