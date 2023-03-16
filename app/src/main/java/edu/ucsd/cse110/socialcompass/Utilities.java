@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+import edu.ucsd.cse110.socialcompass.services.LocationService;
 
 /**
  * This class stores all the helper methods for showing alerts and dialogs, as well as taking in
@@ -92,9 +94,7 @@ public class Utilities {
         android.app.AlertDialog.Builder alertBuilder2 = new android.app.AlertDialog.Builder(activity);
 
         LayoutInflater inflater2 = LayoutInflater.from(activity);
-        //View promptUserNameView2 = inflater2.inflate(R.layout.dialog_user_name_prompt, null);
         View promptUserNameView2 = inflater2.inflate(R.layout.dialog_init_friend_prompt, null);
-        //TextView userName = promptUserNameView.findViewById(R.id.inputName);
 
         alertBuilder2
                 .setView(promptUserNameView2)
@@ -183,13 +183,22 @@ public class Utilities {
         return uniqueName;
     }
 
-    // used to calculate which zone the friends lie in
+    public static double recalculateDistance(double userLat, double userLong, double friendLat, double friendLong) {
+        float[] results = new float[2];
+        Location.distanceBetween(userLat, userLong,
+                friendLat, friendLong, results);
+        return LocationService.metersToMiles(results[0]);
+    }
+
+    // used to calculate which zone the friends lie in, your start value will be the inner zone,
+    // ex: if you want to calculate which zone in between zone 1 and zone 2, start will be 1,
+    // number will be the distance
     public static double roundToLowestMultiple(double start, double number, double multiple) {
         double result =  Math.floor(number / multiple) * multiple;
         return start + Math.round(result * 100.0) / 100.0;
     }
 
-    // used to return the zone
+    // used to return the zone, haven't implemented zone 3 and 4 since we don't need it for story 5
     public static int getFriendZone(double distance){
         if(distance >= Constants.ZONE0 & distance < Constants.ZONE1){
             return (Constants.HASHMAPZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));

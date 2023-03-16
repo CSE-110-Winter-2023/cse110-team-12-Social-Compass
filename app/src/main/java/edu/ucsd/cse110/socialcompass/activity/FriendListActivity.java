@@ -1,15 +1,4 @@
 package edu.ucsd.cse110.socialcompass.activity;
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -22,18 +11,24 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.gson.Gson;
 
 import edu.ucsd.cse110.socialcompass.Bearing;
-import edu.ucsd.cse110.socialcompass.Constants;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
-import edu.ucsd.cse110.socialcompass.model.FriendAPI;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
-import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
 public class FriendListActivity extends AppCompatActivity {
 
@@ -65,7 +60,6 @@ public class FriendListActivity extends AppCompatActivity {
         reobserveLocation();
 
         // if this is a new user, add them to the database
-        System.out.println("new user " + newUser);
         if (newUser) {
             self = new Friend(UserName, UserUID, UserLatitude, UserLongitude,-1);
             viewModel.save(self);
@@ -89,13 +83,6 @@ public class FriendListActivity extends AppCompatActivity {
 
         TextView selfUID = this.findViewById(R.id.selfUID);
         selfUID.setText(UserUID);
-    }
-
-    private double recalculateDistance(double friendLat, double friendLong) {
-        float[] results = new float[2];
-        Location.distanceBetween(UserLatitude, UserLongitude,
-                friendLat, friendLong, results);
-        return LocationService.metersToMiles(results[0]);
     }
 
     private void reobserveLocation() {
@@ -200,7 +187,6 @@ public class FriendListActivity extends AppCompatActivity {
 
             // Otherwise, create the livedata for the remote friend object and set an observer
             var friendLiveData = viewModel.getFriend(uid);
-            //friendLiveData.observe(this,this::onFriendLocationChanged);
             friendLiveData.observe(this, new Observer<>() {
                 @Override
                 public void onChanged(Friend friend) {
@@ -208,7 +194,7 @@ public class FriendListActivity extends AppCompatActivity {
                     friendLiveData.removeObserver(this);
                     double friendLat = friend.getLatitude();
                     double friendLong = friend.getLongitude();
-                    double newDist = recalculateDistance(friendLat, friendLong);
+                    double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
                     friend.setDistance(newDist);
                     int zone = Utilities.getFriendZone(newDist);
                     Log.d("ZONE",String.valueOf(zone));
