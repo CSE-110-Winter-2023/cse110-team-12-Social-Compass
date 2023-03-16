@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -267,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-    public void getInactiveTimeText(long seconds) {
+    public void setInactiveTimeText(long seconds) {
         long minutes = seconds / 60;
         long hours = minutes / 60;
         String timeStr;
@@ -293,6 +294,18 @@ public class MainActivity extends AppCompatActivity {
         return this;
     }
 
+    public void setIconVisibility(long seconds) {
+        ImageView redIcon = this.findViewById(R.id.red_btn);
+        ImageView greenIcon = this.findViewById(R.id.green_btn);
+        if (seconds != 0) {
+            greenIcon.setVisibility(View.INVISIBLE);
+            redIcon.setVisibility(View.VISIBLE);
+        } else {
+            greenIcon.setVisibility(View.VISIBLE);
+            redIcon.setVisibility(View.INVISIBLE);
+        }
+    }
+
     Runnable myRunnable = new Runnable() {
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
@@ -312,7 +325,8 @@ public class MainActivity extends AppCompatActivity {
             //System.out.println("Last Longitude: " + locationService.getLastLocation().getLongitude());
             locationService.setInactiveDuration(lastActiveDuration
                     + locationService.getSavedLastDuration(getActivity()), getActivity());
-            getInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
+            setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
+            setIconVisibility(locationService.getSavedLastDuration(getActivity()));
             handler.postDelayed(this, 1000);
         }
     };
