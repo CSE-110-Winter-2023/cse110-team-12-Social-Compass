@@ -90,21 +90,32 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
 
         friendIcons = new HashMap<>();
 
+        // Fetch the zooming setting saved
+        int scaleOfCirclesSaved = preferences.getInt("scaleOfCircles", 300);
+
         // Start polling friends
         startPollingFriends();
-        
         displayFriends(mainViewModel, range, Double.POSITIVE_INFINITY, 480, true);
 
-        // Zoom in twice as set up
-        firstCircle.startAnimation(zoomInFirstFrom100Animation);
-        secondCircle.startAnimation(zoomOutSecondFrom200Animation);
-        thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
-        range = 500;
-        scaleOfCircles = 200;
-        secondCircle.startAnimation(zoomInSecondFrom133Animation);
-        thirdCircle.startAnimation(zoomInThirdFrom267Animation);
-        range = 10;
-        scaleOfCircles = 300;
+        // Zooming in based on the zooming setting
+        if(scaleOfCirclesSaved > 100) {
+            firstCircle.startAnimation(zoomInFirstFrom100Animation);
+            secondCircle.startAnimation(zoomOutSecondFrom200Animation);
+            thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
+            range = 500;
+            scaleOfCircles = 200;
+        }
+        if(scaleOfCirclesSaved > 200) {
+            secondCircle.startAnimation(zoomInSecondFrom133Animation);
+            thirdCircle.startAnimation(zoomInThirdFrom267Animation);
+            range = 10;
+            scaleOfCircles = 300;
+        }
+        if(scaleOfCirclesSaved > 300) {
+            secondCircle.startAnimation(zoomInSecondFrom200Animation);
+            range = 1;
+            scaleOfCircles = 400;
+        }
 
         // Run animations
         zoomIn.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +160,16 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                 }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        // Save the zooming setting
+        super.onPause();
+        SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("scaleOfCircles", scaleOfCircles);
+        editor.apply();
     }
 
     @Override
@@ -308,5 +329,4 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         Intent intent = new Intent(this, FriendListActivity.class);
         startActivity(intent);
     }
-
 }
