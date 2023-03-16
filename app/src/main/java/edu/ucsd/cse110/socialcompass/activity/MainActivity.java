@@ -3,14 +3,12 @@ package edu.ucsd.cse110.socialcompass.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -18,18 +16,20 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.ucsd.cse110.socialcompass.Bearing;
-import edu.ucsd.cse110.socialcompass.Constants;
 import edu.ucsd.cse110.socialcompass.FriendIcon;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
+import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.MainActivityViewModel;
 
 public class MainActivity extends AppCompatActivity implements Animation.AnimationListener {
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         // Start polling friends
         startPollingFriends();
         
-        displayFriends(viewModel, 10.0, Double.POSITIVE_INFINITY, 480, true);
+        displayFriends(mainViewModel, 10.0, Double.POSITIVE_INFINITY, 480, true);
     }
 
     @Override
@@ -144,8 +144,6 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
 
     @Override
     public void onAnimationRepeat(Animation animation) {
-    }
-
     }
 
     private void startPollingFriends() {
