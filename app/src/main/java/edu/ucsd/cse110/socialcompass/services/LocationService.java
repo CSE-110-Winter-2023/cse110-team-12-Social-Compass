@@ -23,6 +23,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.Arrays;
 
+import edu.ucsd.cse110.socialcompass.activity.MainActivity;
+
 public class LocationService implements LocationListener {
 
     final String[] REQUIRED_PERMISSIONS = {
@@ -123,8 +125,9 @@ public class LocationService implements LocationListener {
     }
 
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-    public void setLastKnownActiveTime(Activity activity) {
-        this.lastActiveTime = getLastLocation().getTime();
+    public void setLastKnownActiveTime(MainActivity activity) {
+        Location location = (getLastLocation() != null) ? getLastLocation() : activity.getLocation();
+        this.lastActiveTime = location.getTime();
         SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong("lastActiveTime", this.lastActiveTime);

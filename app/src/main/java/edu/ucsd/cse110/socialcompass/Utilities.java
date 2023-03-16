@@ -1,6 +1,5 @@
 package edu.ucsd.cse110.socialcompass;
 
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -19,8 +18,6 @@ import java.util.UUID;
 
 import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
-import edu.ucsd.cse110.socialcompass.model.Friend;
-import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
 
 /**

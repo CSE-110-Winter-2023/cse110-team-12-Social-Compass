@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private HashMap<String, FriendIcon> friendIcons;
     private Handler handler;
     private long lastActiveDuration;
+    Location location;
 
     // Sensor stuff
     private SensorManager sensorManager;
@@ -367,11 +369,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    // occasionally check for GPS status using a Runnable thread
     Runnable myRunnable = new Runnable() {
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
-            if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
+            if (locationService.getLastLocation() != null) {
+                location = locationService.getLastLocation();
+            }
+            if (locationService.getLastActiveTime(getActivity()) == location.getTime()) {
                 // GPS signal has gone stale
                 locationService.incrementInactiveDuration(getActivity());
             } else {
