@@ -70,44 +70,6 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         var zoomOutThirdFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_third_circle_from_300);
         zoomInFirstFrom100Animation.setAnimationListener(this);
 
-        // Run animations
-        zoomIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(scaleOfCircles == 100) {
-                    firstCircle.startAnimation(zoomInFirstFrom100Animation);
-                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
-                    thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
-                    scaleOfCircles = 200;
-                } else if(scaleOfCircles == 200) {
-                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
-                    thirdCircle.startAnimation(zoomInThirdFrom267Animation);
-                    scaleOfCircles = 300;
-                } else if(scaleOfCircles == 300) {
-                    secondCircle.startAnimation(zoomInSecondFrom200Animation);
-                    scaleOfCircles = 400;
-                }
-            }
-        });
-        zoomOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(scaleOfCircles == 400) {
-                    secondCircle.startAnimation(zoomOutSecondFrom1000Animation);
-                    scaleOfCircles = 300;
-                } else if(scaleOfCircles == 300) {
-                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
-                    thirdCircle.startAnimation(zoomOutThirdFrom1000Animation);
-                    scaleOfCircles = 200;
-                } else if(scaleOfCircles == 200) {
-                    firstCircle.startAnimation(zoomOutFirstFrom1000Animation);
-                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
-                    thirdCircle.startAnimation(zoomInThirdBackAnimation);
-                    scaleOfCircles = 100;
-                }
-            }
-        });
-
         // Check if user is new
         SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         boolean newUser = preferences.getBoolean("newUser", true);
@@ -131,7 +93,62 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         // Start polling friends
         startPollingFriends();
         
-        displayFriends(mainViewModel, 1000.0, Double.POSITIVE_INFINITY, 480, true);
+        displayFriends(mainViewModel, range, Double.POSITIVE_INFINITY, 480, true);
+
+        // Zoom in twice as set up
+        firstCircle.startAnimation(zoomInFirstFrom100Animation);
+        secondCircle.startAnimation(zoomOutSecondFrom200Animation);
+        thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
+        range = 500;
+        scaleOfCircles = 200;
+        secondCircle.startAnimation(zoomInSecondFrom133Animation);
+        thirdCircle.startAnimation(zoomInThirdFrom267Animation);
+        range = 10;
+        scaleOfCircles = 300;
+
+        // Run animations
+        zoomIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(scaleOfCircles == 100) {
+                    firstCircle.startAnimation(zoomInFirstFrom100Animation);
+                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
+                    thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
+                    range = 500;
+                    scaleOfCircles = 200;
+                } else if(scaleOfCircles == 200) {
+                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
+                    thirdCircle.startAnimation(zoomInThirdFrom267Animation);
+                    range = 10;
+                    scaleOfCircles = 300;
+                } else if(scaleOfCircles == 300) {
+                    secondCircle.startAnimation(zoomInSecondFrom200Animation);
+                    range = 1;
+                    scaleOfCircles = 400;
+                }
+            }
+        });
+        zoomOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(scaleOfCircles == 400) {
+                    secondCircle.startAnimation(zoomOutSecondFrom1000Animation);
+                    range = 10;
+                    scaleOfCircles = 300;
+                } else if(scaleOfCircles == 300) {
+                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
+                    thirdCircle.startAnimation(zoomOutThirdFrom1000Animation);
+                    range = 500;
+                    scaleOfCircles = 200;
+                } else if(scaleOfCircles == 200) {
+                    firstCircle.startAnimation(zoomOutFirstFrom1000Animation);
+                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
+                    thirdCircle.startAnimation(zoomInThirdBackAnimation);
+                    range = 1000;
+                    scaleOfCircles = 100;
+                }
+            }
+        });
     }
 
     @Override
@@ -172,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                                         double friendLong = friend.getLongitude();
                                         double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
                                         friend.setDistance(newDist);
-                                        int zone = Utilities.getFriendZone(newDist);
+                                        int zone = Utilities.getFriendZone(newDist, scaleOfCircles);
                                         float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat, friendLong);
                                         friend.setBearingAngle(bearingAngle);
                                         friendListViewModel.saveLocal(friend);

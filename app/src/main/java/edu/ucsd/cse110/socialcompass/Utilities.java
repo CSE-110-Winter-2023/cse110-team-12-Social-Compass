@@ -193,27 +193,53 @@ public class Utilities {
     }
 
     // Return the zone
-    public static int getFriendZone(double distance) {
-        if(distance >= Constants.ZONE0 & distance < Constants.ZONE1) {
-            return (Constants.HASHMAP_ZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));
-        } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2) {
-            return (Constants.HASHMAP_ZONE2).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
-        } else if(distance >= Constants.ZONE2 & distance < Constants.ZONE3) {
-            return (Constants.HASHMAP_ZONE3).get(Utilities.roundToLowestMultiple(10.0,distance,98.0));
-        } else if(distance >= Constants.ZONE3 & distance < Constants.ZONE4) {
-            if(distance < 600) {
-                return 392;
-            } else if(distance < 700) {
-                return 417;
-            } else if(distance < 800) {
-                return 441;
-            } else if(distance < 900) {
-                return 466;
+    public static int getFriendZone(double distance, int scale) {
+        if(scale == 100) {
+            if(distance >= Constants.ZONE0 & distance < Constants.ZONE1) {
+                return (Constants.HASHMAP_ZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));
+            } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2) {
+                return (Constants.HASHMAP_ZONE2).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
+            } else if(distance >= Constants.ZONE2 & distance < Constants.ZONE3) {
+                return (Constants.HASHMAP_ZONE3).get(Utilities.roundToLowestMultiple(10.0,distance,98.0));
+            } else if(distance >= Constants.ZONE3 & distance < Constants.ZONE4) {
+                if(distance < 600) {
+                    return 392;
+                } else if(distance < 700) {
+                    return 417;
+                } else if(distance < 800) {
+                    return 441;
+                } else if(distance < 900) {
+                    return 466;
+                } else {
+                    return 489;
+                }
             } else {
-                return 489;
+                return 490;
+            }
+        } else if(scale == 200) {
+            if(distance >= Constants.ZONE0 & distance < Constants.ZONE1) {
+                return (Constants.HASHMAP_ZONE1_2).get(Utilities.roundToLowestMultiple(0,distance,0.2));
+            } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2) {
+                return (Constants.HASHMAP_ZONE2_2).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
+            } else if(distance >= Constants.ZONE2 & distance < Constants.ZONE3) {
+                return (Constants.HASHMAP_ZONE3_2).get(Utilities.roundToLowestMultiple(10.0,distance,98.0));
+            } else {
+                return 490;
+            }
+        } else if(scale == 300) {
+            if(distance >= Constants.ZONE0 & distance < Constants.ZONE1) {
+                return (Constants.HASHMAP_ZONE1_3).get(Utilities.roundToLowestMultiple(0,distance,0.2));
+            } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2) {
+                return (Constants.HASHMAP_ZONE2_3).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
+            } else {
+                return 490;
             }
         } else {
-            return 490;
+            if(distance >= Constants.ZONE0 & distance < Constants.ZONE1) {
+                return (Constants.HASHMAP_ZONE1_4).get(Utilities.roundToLowestMultiple(0,distance,0.2));
+            } else {
+                return 490;
+            }
         }
     }
 }

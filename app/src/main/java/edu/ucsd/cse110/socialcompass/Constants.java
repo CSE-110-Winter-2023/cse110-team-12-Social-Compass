@@ -38,12 +38,55 @@ public class Constants {
         put(402.0, 368);
     }};
 
-    public static final HashMap<Double, Integer> HASHMAP_ZONE4 = new HashMap<Double, Integer>() {{
-        put(500.0, 392);
-        put(600.0, 417);
-        put(700.0, 441);
-        put(800.0, 466);
-        put(900.0, 489);
+    // Zone 1 after zooming in once
+    public static final HashMap<Double, Integer> HASHMAP_ZONE1_2 = new HashMap<Double, Integer>() {{
+        put(0.0, 33);
+        put(0.2, 65);
+        put(0.4, 98);
+        put(0.6, 131);
+        put(0.8, 163);
+    }};
+
+    public static final HashMap<Double, Integer> HASHMAP_ZONE2_2 = new HashMap<Double, Integer>() {{
+        put(1.0, 196);
+        put(2.8, 229);
+        put(4.6, 261);
+        put(6.4, 294);
+        put(8.2, 327);
+    }};
+
+    public static final HashMap<Double, Integer> HASHMAP_ZONE3_2 = new HashMap<Double, Integer>() {{
+        put(10.0, 359);
+        put(108.0, 392);
+        put(206.0, 425);
+        put(304.0, 457);
+        put(402.0, 489);
+    }};
+
+    // Zone 1 after zooming in third times
+    public static final HashMap<Double, Integer> HASHMAP_ZONE1_3 = new HashMap<Double, Integer>() {{
+        put(0.0, 49);
+        put(0.2, 98);
+        put(0.4, 147);
+        put(0.6, 196);
+        put(0.8, 245);
+    }};
+
+    public static final HashMap<Double, Integer> HASHMAP_ZONE2_3 = new HashMap<Double, Integer>() {{
+        put(1.0, 294);
+        put(2.8, 343);
+        put(4.6, 392);
+        put(6.4, 441);
+        put(8.2, 489);
+    }};
+
+    // Zone 1 after zooming in fourth times
+    public static final HashMap<Double, Integer> HASHMAP_ZONE1_4 = new HashMap<Double, Integer>() {{
+        put(0.0, 98);
+        put(0.2, 196);
+        put(0.4, 294);
+        put(0.6, 392);
+        put(0.8, 489);
     }};
 
     public static final double MILES_CONVERSION = 0.00062137119;
