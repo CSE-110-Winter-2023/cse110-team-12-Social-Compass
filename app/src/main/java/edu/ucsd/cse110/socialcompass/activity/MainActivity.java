@@ -20,12 +20,22 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import android.content.pm.PackageManager;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+
+import android.os.Looper;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -59,7 +69,7 @@ import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.MainActivityViewModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private LocationService locationService;
     private String UID; // The user's unique UID
@@ -74,11 +84,29 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private long lastActiveDuration;
 
+    //Sensor stuff
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private Sensor magnetometer;
+    private float[] lastAccelerometer = new float[3];
+    private float[] lastMagnetometer = new float[3];
+    private boolean accelerometerSet = false;
+    private boolean magnetometerSet = false;
+    private float[] rotationMatrix = new float[9];
+    private float[] orientation = new float[3];
+    private float currentAzimuth = 0;
+
+
     @Override
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Initializing for Sensor
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
         // Check if user is new
         SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
@@ -109,9 +137,42 @@ public class MainActivity extends AppCompatActivity {
         // Start polling friends
         startPollingFriends();
 
-        // ... (rest of the code)
-        displayFriends(mainViewModel, 10.0, Double.POSITIVE_INFINITY, 480, true);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this, accelerometer);
+        sensorManager.unregisterListener(this, magnetometer);
+    }
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            System.arraycopy(event.values, 0, lastAccelerometer, 0, event.values.length);
+            accelerometerSet = true;
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            System.arraycopy(event.values, 0, lastMagnetometer, 0, event.values.length);
+            magnetometerSet = true;
+        }
+
+        if (accelerometerSet && magnetometerSet) {
+            SensorManager.getRotationMatrix(rotationMatrix, null, lastAccelerometer, lastMagnetometer);
+            SensorManager.getOrientation(rotationMatrix, orientation);
+            currentAzimuth = (float) Math.toDegrees(orientation[0]);
+            currentAzimuth = (currentAzimuth + 360) % 360;
+
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
     private void startPollingFriends() {
@@ -131,32 +192,88 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onChanged(Friend friend) {
                                     ConstraintLayout mainLayout = findViewById(R.id.main_layout);
+
+                                    // check if the user deleted his/her friend, if so remove the friendIcon and stop observing
                                     if (!friendListViewModel.existsLocal(friend.getUid())) {
                                         friendLiveData.removeObserver(this);
                                         mainLayout.removeView(friendIcons.remove(friend.getUid()).getFriendIcon());
                                     } else {
                                         double friendLat = friend.getLatitude();
                                         double friendLong = friend.getLongitude();
-                                        double newDist = recalculateDistance(friendLat, friendLong);
+                                        double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
+
+
                                         friend.setDistance(newDist);
                                         int zone = Utilities.getFriendZone(newDist);
+
                                         float bearingAngle = Bearing.bearing(UserLatitude,
                                                 UserLongitude, friendLat, friendLong);
+
+                                        float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat, friendLong);
+
+                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360)%360;
+
                                         friend.setBearingAngle(bearingAngle);
+
                                         friendListViewModel.saveLocal(friend);
+
+
 
                                         boolean isWithinRange = newDist < range;
 
                                         if (friendIcons != null && friendIcons.containsKey(friend.getUid())) {
+                                            FriendIcon icon = friendIcons.get(friend.getUid());
+
+                                            // check if there is overlap
+                                            if(icon != null && icon.getOverlapIconUID() != null && friendIcons.containsKey(icon.getOverlapIconUID())){
+                                                FriendIcon overlapIcon = friendIcons.get(icon.getOverlapIconUID());
+                                                // check whether the the overlapIcon was shifted closer to the center or further and set offset to it
+                                                int offset = overlapIcon.getOverlapIsCloser() ? 75 : -75;
+
+                                                // if there is still overlap, return and don't update the icons, otherwise remove overlap
+                                                if(zone == overlapIcon.getRadius() + offset && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10){
+                                                    return;
+                                                }
+                                                else{
+                                                    overlapIcon.setOverlapIconUID(null);
+
+                                                }
+                                            }
+
                                             mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
                                         }
 
                                         FriendIcon friendIcon = new FriendIcon(MainActivity.this,
                                                 friend.getName(), bearingAngle, zone, newDist, isWithinRange);
                                         friendIcon.createIcon();
+
+                                        // if the icon is within range, then check if there is any overlap, if so grab the uid of the icon that it is overlapping
+                                        String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,bearingAngle) : "";
+
+                                        // offset to shift the icon further from the circle if there is overlap
+                                        int offset = overlapIconUID.equals("") ? 0 : 75;
+
+                                        // create a new friendIcon with updated bearing, zone, and distance
+                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this, friend.getName(), bearingAngle, zone + offset, newDist, isWithinRange);
+
+                                        boolean truncate = false;
+
+                                        // if there is overlap, we want to make note of that
+                                        if(offset > 0){
+                                            friendIcon.setOverlapIconUID(overlapIconUID);
+                                            friendIcon.setOverlapIsCloser(false);
+
+                                            // check if we want to truncate the icon
+                                            truncate = bearingAngle > 225 && bearingAngle < 315 ;
+                                        }
+                                        friendIcon.createIcon(truncate);
+
                                         mainLayout.addView(friendIcon.getFriendIcon());
 
+                                        // add friendIcon to map
                                         friendIcons.put(friend.getUid(), friendIcon);
+
+
                                     }
                                 }
                             });
@@ -167,11 +284,46 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private double recalculateDistance(double friendLat, double friendLong) {
-        float[] results = new float[2];
-        Location.distanceBetween(UserLatitude, UserLongitude,
-                friendLat, friendLong, results);
-        return LocationService.metersToMiles(results[0]);
+    // function to check if there are any overlaps, if so shift overlapIcon closer to the circle and return its UID
+    private String stackLabels(ConstraintLayout mainLayout, String overlapIconUID, int zone, float bearingAngle){
+        FriendIcon friend = null;
+        String uid = "";
+
+        // iterate through all of the friendIcons on the screen and check for overlap
+        for (HashMap.Entry<String, FriendIcon> friendIcon : friendIcons.entrySet()) {
+            String friendUID = friendIcon.getKey();
+            FriendIcon value = friendIcon.getValue();
+
+            // check if the icons are in the same zone and the difference of their bearingAngle is within 10 degrees
+            if (value.getRadius() == zone && Math.abs(value.getBearingAngle() - bearingAngle) <= 10){
+                friend = value;
+                uid = friendUID;
+                break;
+            }
+        }
+
+        // if there is no overlap, return ""
+        if(friend == null || uid.equals("") || uid.equals(overlapIconUID)){
+            return "";
+        }
+
+        mainLayout.removeView(friend.getFriendIcon());
+
+        friend.setRadius(friend.getRadius() - 75);
+
+        friend.setOverlapIconUID(overlapIconUID);
+
+        friend.setOverlapIsCloser(true);
+
+        boolean truncate = friend.getBearingAngle() < 135 && friend.getBearingAngle() > 45;
+
+        friend.createIcon(truncate);
+
+        mainLayout.addView(friend.getFriendIcon());
+
+        friendIcons.put(uid, friend);
+
+        return uid;
     }
 
     private MainActivityViewModel setupMainViewModel() {
@@ -181,6 +333,7 @@ public class MainActivity extends AppCompatActivity {
     private FriendListViewModel setupFriendListViewModel() {
         return new ViewModelProvider(this).get(FriendListViewModel.class);
     }
+
 
     private void setFriends(List<Friend> friends1, List<Friend> friends2) {
         friends1 = friends2;

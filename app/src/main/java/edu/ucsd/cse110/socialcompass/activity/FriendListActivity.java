@@ -208,10 +208,12 @@ public class FriendListActivity extends AppCompatActivity {
                     friendLiveData.removeObserver(this);
                     double friendLat = friend.getLatitude();
                     double friendLong = friend.getLongitude();
-                    double newDist = recalculateDistance(friendLat, friendLong);
+                    double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
                     friend.setDistance(newDist);
+
                     int zone = Utilities.getFriendZone(newDist);
                     Log.d("ZONE",String.valueOf(zone));
+
                     float bearingAngle = Bearing.bearing(UserLatitude,UserLongitude,friendLat,friendLong);
                     friend.setBearingAngle(bearingAngle);
                     viewModel.saveLocal(friend);
