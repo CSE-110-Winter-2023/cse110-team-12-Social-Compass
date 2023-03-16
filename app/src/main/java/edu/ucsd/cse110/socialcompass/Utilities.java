@@ -182,4 +182,23 @@ public class Utilities {
     public static String getName() {
         return uniqueName;
     }
+
+    // used to calculate which zone the friends lie in
+    public static double roundToLowestMultiple(double start, double number, double multiple) {
+        double result =  Math.floor(number / multiple) * multiple;
+        return start + Math.round(result * 100.0) / 100.0;
+    }
+
+    // used to return the zone
+    public static int getFriendZone(double distance){
+        if(distance >= Constants.ZONE0 & distance < Constants.ZONE1){
+            return (Constants.HASHMAPZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));
+        } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2){
+            return (Constants.HASHMAPZONE2).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
+        }else if(distance >= Constants.ZONE2 & distance < Constants.ZONE3){
+            return 535;
+        }else {
+            return 535;
+        }
+    }
 }

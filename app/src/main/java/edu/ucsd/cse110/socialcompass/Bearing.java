@@ -4,7 +4,7 @@ public class Bearing {
 
     // Calculates the bearing angle (0-360 degrees) from two points using latitude and longitude.
     // If the result is negative, return the corresponding positive angle
-    protected static float bearing(double lat1, double lon1, double lat2, double lon2){
+    public static float bearing(double lat1, double lon1, double lat2, double lon2){
         double longitude1 = lon1;
         double longitude2 = lon2;
         double latitude1 = Math.toRadians(lat1);

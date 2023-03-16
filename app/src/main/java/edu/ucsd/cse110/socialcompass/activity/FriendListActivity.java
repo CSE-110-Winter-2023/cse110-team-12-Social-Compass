@@ -24,6 +24,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import edu.ucsd.cse110.socialcompass.Bearing;
+import edu.ucsd.cse110.socialcompass.Constants;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
@@ -33,8 +35,6 @@ import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
 public class FriendListActivity extends AppCompatActivity {
 
     public FriendListViewModel viewModel;
@@ -44,9 +44,6 @@ public class FriendListActivity extends AppCompatActivity {
     private Friend self;    // adding any new user to list of friends
     private String UserName, UserUID;
     private double UserLatitude, UserLongitude;
-    static boolean isInserted = false;
-
-    private int friendListSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +78,9 @@ public class FriendListActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String json = gson.toJson(self);
             editor.putString("self", json);
-            editor.commit();
+            editor.apply();
 
         }
-
         // self info
         TextView selfName = this.findViewById(R.id.selfName);
         System.out.println(newUser);
@@ -93,40 +89,6 @@ public class FriendListActivity extends AppCompatActivity {
 
         TextView selfUID = this.findViewById(R.id.selfUID);
         selfUID.setText(UserUID);
-
-        startPollingFriends();
-    }
-
-    private void startPollingFriends(){
-        // live updating for friends already in the database (when you rerun the program)
-        LiveData<List<Friend>> friendsLiveData = viewModel.getAll();
-        friendsLiveData.observe(this, new Observer<List<Friend>>() {
-            //grabs the list of friends
-            @Override
-            public void onChanged(List<Friend> friendList) {
-                friendsLiveData.removeObserver(this);
-                if (friendList != null) {
-                    friendListSize = friendList.size();
-                    //for each friend, if its not the user then grabs its live data and poll from it
-                    for(Friend friend : friendList){
-                        if (friend.order != -1) {
-                            LiveData<Friend> friendLiveData = viewModel.getFriend(friend.getUid());
-                            friendLiveData.observe(FriendListActivity.this, new Observer<Friend>() {
-                                @Override
-                                public void onChanged(Friend friend) {
-                                    friendLiveData.removeObserver(this);
-                                    double friendLat = friend.getLatitude();
-                                    double friendLong = friend.getLongitude();
-                                    double newDist = recalculateDistance(friendLat, friendLong);
-                                    friend.setDistance(newDist);
-                                    viewModel.saveLocal(friend);
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        });
     }
 
     private double recalculateDistance(double friendLat, double friendLong) {
@@ -161,7 +123,6 @@ public class FriendListActivity extends AppCompatActivity {
                 self.setLatitude(latLong.first);
                 self.setLongitude(latLong.second);
                 // if your distance changed, recompute distance for all friends
-                startPollingFriends();
                 viewModel.save(self);
             }
         }
@@ -247,7 +208,12 @@ public class FriendListActivity extends AppCompatActivity {
                     friendLiveData.removeObserver(this);
                     double friendLat = friend.getLatitude();
                     double friendLong = friend.getLongitude();
-                    friend.setDistance(recalculateDistance(friendLat, friendLong));
+                    double newDist = recalculateDistance(friendLat, friendLong);
+                    friend.setDistance(newDist);
+                    int zone = Utilities.getFriendZone(newDist);
+                    Log.d("ZONE",String.valueOf(zone));
+                    float bearingAngle = Bearing.bearing(UserLatitude,UserLongitude,friendLat,friendLong);
+                    friend.setBearingAngle(bearingAngle);
                     viewModel.saveLocal(friend);
                 }
             });
@@ -264,13 +230,5 @@ public class FriendListActivity extends AppCompatActivity {
         // Delete the friend
         Log.d("FriendAdapter", "Deleted friend " + friend.name);
         viewModel.delete(friend);
-    }
-
-    public static boolean checkInsert() {
-        return isInserted;
-    }
-
-    public int getFriendListSize() {
-        return this.friendListSize;
     }
 }
