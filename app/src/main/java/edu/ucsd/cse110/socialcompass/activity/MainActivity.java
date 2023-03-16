@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float[] orientation = new float[3];
     private float currentAzimuth = 0;
 
-
     @Override
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,12 +99,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         friendIcons = new HashMap<>();
         lastActiveDuration = locationService.getSavedLastDuration(this);
-        System.out.println("lastActiveDuration: " + lastActiveDuration);
         handler = new Handler();
         handler.postDelayed(myRunnable, 100);
         // Start polling friends
         startPollingFriends();
-
     }
 
     @Override
