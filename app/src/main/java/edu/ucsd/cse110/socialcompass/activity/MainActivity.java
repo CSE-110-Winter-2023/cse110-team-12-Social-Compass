@@ -14,6 +14,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,7 +43,7 @@ import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.MainActivityViewModel;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements Animation.AnimationListener, SensorEventListener {
 
     private LocationService locationService;
     private String UID; // The user's unique UID
@@ -49,10 +52,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private FriendListViewModel friendListViewModel;
     private double UserLatitude, UserLongitude;
     private Friend self;    // adding any new user to list of friends
-    private int range = 10;
+    private int range = 1000;
     private HashMap<String, FriendIcon> friendIcons;
     private Handler handler;
     private long lastActiveDuration;
+    private int scaleOfCircles = 100;
     Location location;
 
     // Sensor stuff
@@ -77,6 +81,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        // Find views for zooming
+        var firstCircle = (TextView)findViewById(R.id.first_circle);
+        var secondCircle = (TextView)findViewById(R.id.second_circle);
+        var thirdCircle = (TextView)findViewById(R.id.third_circle);
+        var zoomIn = (TextView)findViewById(R.id.zoom_in);
+        var zoomOut = (TextView)findViewById(R.id.zoom_out);
+
+        // Set up animations
+        var zoomInFirstFrom100Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_first_circle_from_100);
+        var zoomInSecondFrom133Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_133);
+        var zoomInSecondFrom200Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_200);
+        var zoomInThirdFrom267Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_third_circle_from_267);
+        var zoomInThirdBackAnimation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_third_circle_back);
+        var zoomOutFirstFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_first_circle_from_1000);
+        var zoomOutSecondFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_1000);
+        var zoomOutSecondFrom200Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_200);
+        var zoomOutThirdFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_third_circle_from_1000);
+        var zoomOutThirdFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_third_circle_from_300);
+        zoomInFirstFrom100Animation.setAnimationListener(this);
 
         // Check if user is new
         SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
@@ -103,8 +127,77 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         lastActiveDuration = locationService.getSavedLastDuration(this);
         handler = new Handler();
         handler.postDelayed(myRunnable, 100);
+
+        // Fetch the zooming setting saved
+        int scaleOfCirclesSaved = preferences.getInt("scaleOfCircles", 300);
+
         // Start polling friends
         startPollingFriends();
+        displayFriends(mainViewModel, range, Double.POSITIVE_INFINITY, 480, true);
+
+        // Zooming in based on the zooming setting
+        if(scaleOfCirclesSaved > 100) {
+            firstCircle.startAnimation(zoomInFirstFrom100Animation);
+            secondCircle.startAnimation(zoomOutSecondFrom200Animation);
+            thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
+            range = 500;
+            scaleOfCircles = 200;
+        }
+        if(scaleOfCirclesSaved > 200) {
+            secondCircle.startAnimation(zoomInSecondFrom133Animation);
+            thirdCircle.startAnimation(zoomInThirdFrom267Animation);
+            range = 10;
+            scaleOfCircles = 300;
+        }
+        if(scaleOfCirclesSaved > 300) {
+            secondCircle.startAnimation(zoomInSecondFrom200Animation);
+            range = 1;
+            scaleOfCircles = 400;
+        }
+
+        // Run animations
+        zoomIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(scaleOfCircles == 100) {
+                    firstCircle.startAnimation(zoomInFirstFrom100Animation);
+                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
+                    thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
+                    range = 500;
+                    scaleOfCircles = 200;
+                } else if(scaleOfCircles == 200) {
+                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
+                    thirdCircle.startAnimation(zoomInThirdFrom267Animation);
+                    range = 10;
+                    scaleOfCircles = 300;
+                } else if(scaleOfCircles == 300) {
+                    secondCircle.startAnimation(zoomInSecondFrom200Animation);
+                    range = 1;
+                    scaleOfCircles = 400;
+                }
+            }
+        });
+        zoomOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(scaleOfCircles == 400) {
+                    secondCircle.startAnimation(zoomOutSecondFrom1000Animation);
+                    range = 10;
+                    scaleOfCircles = 300;
+                } else if(scaleOfCircles == 300) {
+                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
+                    thirdCircle.startAnimation(zoomOutThirdFrom1000Animation);
+                    range = 500;
+                    scaleOfCircles = 200;
+                } else if(scaleOfCircles == 200) {
+                    firstCircle.startAnimation(zoomOutFirstFrom1000Animation);
+                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
+                    thirdCircle.startAnimation(zoomInThirdBackAnimation);
+                    range = 1000;
+                    scaleOfCircles = 100;
+                }
+            }
+        });
     }
 
     @Override
@@ -119,7 +212,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onPause();
         sensorManager.unregisterListener(this, accelerometer);
         sensorManager.unregisterListener(this, magnetometer);
+
+        // Save the zooming setting
+        super.onPause();
+        SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("scaleOfCircles", scaleOfCircles);
+        editor.apply();
     }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -135,7 +236,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             SensorManager.getOrientation(rotationMatrix, orientation);
             currentAzimuth = (float) Math.toDegrees(orientation[0]);
             currentAzimuth = (currentAzimuth + 360) % 360;
-
         }
     }
 
@@ -144,10 +244,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // get implementation for accurate orientation
     }
 
+    @Override
+    public void onAnimationStart(Animation animation) {
+    }
+
+    @Override
+    public void onAnimationEnd(Animation animation) {
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {
+
+    }
+
     private void startPollingFriends() {
         // live updating for friends already in the database (when you rerun the program)
         LiveData<List<Friend>> friendsLiveData = friendListViewModel.getAll();
-        friendsLiveData.observe(this, new Observer<>() {
+        friendsLiveData.observe(this, new Observer<List<Friend>>() {
             //grabs the list of friends
             @Override
             public void onChanged(List<Friend> friendList) {
@@ -157,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     for (Friend friend : friendList) {
                         if (friend.order != -1) {
                             LiveData<Friend> friendLiveData = friendListViewModel.getFriend(friend.getUid());
-                            friendLiveData.observe(MainActivity.this, new Observer<>() {
+                            friendLiveData.observe(MainActivity.this, new Observer<Friend>() {
                                 @Override
                                 public void onChanged(Friend friend) {
                                     ConstraintLayout mainLayout = findViewById(R.id.main_layout);
@@ -169,17 +282,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                     } else {
                                         double friendLat = friend.getLatitude();
                                         double friendLong = friend.getLongitude();
+                                        double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
 
-                                        double newDist = Utilities.recalculateDistance(UserLatitude,
-                                                UserLongitude, friendLat, friendLong);
                                         friend.setDistance(newDist);
+                                        int zone = Utilities.getFriendZone(newDist, scaleOfCircles);
 
-                                        int zone = Utilities.getFriendZone(newDist);
-                                        float bearingAngle = Bearing.bearing(UserLatitude,
-                                                UserLongitude, friendLat, friendLong);
+                                        float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat, friendLong);
 
-                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
+                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360)%360;
+
                                         friend.setBearingAngle(bearingAngle);
+
                                         friendListViewModel.saveLocal(friend);
 
                                         boolean isWithinRange = newDist < range;
@@ -188,45 +301,43 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                             FriendIcon icon = friendIcons.get(friend.getUid());
 
                                             // check if there is overlap
-                                            if (icon != null && icon.getOverlapIconUID() != null
-                                                    && friendIcons.containsKey(icon.getOverlapIconUID())) {
+                                            if (icon != null && icon.getOverlapIconUID() != null && friendIcons.containsKey(icon.getOverlapIconUID())){
                                                 FriendIcon overlapIcon = friendIcons.get(icon.getOverlapIconUID());
                                                 // check whether the the overlapIcon was shifted closer to the center or further and set offset to it
                                                 int offset = overlapIcon.getOverlapIsCloser() ? 75 : -75;
 
                                                 // if there is still overlap, return and don't update the icons, otherwise remove overlap
-                                                if (zone == overlapIcon.getRadius() + offset
-                                                        && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10) {
+                                                if(zone == overlapIcon.getRadius() + offset
+                                                        && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10){
                                                     return;
-                                                } else {
+                                                }
+                                                else {
                                                     overlapIcon.setOverlapIconUID(null);
                                                 }
                                             }
                                             mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
                                         }
-                                        // if the icon is within range, then check if there is any overlap,
-                                        // if so grab the uid of the icon that it is overlapping
-                                        String overlapIconUID = isWithinRange ? stackLabels(mainLayout, friend.getUid(), zone, bearingAngle) : "";
+
+                                        // if the icon is within range, then check if there is any overlap, if so grab the uid of the icon that it is overlapping
+                                        String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,bearingAngle) : "";
 
                                         // offset to shift the icon further from the circle if there is overlap
                                         int offset = overlapIconUID.equals("") ? 0 : 75;
 
                                         // create a new friendIcon with updated bearing, zone, and distance
-                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this,
-                                                friend.getName(), bearingAngle, zone + offset, newDist, isWithinRange);
+                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this, friend.getName(), bearingAngle, zone + offset, newDist, isWithinRange);
 
                                         boolean truncate = false;
 
                                         // if there is overlap, we want to make note of that
-                                        if (offset > 0) {
+                                        if(offset > 0){
                                             friendIcon.setOverlapIconUID(overlapIconUID);
                                             friendIcon.setOverlapIsCloser(false);
 
                                             // check if we want to truncate the icon
-                                            truncate = bearingAngle > 225 && bearingAngle < 315;
+                                            truncate = bearingAngle > 225 && bearingAngle < 315 ;
                                         }
                                         friendIcon.createIcon(truncate);
-
                                         mainLayout.addView(friendIcon.getFriendIcon());
 
                                         // add friendIcon to map
@@ -281,6 +392,54 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private FriendListViewModel setupFriendListViewModel() {
         return new ViewModelProvider(this).get(FriendListViewModel.class);
+    }
+    
+    private void setFriends(List<Friend> friends1, List<Friend> friends2) {
+        friends1 = friends2;
+    }
+
+    private void displayFriends(MainActivityViewModel viewModel, double inner, double outer,
+                                int radius, boolean isWithinRange) {
+        LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner, outer);
+        List<Friend> friends = new ArrayList<>();
+        liveDataFriends.observeForever(new Observer<List<Friend>>() {
+            @Override
+            public void onChanged(List<Friend> friendsWithinZone) {
+                if (friendsWithinZone != null) {
+                    setFriends(friends, friendsWithinZone);
+                }
+            }
+        });
+
+        for (Friend friend : friends) {
+            ConstraintLayout mainLayout = findViewById(R.id.main_layout);
+            FriendIcon friendIcon = new FriendIcon(this, friend.getName(), friend.getBearingAngle(),
+                    radius, friend.getDistance(), isWithinRange);
+            double friendLat = friend.getLatitude();
+            double friendLong = friend.getLongitude();
+            double newDist = Utilities.recalculateDistance(UserLatitude, UserLongitude, friendLat, friendLong);
+
+            int zone = Utilities.getFriendZone(newDist, scaleOfCircles);
+            String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,friend.getBearingAngle()) : "";
+            int offset = overlapIconUID.equals("") ? 0 : 75;
+
+            boolean truncate = false;
+
+            // if there is overlap, we want to make note of that
+            if(offset > 0){
+                friendIcon.setOverlapIconUID(overlapIconUID);
+                friendIcon.setOverlapIsCloser(false);
+
+                // check if we want to truncate the icon
+                truncate = friend.getBearingAngle() > 225 && friend.getBearingAngle() < 315 ;
+            }
+            friendIcon.createIcon(truncate);
+            mainLayout.addView(friendIcon.getFriendIcon());
+        }
+    }
+
+    private MainActivityViewModel setupViewModel() {
+        return new ViewModelProvider(this).get(MainActivityViewModel.class);
     }
 
     @NonNull

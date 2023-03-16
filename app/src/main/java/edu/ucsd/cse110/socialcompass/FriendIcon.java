@@ -3,10 +3,8 @@ package edu.ucsd.cse110.socialcompass;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -104,8 +102,8 @@ public class FriendIcon {
         }
 
         // Add null checks to avoid NullPointerException
-        View outerCircle = activity.findViewById(R.id.outer_circle);
-        View innerCircle = activity.findViewById(R.id.inner_circle);
+        View outerCircle = activity.findViewById(R.id.second_circle);
+        View innerCircle = activity.findViewById(R.id.first_circle);
         if (outerCircle != null && innerCircle != null) {
             float outerCircleRadius = (float) outerCircle.getHeight() / 2;
             float innerCircleRadius = (float) innerCircle.getHeight() / 2;
