@@ -3,6 +3,8 @@ package edu.ucsd.cse110.socialcompass.services;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
+import static edu.ucsd.cse110.socialcompass.Constants.MILES_CONVERSION;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -39,10 +41,8 @@ public class LocationService implements LocationListener {
     public static LocationService singleton(AppCompatActivity activity){
         if (instance == null){
             instance = new LocationService(activity);
-
         }
         return instance;
-
     }
 
     /**
@@ -55,6 +55,10 @@ public class LocationService implements LocationListener {
         this.locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         //Register sensor listeners
         withLocationPermissions(this::registerLocationListener);
+    }
+
+    public static double metersToMiles(float result) {
+        return result * MILES_CONVERSION;
     }
 
     /**  This will only be called when we for sure have permissions. */
@@ -104,6 +108,5 @@ public class LocationService implements LocationListener {
         unregisterLocationListener();
         this.locationValue = mockDataSource;
     }
-
 }
 

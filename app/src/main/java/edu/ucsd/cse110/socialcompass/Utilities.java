@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+import edu.ucsd.cse110.socialcompass.services.LocationService;
 
 /**
  * This class stores all the helper methods for showing alerts and dialogs, as well as taking in
@@ -27,6 +29,7 @@ import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
  */
 public class Utilities {
     static String uniqueID;
+    static String uniqueName;
 
     /**
      * Alert to display an error when adding a UID that does not exist.
@@ -68,6 +71,7 @@ public class Utilities {
                 .setMessage(message)
                 .setPositiveButton("Submit", (dialog, id) -> {
                     String name = userName.getText().toString();
+                    uniqueName = name;
 
                     //save name to user's shared preferences
                     //add a new "Friend" for self in onCreate of FriendListActivity
@@ -143,11 +147,10 @@ public class Utilities {
                 .setView(copyUIDView)
                 .setTitle("Welcome!")
                 .setMessage(message)
-                //.setPositiveButton("Continue", (dialog, id) -> {
                 .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        showInitFriendAlert(activity, "Make FRiend");
+                        showInitFriendAlert(activity, "Make Friend");
                     }
                 })
                 .setCancelable(false);
@@ -176,5 +179,37 @@ public class Utilities {
         return String.format(Locale.US, "%.0f° %.0f' %.0f\" N, %.0f° %.0f' %.0f\" W",
                 Math.abs(latitude), Math.abs(latitude % 1) * 60, Math.abs(latitude % 1 % 1) * 60,
                 Math.abs(longitude), Math.abs(longitude % 1) * 60, Math.abs(longitude % 1 % 1) * 60);
+    }
+
+    public static String getName() {
+        return uniqueName;
+    }
+
+    public static double recalculateDistance(double userLat, double userLong, double friendLat, double friendLong) {
+        float[] results = new float[2];
+        Location.distanceBetween(userLat, userLong,
+                friendLat, friendLong, results);
+        return LocationService.metersToMiles(results[0]);
+    }
+
+    // used to calculate which zone the friends lie in, your start value will be the inner zone,
+    // ex: if you want to calculate which zone in between zone 1 and zone 2, start will be 1,
+    // number will be the distance
+    public static double roundToLowestMultiple(double start, double number, double multiple) {
+        double result =  Math.floor(number / multiple) * multiple;
+        return start + Math.round(result * 100.0) / 100.0;
+    }
+
+    // used to return the zone, havent implemented zone 3 and 4 since we don't need it for story 5
+    public static int getFriendZone(double distance){
+        if(distance >= Constants.ZONE0 & distance < Constants.ZONE1){
+            return (Constants.HASHMAPZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));
+        } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2){
+            return (Constants.HASHMAPZONE2).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
+        }else if(distance >= Constants.ZONE2 & distance < Constants.ZONE3){
+            return 535;
+        }else {
+            return 535;
+        }
     }
 }

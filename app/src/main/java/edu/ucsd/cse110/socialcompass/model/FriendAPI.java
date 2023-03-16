@@ -14,7 +14,7 @@ public class FriendAPI {
     private volatile static FriendAPI instance = null;
     private OkHttpClient client;
     // URL for Social Compass server API
-    private static final String URL = "https://socialcompass.goto.ucsd.edu/docs/location/";
+    private static final String URL = "https://socialcompass.goto.ucsd.edu/location/";
     // MediaType specification for putFriend
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
@@ -51,13 +51,37 @@ public class FriendAPI {
     }
 
     /**
+     * Background thread for getting the response code for a GET request to the server.
+     * Called to check that the UID being added by the user is valid.
+     */
+    @WorkerThread
+    public int getFriendCode(String uid) {
+        int code = 0;
+        var request = new Request.Builder()
+                .url(URL + uid)
+                .build();
+
+        try (var response = client.newCall(request).execute()) {
+            assert response.body() != null;
+            code = response.code();
+            Log.i("GET FRIEND CODE", String.valueOf(code));
+            System.out.println(response.body().string());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Code: " + code);
+        return code;
+    }
+
+    /**
      * Background thread for putting friend location to server
      * @require FriendDao.exists(friend.uid) == true
      */
     @WorkerThread
     public void putFriend(Friend friend) {
 
-        String uid = friend.getUid();
+        String uid = friend.uid;
+        Log.d("UID",uid);
 
         var requestBody = RequestBody.create(friend.toJSON(), JSON);
         var request = new Request.Builder()

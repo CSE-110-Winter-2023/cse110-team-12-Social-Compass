@@ -42,9 +42,11 @@
         android:layout_height="wrap_content"
         android:background="@drawable/outer_circle"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5085"/>
 
     <TextView
         android:id="@+id/inner_circle"
@@ -56,62 +58,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/north"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="N"
-        android:textColor="@color/black"
-        android:textSize="25sp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/inner_circle"
-        app:layout_constraintEnd_toEndOf="@+id/outer_circle"
-        app:layout_constraintStart_toStartOf="@+id/outer_circle"
-        app:layout_constraintTop_toTopOf="@+id/outer_circle" />
-
-    <TextView
-        android:id="@+id/south"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="S"
-        android:textColor="@color/black"
-        android:textSize="25sp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/outer_circle"
-        app:layout_constraintEnd_toEndOf="@+id/outer_circle"
-        app:layout_constraintStart_toStartOf="@+id/outer_circle"
-        app:layout_constraintTop_toBottomOf="@+id/inner_circle" />
-
-
-    <TextView
-        android:id="@+id/east"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="E"
-        android:textColor="@color/black"
-        android:textSize="25sp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/outer_circle"
-        app:layout_constraintEnd_toEndOf="@+id/outer_circle"
-        app:layout_constraintStart_toEndOf="@+id/inner_circle"
-        app:layout_constraintTop_toTopOf="@+id/outer_circle" />
-
-    <TextView
-        android:id="@+id/west"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="W"
-        android:textColor="@color/black"
-        android:textSize="25sp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/outer_circle"
-        app:layout_constraintEnd_toStartOf="@+id/inner_circle"
-        app:layout_constraintStart_toStartOf="@+id/outer_circle"
-        app:layout_constraintTop_toTopOf="@+id/outer_circle" />
 
     <TextView
         android:id="@+id/location_icon"
@@ -123,6 +69,10 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

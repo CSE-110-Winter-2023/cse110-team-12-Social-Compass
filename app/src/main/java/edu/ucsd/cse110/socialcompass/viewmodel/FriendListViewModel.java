@@ -8,20 +8,23 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import edu.ucsd.cse110.socialcompass.model.Friend;
+import edu.ucsd.cse110.socialcompass.model.FriendDao;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.model.FriendRepository;
 
 public class FriendListViewModel extends AndroidViewModel {
     private LiveData<List<Friend>> friends;
-    private final FriendRepository repo;
+    public final FriendRepository repo;
+    private FriendDao dao;
 
     public FriendListViewModel(@NonNull Application application) {
         super(application);
         var context = application.getApplicationContext();
         var db = FriendDatabase.provide(context);
-        var dao = db.getDao();
+        this.dao = db.getDao();
         this.repo = new FriendRepository(dao);
     }
 
@@ -30,8 +33,8 @@ public class FriendListViewModel extends AndroidViewModel {
      * @return a LiveData object that will be updated when the friend's location change.
      */
     public LiveData<Friend> getFriend(String uid) {
-
-        return repo.getLocal(uid);
+//        return repo.getLocal(uid);
+        return repo.getRemote(uid);
     }
 
     /**
@@ -45,5 +48,31 @@ public class FriendListViewModel extends AndroidViewModel {
         return friends;
     }
 
+    public boolean existsLocal(String uid) { return repo.existsLocal(uid); }
+
+    public boolean existsRemote(String uid) {
+        try {
+            return repo.existsRemote(uid);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void save(Friend friend) {repo.upsertSynced(friend);}
+
+    public LiveData<List<Friend>> getAll() {
+        return dao.getAll();
+    }
+    public void delete(Friend friend) {repo.deleteLocal(friend);}
+
+    public void saveLocal(Friend friend) {
+        repo.upsertLocal(friend);
+    }
+
+    public void syncLocal(Friend friend) {
+        repo.getSynced(friend.getUid());
+    }
+
 }
