@@ -1,8 +1,11 @@
 package edu.ucsd.cse110.socialcompass.activity;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.os.Looper.getMainLooper;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -28,6 +31,9 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -65,8 +71,11 @@ public class MainActivity extends AppCompatActivity {
     private int range = 10;
     private HashMap<String, FriendIcon> friendIcons;
     private Handler handler;
+    private FusedLocationProviderClient fusedLocationClient;
+    private long lastActiveDuration;
 
     @Override
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -85,20 +94,16 @@ public class MainActivity extends AppCompatActivity {
         friendListViewModel = setupFriendListViewModel();
         var adapter = setupAdapter(mainViewModel);
 
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.apply();
+
         // Setup location service
         locationService = LocationService.singleton(this);
         this.reobserveLocation();
 
-        // GPS sensor
-        boolean isGPSDisabled = preferences.getBoolean("isGPSDisabled", true);
-        long inactiveDuration = preferences.getLong("inactiveDuration", 0);
-
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("isGPSDisabled", locationService.getIsGPSEnabled());
-        editor.putLong("inactiveDuration", locationService.getInactiveDuration());
-        editor.apply();
-
         friendIcons = new HashMap<>();
+        lastActiveDuration = locationService.getSavedLastDuration(this);
+        System.out.println("lastActiveDuration: " + lastActiveDuration);
         handler = new Handler();
         handler.postDelayed(myRunnable, 100);
         // Start polling friends
@@ -176,19 +181,20 @@ public class MainActivity extends AppCompatActivity {
     private FriendListViewModel setupFriendListViewModel() {
         return new ViewModelProvider(this).get(FriendListViewModel.class);
     }
-    private void setFriends(List<Friend> friends1, List<Friend> friends2){
+
+    private void setFriends(List<Friend> friends1, List<Friend> friends2) {
         friends1 = friends2;
     }
 
     private void displayFriends(MainActivityViewModel viewModel, double inner, double outer,
-                                int radius, boolean isWithinRange){
+                                int radius, boolean isWithinRange) {
         // .getValue() seems to return null for live data, so this implementation assumes it doesn't return null
-        LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner,outer);
+        LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner, outer);
         List<Friend> friends = new ArrayList<>();
         liveDataFriends.observeForever(new Observer<List<Friend>>() {
             @Override
             public void onChanged(List<Friend> friendsWithinZone) {
-                if(friendsWithinZone != null){
+                if (friendsWithinZone != null) {
                     setFriends(friends, friendsWithinZone);
                 }
             }
@@ -249,20 +255,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void reobserveGPSSignal() {
-        //LocationManager manager = new LocationManager()
-        var locationData = locationService;
-        //locationData.observe(this, this::onLocationChanged);
-    }
-
-    private void onSignalChanged(boolean changedSignal, long changedDuration) {
-        SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("isGPSDisabled", changedSignal);
-        editor.putLong("inactiveDuration", changedDuration);
-        editor.apply();
-    }
-
     // This method should only be called one time EVER - for initializing brand new users.
     private void initNewUser() {
         Utilities.showUserNamePromptAlert(this, "Please enter your name");
@@ -273,38 +265,55 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void getInactiveTimeText() {
-        locationService.putSavedLastDuration(this);
-        long seconds = locationService.getSavedLastDuration(this) / 1000;
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public void getInactiveTimeText(long seconds) {
         long minutes = seconds / 60;
         long hours = minutes / 60;
         String timeStr;
         if (hours > 0) {
             timeStr = hours + "h";
-        } else if (minutes > 1) {
+        } else if (minutes >= 1) {
             timeStr = minutes + "m";
         } else {
             timeStr = "<1m";
         }
-        // Display the inactive time using a Handler on the UI thread
-        new Handler(getMainLooper()).post(() -> {
-            // Display the inactive time in a TextView
-            TextView lastActiveTimeText = this.findViewById(R.id.gps_status);
-            if (!locationService.getIsGPSEnabled()) {
-                lastActiveTimeText.setText(timeStr + " ago");
-            } else {
-                lastActiveTimeText.setText("LIVE");
-            }
-        });
+        TextView lastActiveTimeText = this.findViewById(R.id.gps_status);
+        System.out.println("Last saved Duration: " + seconds);
+        if (seconds != 0) {
+            // update the duration if we are inactive
+            lastActiveTimeText.setText(timeStr + " ago");
+        } else {
+            // indicate GPS is live otherwise
+            lastActiveTimeText.setText("LIVE");
+        }
+    }
+
+    public MainActivity getActivity() {
+        return this;
     }
 
     Runnable myRunnable = new Runnable() {
         @Override
+        @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
-            getInactiveTimeText();
+            System.out.println("Last active time is: " + locationService.getLastActiveTime(getActivity()));
+            if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
+                // GPS signal has gone stale
+                locationService.incrementInactiveDuration(getActivity());
+            } else {
+                // GPS signal is live
+                locationService.resetInactiveDuration(getActivity());
+                lastActiveDuration = 0;
+            }
+            locationService.setLastKnownActiveTime(getActivity());
+            // Last known coordinates to use
+            //System.out.println("Last Latitude: " + locationService.getLastLocation().getLatitude());
+            //System.out.println("Last Longitude: " + locationService.getLastLocation().getLongitude());
+            locationService.setInactiveDuration(lastActiveDuration
+                    + locationService.getSavedLastDuration(getActivity()), getActivity());
+            getInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
             handler.postDelayed(this, 1000);
         }
     };
-
-
 }

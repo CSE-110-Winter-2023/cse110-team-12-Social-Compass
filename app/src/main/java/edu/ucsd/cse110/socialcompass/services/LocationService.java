@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Pair;
 import android.widget.TextView;
@@ -26,6 +27,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -34,6 +39,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 
 public class LocationService implements LocationListener {
@@ -51,6 +57,7 @@ public class LocationService implements LocationListener {
     private final LocationManager locationManager;
 
     private long lastActiveTime = 0;
+    private long inactiveDuration = 0;
 
     public static LocationService singleton(AppCompatActivity activity){
         if (instance == null){
@@ -114,24 +121,6 @@ public class LocationService implements LocationListener {
         this.locationValue.postValue(new Pair<Double,Double>(location.getLatitude(),location.getLongitude()));
     }
 
-    @Override
-    public void onProviderDisabled(@NonNull String provider) {
-        if (provider.equals(LocationManager.GPS_PROVIDER)) {
-            // GPS signal is disabled
-            setLastActiveTime(System.currentTimeMillis());
-            System.out.println("Provider disabled");
-        }
-    }
-
-    @Override
-    public void onProviderEnabled(@NonNull String provider) {
-        if (provider.equals(LocationManager.GPS_PROVIDER)) {
-            /* GPS signal is enabled. If it was previously disabled, erase the last active time from screen,
-             * change dot from red to green, and stop the executor from listening. */
-            System.out.println("Provider enabled");
-        }
-    }
-
     private void unregisterLocationListener(){locationManager.removeUpdates(this);}
 
     public LiveData<Pair<Double,Double>> getLocation(){return this.locationValue;}
@@ -141,34 +130,45 @@ public class LocationService implements LocationListener {
         this.locationValue = mockDataSource;
     }
 
-    public void setLastActiveTime(long time) {
-        lastActiveTime = time;
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public long getSavedLastDuration(Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        return preferences.getLong("inactiveDuration", this.inactiveDuration);
     }
 
-    public long getInactiveDuration() {
-        return System.currentTimeMillis() - lastActiveTime;
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public Location getLastLocation() {
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
-    public void updateDuration() {
-        ScheduledExecutorService backgroundExecutor = Executors.newSingleThreadScheduledExecutor();
-        backgroundExecutor.scheduleAtFixedRate(() -> {
-            setLastActiveTime(getInactiveDuration());
-        }, 0, 1000, TimeUnit.MILLISECONDS);
-    }
-
-    public boolean getIsGPSEnabled() {
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-    }
-
-    public void putSavedLastDuration(Activity activity) {
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public void setLastKnownActiveTime(Activity activity) {
+        this.lastActiveTime = getLastLocation().getTime();
         SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putLong("inactiveDuration", this.getInactiveDuration());
+        editor.putLong("lastActiveTime", this.lastActiveTime);
         editor.apply();
     }
 
-    public long getSavedLastDuration(Activity activity) {
+    public long getLastActiveTime(Activity activity) {
         SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        return preferences.getLong("inactiveDuration", this.getInactiveDuration());
+        return preferences.getLong("lastActiveTime", 0);
+    }
+
+    public void resetInactiveDuration(Activity activity) {
+        this.inactiveDuration = 0;
+        setInactiveDuration(this.inactiveDuration, activity);
+    }
+
+    public void incrementInactiveDuration(Activity activity) {
+        this.inactiveDuration += 1;
+        setInactiveDuration(this.inactiveDuration, activity);
+    }
+
+    public void setInactiveDuration(long value, Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("inactiveDuration", value);
+        editor.apply();
     }
 }
