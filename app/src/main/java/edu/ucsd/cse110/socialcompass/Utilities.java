@@ -1,6 +1,5 @@
 package edu.ucsd.cse110.socialcompass;
 
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -19,8 +18,6 @@ import java.util.UUID;
 
 import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
-import edu.ucsd.cse110.socialcompass.model.Friend;
-import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
 
 /**
@@ -83,14 +80,11 @@ public class Utilities {
                 })
                 .setCancelable(false);
 
-
         android.app.AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
-
-
     }
-    public static void showInitFriendAlert(MainActivity activity, String message)
-    {
+
+    public static void showInitFriendAlert(MainActivity activity, String message) {
         android.app.AlertDialog.Builder alertBuilder2 = new android.app.AlertDialog.Builder(activity);
 
         LayoutInflater inflater2 = LayoutInflater.from(activity);
@@ -115,7 +109,6 @@ public class Utilities {
 
         android.app.AlertDialog alertDialog2 = alertBuilder2.create();
         alertDialog2.show();
-
     }
 
     public static void showCopyUIDAlert(MainActivity activity, String message, String uid) {
@@ -131,7 +124,6 @@ public class Utilities {
 
         // copy UID to clipboard
         copyButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View var1) {
                 ClipboardManager clipboard = (ClipboardManager) var1.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -200,16 +192,28 @@ public class Utilities {
         return start + Math.round(result * 100.0) / 100.0;
     }
 
-    // used to return the zone, havent implemented zone 3 and 4 since we don't need it for story 5
-    public static int getFriendZone(double distance){
-        if(distance >= Constants.ZONE0 & distance < Constants.ZONE1){
-            return (Constants.HASHMAPZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));
-        } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2){
-            return (Constants.HASHMAPZONE2).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
-        }else if(distance >= Constants.ZONE2 & distance < Constants.ZONE3){
-            return 535;
-        }else {
-            return 535;
+    // Return the zone
+    public static int getFriendZone(double distance) {
+        if(distance >= Constants.ZONE0 & distance < Constants.ZONE1) {
+            return (Constants.HASHMAP_ZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));
+        } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2) {
+            return (Constants.HASHMAP_ZONE2).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
+        } else if(distance >= Constants.ZONE2 & distance < Constants.ZONE3) {
+            return (Constants.HASHMAP_ZONE3).get(Utilities.roundToLowestMultiple(10.0,distance,98.0));
+        } else if(distance >= Constants.ZONE3 & distance < Constants.ZONE4) {
+            if(distance < 600) {
+                return 392;
+            } else if(distance < 700) {
+                return 417;
+            } else if(distance < 800) {
+                return 441;
+            } else if(distance < 900) {
+                return 466;
+            } else {
+                return 489;
+            }
+        } else {
+            return 490;
         }
     }
 }

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
     private FriendListViewModel friendListViewModel;
     private double UserLatitude, UserLongitude;
     private Friend self;    // adding any new user to list of friends
-    private int range = 10;
+    private int range = 1000;
     private HashMap<String, FriendIcon> friendIcons;
     private int scaleOfCircles = 100;
 
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         // Start polling friends
         startPollingFriends();
         
-        displayFriends(mainViewModel, 10.0, Double.POSITIVE_INFINITY, 480, true);
+        displayFriends(mainViewModel, 1000.0, Double.POSITIVE_INFINITY, 480, true);
     }
 
     @Override

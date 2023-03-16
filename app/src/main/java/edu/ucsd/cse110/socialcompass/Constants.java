@@ -3,51 +3,47 @@ package edu.ucsd.cse110.socialcompass;
 import java.util.HashMap;
 
 public class Constants {
-    // Zones and their radius, the commented numbers are range, ex. zone1_2 is if the friends distance is between 0 and 0.2
-    // how we calculate the increments, ex. 0.2 for zone 1 and 1.8 in zone 2 is (ZONE1 - ZONE0) / 5. EX: (1-0)/5 = 0.2 and (10-1)/5 = 1.8
-    public static final int ZONE1_1 = 0; // 0
-    public static final int ZONE1_2 = 45; // [0,0.2) 39
-    public static final int ZONE1_3 = 100;  // [0.2,0.4) 78
-    public static final int ZONE1_4 = 155; // [0.4,0.6) 117
-    public static final int ZONE1_5 = 210; // [0.6,0.8) 156
 
-    public static final int ZONE2_1 = 260; // [0.8, 1) 195
-    public static final int ZONE2_2 = 320; // [1.0,2.8) 234
-    public static final int ZONE2_3 = 370; // [2.8,4.6) 273
-    public static final int ZONE2_4 = 425; // [4.6,6.4) 312
-    public static final int ZONE2_5 = 480; // [6.4, 8.2) 351
-
-    public static final int ZONE3_1 = 530; // (8.2, 10] 390
-
+    // Zones and their radius
     public static final int ZONE0 = 0;
     public static final int ZONE1 = 1;
     public static final int ZONE2 = 10;
     public static final int ZONE3 = 500;
     public static final int ZONE4 = 1000;
 
-    //hash maps to map to the inner zones
-    public static final HashMap<Double, Integer> HASHMAPZONE1 = new HashMap<>() {{
-        put(0.0, 45);
-        put(0.2, 100);
-        put(0.4, 155);
-        put(0.6, 210);
-        put(0.8, 260);
+    // HashMap to map to the first zone, the inner most one
+    // Divide each zone into five smaller circles with increasing radius
+    // How the increments are calculated: e.g. (ZONE1 - ZONE0) / 5, (1 - 0) / 5 = 0.2
+    public static final HashMap<Double, Integer> HASHMAP_ZONE1 = new HashMap<>() {{
+        put(0.0, 25);
+        put(0.2, 49);
+        put(0.4, 74);
+        put(0.6, 98);
+        put(0.8, 123);
     }};
 
-    public static final HashMap<Double, Integer> HASHMAPZONE2 = new HashMap<Double, Integer>() {{
-        put(1.0, 320);
-        put(2.8, 370);
-        put(4.6, 425);
-        put(6.4, 480);
-        put(8.2, 530);
+    public static final HashMap<Double, Integer> HASHMAP_ZONE2 = new HashMap<Double, Integer>() {{
+        put(1.0, 147);
+        put(2.8, 172);
+        put(4.6, 196);
+        put(6.4, 221);
+        put(8.2, 245);
     }};
 
-    public static final HashMap<Double, Integer> HASHMAPZONE3 = new HashMap<Double, Integer>() {{
-
+    public static final HashMap<Double, Integer> HASHMAP_ZONE3 = new HashMap<Double, Integer>() {{
+        put(10.0, 270);
+        put(108.0, 294);
+        put(206.0, 319);
+        put(304.0, 343);
+        put(402.0, 368);
     }};
 
-    public static final HashMap<Double, Integer> HASHMAPZONE4 = new HashMap<Double, Integer>() {{
-
+    public static final HashMap<Double, Integer> HASHMAP_ZONE4 = new HashMap<Double, Integer>() {{
+        put(500.0, 392);
+        put(600.0, 417);
+        put(700.0, 441);
+        put(800.0, 466);
+        put(900.0, 489);
     }};
 
     public static final double MILES_CONVERSION = 0.00062137119;
