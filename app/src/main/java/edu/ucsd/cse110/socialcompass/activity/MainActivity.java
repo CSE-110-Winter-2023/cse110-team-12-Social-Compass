@@ -1,35 +1,59 @@
 package edu.ucsd.cse110.socialcompass.activity;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.os.Looper.getMainLooper;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.app.ActivityCompat;
 import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import android.content.pm.PackageManager;
+
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+
 import android.os.Looper;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import edu.ucsd.cse110.socialcompass.Bearing;
 import edu.ucsd.cse110.socialcompass.Constants;
@@ -56,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Friend self;    // adding any new user to list of friends
     private int range = 10;
     private HashMap<String, FriendIcon> friendIcons;
+    private Handler handler;
+    private FusedLocationProviderClient fusedLocationClient;
+    private long lastActiveDuration;
 
     //Sensor stuff
     private SensorManager sensorManager;
@@ -71,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     @Override
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -94,12 +122,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         friendListViewModel = setupFriendListViewModel();
         var adapter = setupAdapter(mainViewModel);
 
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.apply();
+
         // Setup location service
         locationService = LocationService.singleton(this);
         this.reobserveLocation();
 
         friendIcons = new HashMap<>();
-
+        lastActiveDuration = locationService.getSavedLastDuration(this);
+        System.out.println("lastActiveDuration: " + lastActiveDuration);
+        handler = new Handler();
+        handler.postDelayed(myRunnable, 100);
         // Start polling friends
         startPollingFriends();
 
@@ -137,17 +171,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-
     private void startPollingFriends() {
         // live updating for friends already in the database (when you rerun the program)
         LiveData<List<Friend>> friendsLiveData = friendListViewModel.getAll();
-        friendsLiveData.observe(this, new Observer<List<Friend>>() {
+        friendsLiveData.observe(this, new Observer<>() {
             //grabs the list of friends
             @Override
             public void onChanged(List<Friend> friendList) {
@@ -174,6 +205,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                                         friend.setDistance(newDist);
                                         int zone = Utilities.getFriendZone(newDist);
+
+                                        float bearingAngle = Bearing.bearing(UserLatitude,
+                                                UserLongitude, friendLat, friendLong);
 
                                         float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat, friendLong);
 
@@ -209,6 +243,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                             mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
                                         }
 
+                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this,
+                                                friend.getName(), bearingAngle, zone, newDist, isWithinRange);
+                                        friendIcon.createIcon();
+
                                         // if the icon is within range, then check if there is any overlap, if so grab the uid of the icon that it is overlapping
                                         String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,bearingAngle) : "";
 
@@ -229,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                             truncate = bearingAngle > 225 && bearingAngle < 315 ;
                                         }
                                         friendIcon.createIcon(truncate);
+
                                         mainLayout.addView(friendIcon.getFriendIcon());
 
                                         // add friendIcon to map
@@ -296,6 +335,37 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
+    private void setFriends(List<Friend> friends1, List<Friend> friends2) {
+        friends1 = friends2;
+    }
+
+    private void displayFriends(MainActivityViewModel viewModel, double inner, double outer,
+                                int radius, boolean isWithinRange) {
+        // .getValue() seems to return null for live data, so this implementation assumes it doesn't return null
+        LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner, outer);
+        List<Friend> friends = new ArrayList<>();
+        liveDataFriends.observeForever(new Observer<List<Friend>>() {
+            @Override
+            public void onChanged(List<Friend> friendsWithinZone) {
+                if (friendsWithinZone != null) {
+                    setFriends(friends, friendsWithinZone);
+                }
+            }
+        });
+
+        // hardcoded
+        double distance = 0.1;
+        float bearingAngle = 180;
+
+        for (Friend friend : friends) {
+            ConstraintLayout mainLayout = findViewById(R.id.main_layout);
+            FriendIcon friendIcon = new FriendIcon(this, friend.getName(), bearingAngle,
+                    radius, distance, isWithinRange);
+            friendIcon.createIcon();
+            mainLayout.addView(friendIcon.getFriendIcon());
+        }
+    }
+
     private MainActivityViewModel setupViewModel() {
         return new ViewModelProvider(this).get(MainActivityViewModel.class);
     }
@@ -348,4 +418,55 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         startActivity(intent);
     }
 
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public void getInactiveTimeText(long seconds) {
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        String timeStr;
+        if (hours > 0) {
+            timeStr = hours + "h";
+        } else if (minutes >= 1) {
+            timeStr = minutes + "m";
+        } else {
+            timeStr = "<1m";
+        }
+        TextView lastActiveTimeText = this.findViewById(R.id.gps_status);
+        System.out.println("Last saved Duration: " + seconds);
+        if (seconds != 0) {
+            // update the duration if we are inactive
+            lastActiveTimeText.setText(timeStr + " ago");
+        } else {
+            // indicate GPS is live otherwise
+            lastActiveTimeText.setText("LIVE");
+        }
+    }
+
+    public MainActivity getActivity() {
+        return this;
+    }
+
+    Runnable myRunnable = new Runnable() {
+        @Override
+        @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+        public void run() {
+            System.out.println("Last active time is: " + locationService.getLastActiveTime(getActivity()));
+            if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
+                // GPS signal has gone stale
+                locationService.incrementInactiveDuration(getActivity());
+            } else {
+                // GPS signal is live
+                locationService.resetInactiveDuration(getActivity());
+                lastActiveDuration = 0;
+            }
+            locationService.setLastKnownActiveTime(getActivity());
+            // Last known coordinates to use
+            //System.out.println("Last Latitude: " + locationService.getLastLocation().getLatitude());
+            //System.out.println("Last Longitude: " + locationService.getLastLocation().getLongitude());
+            locationService.setInactiveDuration(lastActiveDuration
+                    + locationService.getSavedLastDuration(getActivity()), getActivity());
+            getInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
+            handler.postDelayed(this, 1000);
+        }
+    };
 }

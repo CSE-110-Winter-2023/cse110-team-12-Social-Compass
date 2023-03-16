@@ -48,6 +48,7 @@ public class Constants {
 
     public static final HashMap<Double, Integer> HASHMAPZONE4 = new HashMap<Double, Integer>() {{
 
+
     }};
 
     public static final double MILES_CONVERSION = 0.00062137119;

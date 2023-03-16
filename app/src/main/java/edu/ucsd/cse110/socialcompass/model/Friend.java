@@ -92,7 +92,6 @@ public class Friend {
         return this.bearingAngle;
     }
 
-
     // Factory method for creating Friend from JSON file
     public static Friend fromJSON(String json) { return new Gson().fromJson(json, Friend.class);}
 
