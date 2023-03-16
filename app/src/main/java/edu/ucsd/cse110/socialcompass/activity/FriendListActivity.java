@@ -35,8 +35,6 @@ import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
 public class FriendListActivity extends AppCompatActivity {
 
     public FriendListViewModel viewModel;
@@ -46,9 +44,6 @@ public class FriendListActivity extends AppCompatActivity {
     private Friend self;    // adding any new user to list of friends
     private String UserName, UserUID;
     private double UserLatitude, UserLongitude;
-    static boolean isInserted = false;
-
-    private int friendListSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +78,9 @@ public class FriendListActivity extends AppCompatActivity {
             Gson gson = new Gson();
             String json = gson.toJson(self);
             editor.putString("self", json);
-            editor.commit();
+            editor.apply();
 
         }
-
         // self info
         TextView selfName = this.findViewById(R.id.selfName);
         System.out.println(newUser);
@@ -95,9 +89,14 @@ public class FriendListActivity extends AppCompatActivity {
 
         TextView selfUID = this.findViewById(R.id.selfUID);
         selfUID.setText(UserUID);
-
     }
 
+    private double recalculateDistance(double friendLat, double friendLong) {
+        float[] results = new float[2];
+        Location.distanceBetween(UserLatitude, UserLongitude,
+                friendLat, friendLong, results);
+        return LocationService.metersToMiles(results[0]);
+    }
 
     private void reobserveLocation() {
         var locationData = locationService.getLocation();
@@ -123,7 +122,7 @@ public class FriendListActivity extends AppCompatActivity {
             if (self.getLatitude() != latLong.first || self.getLongitude() != latLong.second) {
                 self.setLatitude(latLong.first);
                 self.setLongitude(latLong.second);
-
+                // if your distance changed, recompute distance for all friends
                 viewModel.save(self);
             }
         }
@@ -211,6 +210,10 @@ public class FriendListActivity extends AppCompatActivity {
                     double friendLong = friend.getLongitude();
                     double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
                     friend.setDistance(newDist);
+
+                    int zone = Utilities.getFriendZone(newDist);
+                    Log.d("ZONE",String.valueOf(zone));
+
                     float bearingAngle = Bearing.bearing(UserLatitude,UserLongitude,friendLat,friendLong);
                     friend.setBearingAngle(bearingAngle);
                     viewModel.saveLocal(friend);
@@ -218,8 +221,6 @@ public class FriendListActivity extends AppCompatActivity {
             });
         });
     }
-
-
 
     private void onFriendClicked(Friend friend, FriendListViewModel viewModel) {
         Log.d("FriendAdapter", "Opened friend " + friend.name);
@@ -231,13 +232,5 @@ public class FriendListActivity extends AppCompatActivity {
         // Delete the friend
         Log.d("FriendAdapter", "Deleted friend " + friend.name);
         viewModel.delete(friend);
-    }
-
-    public static boolean checkInsert() {
-        return isInserted;
-    }
-
-    public int getFriendListSize() {
-        return this.friendListSize;
     }
 }

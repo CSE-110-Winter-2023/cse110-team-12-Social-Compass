@@ -14,11 +14,13 @@ import androidx.core.content.ContextCompat;
 public class FriendIcon {
     private float bearingAngle;
     private final Activity activity;
-    static int radius;// = 495; //some hard-coded value
+    private int radius;// = 495; //some hard-coded value
     private String userName;
     private TextView username_icon;
     private int id;
     boolean isWithinRange;
+    String overlapIconUID;
+    boolean overlapIsCloser;
 
     double distance;   //in miles
     // Constructor; passes in the activity you want the button,
@@ -38,9 +40,7 @@ public class FriendIcon {
         return username_icon;
     }
 
-
-
-    public void updateAngle(float bearingAngle) {
+    public void setBearingAngle(float bearingAngle) {
         this.bearingAngle = bearingAngle;
     }
 
@@ -52,11 +52,29 @@ public class FriendIcon {
 
     public int getRadius() { return this.radius; }
 
+    public void setRadius(int radius){ this.radius = radius;}
+
     public int getId() { return this.id;}
+
+    public void setOverlapIconUID(String uid){
+        this.overlapIconUID = uid;
+    }
+
+    public String getOverlapIconUID(){
+        return this.overlapIconUID;
+    }
+
+    public void setOverlapIsCloser(boolean overlapIsCloser){
+        this.overlapIsCloser = overlapIsCloser;
+    }
+
+    public boolean getOverlapIsCloser(){
+        return this.overlapIsCloser;
+    }
 
 //
 //    Creates a new button in the activity and sets ints constraints
-    public void createIcon() {
+    public void createIcon(boolean truncate) {
         username_icon = new TextView(activity);
         username_icon.setId(View.generateViewId());
 
@@ -67,9 +85,16 @@ public class FriendIcon {
             username_icon.setTextColor(Color.BLACK);
             username_icon.setTextSize(20);
             username_icon.setTypeface(Typeface.DEFAULT_BOLD);
-            layout = new ConstraintLayout.LayoutParams(
-                    200, 200
-            );
+            username_icon.setMaxLines(1);
+            if(truncate){
+                layout = new ConstraintLayout.LayoutParams(
+                        110, 110
+                );
+            } else {
+                layout = new ConstraintLayout.LayoutParams(
+                        200, 200
+                );
+            }
         } else{
             username_icon.setBackground(ContextCompat.getDrawable(activity, R.drawable.dot));
             layout = new ConstraintLayout.LayoutParams(

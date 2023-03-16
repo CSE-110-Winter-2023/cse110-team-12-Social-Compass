@@ -2,17 +2,22 @@ package edu.ucsd.cse110.socialcompass.services;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.os.Looper.getMainLooper;
 
 import static edu.ucsd.cse110.socialcompass.Constants.MILES_CONVERSION;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
+import android.os.Handler;
 import android.util.Pair;
+import android.widget.TextView;
 
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -22,7 +27,20 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.util.Arrays;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import edu.ucsd.cse110.socialcompass.activity.MainActivity;
+import edu.ucsd.cse110.socialcompass.model.Friend;
 
 public class LocationService implements LocationListener {
 
@@ -37,6 +55,9 @@ public class LocationService implements LocationListener {
 
     private MutableLiveData<Pair<Double,Double>> locationValue;
     private final LocationManager locationManager;
+
+    private long lastActiveTime = 0;
+    private long inactiveDuration = 0;
 
     public static LocationService singleton(AppCompatActivity activity){
         if (instance == null){
@@ -108,5 +129,46 @@ public class LocationService implements LocationListener {
         unregisterLocationListener();
         this.locationValue = mockDataSource;
     }
-}
 
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public long getSavedLastDuration(Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        return preferences.getLong("inactiveDuration", this.inactiveDuration);
+    }
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public Location getLastLocation() {
+        return locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    }
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public void setLastKnownActiveTime(Activity activity) {
+        this.lastActiveTime = getLastLocation().getTime();
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("lastActiveTime", this.lastActiveTime);
+        editor.apply();
+    }
+
+    public long getLastActiveTime(Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        return preferences.getLong("lastActiveTime", 0);
+    }
+
+    public void resetInactiveDuration(Activity activity) {
+        this.inactiveDuration = 0;
+        setInactiveDuration(this.inactiveDuration, activity);
+    }
+
+    public void incrementInactiveDuration(Activity activity) {
+        this.inactiveDuration += 1;
+        setInactiveDuration(this.inactiveDuration, activity);
+    }
+
+    public void setInactiveDuration(long value, Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("inactiveDuration", value);
+        editor.apply();
+    }
+}

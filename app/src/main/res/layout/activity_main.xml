@@ -21,27 +21,32 @@
 
     <Button
         android:id="@+id/see_friends_btn"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_width="411dp"
+        android:layout_height="63dp"
         android:layout_marginBottom="12dp"
         android:onClick="onSeeFriendsClicked"
         android:text="Add Friends"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/outer_circle"
+        app:layout_constraintVertical_bias="0.782" />
 
     <TextView
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="14dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="36dp"
         android:text="Social Compass"
         android:textColor="@color/black"
         android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/green_btn"
         app:layout_constraintHorizontal_bias="0.047"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -70,6 +75,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.5085" />
 
     <TextView
         android:id="@+id/second_circle"
@@ -117,5 +123,37 @@
         android:textSize="35sp"
         app:layout_constraintBottom_toTopOf="@id/see_friends_btn"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/gps_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="16dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/green_btn"
+        android:layout_width="29dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/app_name"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/app_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/greenlighticon" />
+
+    <ImageView
+        android:id="@+id/red_btn"
+        android:layout_width="29dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/green_btn"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/app_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/redlighticon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
