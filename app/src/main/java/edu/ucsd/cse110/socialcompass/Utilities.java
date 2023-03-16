@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
+import edu.ucsd.cse110.socialcompass.services.LocationService;
 
 /**
  * This class stores all the helper methods for showing alerts and dialogs, as well as taking in
@@ -179,31 +181,35 @@ public class Utilities {
                 Math.abs(longitude), Math.abs(longitude % 1) * 60, Math.abs(longitude % 1 % 1) * 60);
     }
 
-    public static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        // convert to radians
-        lon1 = Math.toRadians(lon1);
-        lon2 = Math.toRadians(lon2);
-        lat1 = Math.toRadians(lat1);
-        lat2 = Math.toRadians(lat2);
-
-        // Haversine formula
-        double dlon = lon2 - lon1;
-        double dlat = lat2 - lat1;
-        double a = Math.pow(Math.sin(dlat / 2), 2)
-                + Math.cos(lat1) * Math.cos(lat2)
-                * Math.pow(Math.sin(dlon / 2),2);
-
-        double c = 2 * Math.asin(Math.sqrt(a));
-
-        // Radius of earth in kilometers. Use 3956
-        // for miles
-        double r = 3956;
-
-        // calculate the result
-        return(c * r);
-    }
-
     public static String getName() {
         return uniqueName;
+    }
+
+    public static double recalculateDistance(double userLat, double userLong, double friendLat, double friendLong) {
+        float[] results = new float[2];
+        Location.distanceBetween(userLat, userLong,
+                friendLat, friendLong, results);
+        return LocationService.metersToMiles(results[0]);
+    }
+
+    // used to calculate which zone the friends lie in, your start value will be the inner zone,
+    // ex: if you want to calculate which zone in between zone 1 and zone 2, start will be 1,
+    // number will be the distance
+    public static double roundToLowestMultiple(double start, double number, double multiple) {
+        double result =  Math.floor(number / multiple) * multiple;
+        return start + Math.round(result * 100.0) / 100.0;
+    }
+
+    // used to return the zone, havent implemented zone 3 and 4 since we don't need it for story 5
+    public static int getFriendZone(double distance){
+        if(distance >= Constants.ZONE0 & distance < Constants.ZONE1){
+            return (Constants.HASHMAPZONE1).get(Utilities.roundToLowestMultiple(0,distance,0.2));
+        } else if(distance >= Constants.ZONE1 & distance < Constants.ZONE2){
+            return (Constants.HASHMAPZONE2).get(Utilities.roundToLowestMultiple(1.0,distance,1.8));
+        }else if(distance >= Constants.ZONE2 & distance < Constants.ZONE3){
+            return 535;
+        }else {
+            return 535;
+        }
     }
 }

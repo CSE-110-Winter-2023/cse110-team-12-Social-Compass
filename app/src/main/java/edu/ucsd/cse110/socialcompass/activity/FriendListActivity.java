@@ -14,6 +14,7 @@ import androidx.room.Room;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import edu.ucsd.cse110.socialcompass.Bearing;
+import edu.ucsd.cse110.socialcompass.Constants;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
@@ -38,7 +43,7 @@ public class FriendListActivity extends AppCompatActivity {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public RecyclerView recyclerView;
     private LocationService locationService;
-    private Friend self;
+    private Friend self;    // adding any new user to list of friends
     private String UserName, UserUID;
     private double UserLatitude, UserLongitude;
     static boolean isInserted = false;
@@ -64,9 +69,6 @@ public class FriendListActivity extends AppCompatActivity {
         locationService = LocationService.singleton(this);
         reobserveLocation();
 
-
-        System.out.println(newUser);
-
         // if this is a new user, add them to the database
         System.out.println("new user " + newUser);
         if (newUser) {
@@ -77,8 +79,15 @@ public class FriendListActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("newUser", false);
             editor.apply();
+
+            Gson gson = new Gson();
+            String json = gson.toJson(self);
+            editor.putString("self", json);
+            editor.commit();
+
         }
 
+        // self info
         TextView selfName = this.findViewById(R.id.selfName);
         System.out.println(newUser);
 
@@ -87,36 +96,8 @@ public class FriendListActivity extends AppCompatActivity {
         TextView selfUID = this.findViewById(R.id.selfUID);
         selfUID.setText(UserUID);
 
-        startPollingFriends();
     }
 
-    private void startPollingFriends(){
-        // live updating for friends already in the database (when you rerun the program)
-        LiveData<List<Friend>> friendsLiveData = viewModel.getAll();
-        friendsLiveData.observe(this, new Observer<List<Friend>>() {
-            //grabs the list of friends
-            @Override
-            public void onChanged(List<Friend> friendList) {
-                friendsLiveData.removeObserver(this);
-                if (friendList != null) {
-                    friendListSize = friendList.size();
-                    //for each friend, if its not the user then grabs its live data and poll from it
-                    for(Friend friend : friendList){
-                        if (friend.order != -1) {
-                            LiveData<Friend> friendLiveData = viewModel.getFriend(friend.getUid());
-                            friendLiveData.observe(FriendListActivity.this, new Observer<Friend>() {
-                                @Override
-                                public void onChanged(Friend friend) {
-                                    friendLiveData.removeObserver(this);
-                                    viewModel.saveLocal(friend);
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        });
-    }
 
     private void reobserveLocation() {
         var locationData = locationService.getLocation();
@@ -134,10 +115,15 @@ public class FriendListActivity extends AppCompatActivity {
         UserLatitude = preferences.getFloat("myLatitude", 0);
         UserLongitude = preferences.getFloat("myLongitude", 0);
 
+        Gson gson = new Gson();
+        String json = preferences.getString("self", "");
+        self = gson.fromJson(json, Friend.class);
+
         if (self != null) {
             if (self.getLatitude() != latLong.first || self.getLongitude() != latLong.second) {
                 self.setLatitude(latLong.first);
                 self.setLongitude(latLong.second);
+
                 viewModel.save(self);
             }
         }
@@ -183,7 +169,6 @@ public class FriendListActivity extends AppCompatActivity {
 
             // Otherwise, create a new note, persist it...
             var uid = input.getText().toString();
-            System.out.println("First");
             var friend = viewModel.getFriend(uid);
 
             // ...wait for the database to finish persisting it...
@@ -214,7 +199,6 @@ public class FriendListActivity extends AppCompatActivity {
                 return;
             }
 
-            System.out.println("Made it through");
             // Otherwise, create the livedata for the remote friend object and set an observer
             var friendLiveData = viewModel.getFriend(uid);
             //friendLiveData.observe(this,this::onFriendLocationChanged);
@@ -223,12 +207,19 @@ public class FriendListActivity extends AppCompatActivity {
                 public void onChanged(Friend friend) {
                     // Remove the observer after the first update
                     friendLiveData.removeObserver(this);
-                    // save the friend to the viewModel
+                    double friendLat = friend.getLatitude();
+                    double friendLong = friend.getLongitude();
+                    double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
+                    friend.setDistance(newDist);
+                    float bearingAngle = Bearing.bearing(UserLatitude,UserLongitude,friendLat,friendLong);
+                    friend.setBearingAngle(bearingAngle);
                     viewModel.saveLocal(friend);
                 }
             });
         });
     }
+
+
 
     private void onFriendClicked(Friend friend, FriendListViewModel viewModel) {
         Log.d("FriendAdapter", "Opened friend " + friend.name);
