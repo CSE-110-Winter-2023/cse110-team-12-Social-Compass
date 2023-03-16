@@ -2,15 +2,10 @@ package edu.ucsd.cse110.socialcompass.model;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-
-import java.util.List;
-import java.util.concurrent.Executors;
 
 //@Database(entities = {FriendListItem.class}, version=1)
 @Database(entities = {Friend.class}, version=8, exportSchema = false)

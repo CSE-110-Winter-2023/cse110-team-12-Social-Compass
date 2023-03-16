@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
 
     private LocationService locationService;
     private String UID; // The user's unique UID
-    private LiveData<Friend> user;
     private MainActivityViewModel mainViewModel;
     private FriendListViewModel friendListViewModel;
     private double UserLatitude, UserLongitude;
