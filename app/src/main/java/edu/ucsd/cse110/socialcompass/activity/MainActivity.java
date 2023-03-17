@@ -467,9 +467,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     // occasionally check for GPS status using a Runnable thread
     Runnable myRunnable = new Runnable() {
-
-
-
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
