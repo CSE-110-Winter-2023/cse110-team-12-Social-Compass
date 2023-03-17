@@ -99,11 +99,6 @@ public class LocationService implements LocationListener {
         }
     }
 
-    public boolean checkPermissions() {
-        // We already have at least one of the location permissions, go ahead!
-        return Arrays.stream(REQUIRED_PERMISSIONS).allMatch(perm -> activity.checkSelfPermission(perm) == PackageManager.PERMISSION_GRANTED);
-    }
-
     @Override
     public void onLocationChanged(@NonNull Location location) {
         this.locationValue.postValue(new Pair<Double,Double>(location.getLatitude(),location.getLongitude()));
@@ -116,6 +111,11 @@ public class LocationService implements LocationListener {
     public void setMockOrientationSource(MutableLiveData<Pair<Double,Double>> mockDataSource) {
         unregisterLocationListener();
         this.locationValue = mockDataSource;
+    }
+
+    public boolean checkPermissions() {
+        // We already have at least one of the location permissions, go ahead!
+        return Arrays.stream(REQUIRED_PERMISSIONS).allMatch(perm -> activity.checkSelfPermission(perm) == PackageManager.PERMISSION_GRANTED);
     }
 
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
@@ -159,26 +159,5 @@ public class LocationService implements LocationListener {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong("inactiveDuration", value);
         editor.apply();
-    }
-
-    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-    public void setLastLocation(Activity activity) {
-        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putFloat("myLatitude", (float)locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
-        editor.putFloat("myLongitude", (float)locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
-        editor.apply();
-    }
-
-    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-    public float getLastLatitude(Activity activity) {
-        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        return preferences.getFloat("myLatitude", 0);
-    }
-
-    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
-    public float getLastLongitude(Activity activity) {
-        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        return preferences.getFloat("myLongitude", 0);
     }
 }

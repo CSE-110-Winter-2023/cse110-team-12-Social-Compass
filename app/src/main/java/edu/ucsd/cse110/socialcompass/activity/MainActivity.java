@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (newUser) {
             initNewUser();
         }
-        // TODO: add test to make sure UID will always pull correctly from shared preferences
         UID = preferences.getString("myUID", "Default UID");
 
         // Setup ViewModel and Adapter
@@ -104,11 +103,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         friendIcons = new HashMap<>();
         lastActiveDuration = locationService.getSavedLastDuration(this);
-        UserLatitude = locationService.getLastLatitude(this);
-        UserLongitude = locationService.getLastLongitude(this);
-        self.setLatitude(UserLatitude);
-        self.setLongitude(UserLongitude);
+        handler = new Handler();
         handler.postDelayed(myRunnable, 100);
+
+        // Start polling friends
+        startPollingFriends();
+        displayFriends(mainViewModel, range, Double.POSITIVE_INFINITY, 480, true);
 
         // Find views for zooming
         var firstCircle = (TextView)findViewById(R.id.first_circle);
@@ -152,10 +152,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("scaleOfCircles", scaleOfCircles);
         editor.apply();
-    }
-
-    public int getRange() {
-        return range;
     }
 
     public int getScaleOfCircles() {
@@ -227,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                         float bearingAngle = Bearing.bearing(UserLatitude,
                                                 UserLongitude, friendLat, friendLong);
 
-                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360)%360;
+                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
 
                                         friend.setBearingAngle(bearingAngle);
 
@@ -239,13 +235,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                             FriendIcon icon = friendIcons.get(friend.getUid());
 
                                             // check if there is overlap
-                                            if (icon != null && icon.getOverlapIconUID() != null && friendIcons.containsKey(icon.getOverlapIconUID())){
+                                            if (icon != null && icon.getOverlapIconUID() != null
+                                                    && friendIcons.containsKey(icon.getOverlapIconUID())){
                                                 FriendIcon overlapIcon = friendIcons.get(icon.getOverlapIconUID());
                                                 // check whether the the overlapIcon was shifted closer to the center or further and set offset to it
                                                 int offset = overlapIcon.getOverlapIsCloser() ? 75 : -75;
 
                                                 // if there is still overlap, return and don't update the icons, otherwise remove overlap
-                                                if(zone == overlapIcon.getRadius() + offset
+                                                if (zone == overlapIcon.getRadius() + offset
                                                         && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10){
                                                     return;
                                                 }
@@ -404,8 +401,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String json = preferences.getString("self", "");
         self = gson.fromJson(json, Friend.class);
 
-        UserLatitude = preferences.getFloat("myLatitude", 0);//latLong.first;
-        UserLongitude = preferences.getFloat("myLatitude", 0);//latLong.second;
+        UserLatitude = latLong.first;
+        UserLongitude = latLong.second;
 
         if (self != null) {
             if (self.getLatitude() != latLong.first || self.getLongitude() != latLong.second) {
@@ -480,24 +477,63 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 return;
             }
             if (locationService.getLastLocation() != null) {
-                location = locationService.getLastLocation();
+                if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
+                    // GPS signal has gone stale
+                    locationService.incrementInactiveDuration(getActivity());
+                } else {
+                    // GPS signal is live
+                    locationService.resetInactiveDuration(getActivity());
+                    lastActiveDuration = 0;
+                }
+                locationService.setLastKnownActiveTime(getActivity());
+                // automatically use the last detected location if GPS is off
+                locationService.setInactiveDuration(lastActiveDuration
+                        + locationService.getSavedLastDuration(getActivity()), getActivity());
+                setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
+                setIconVisibility(locationService.getSavedLastDuration(getActivity()));
+                handler.postDelayed(this, 1000);
             }
-            if (locationService.getLastActiveTime(getActivity()) == location.getTime()) {
-                // GPS signal has gone stale
-                locationService.incrementInactiveDuration(getActivity());
-            } else {
-                // GPS signal is live
-                locationService.resetInactiveDuration(getActivity());
-                lastActiveDuration = 0;
-            }
-            locationService.setLastKnownActiveTime(getActivity());
-            locationService.setLastLocation(getActivity());
-            // automatically use the last detected location if GPS is off
-            locationService.setInactiveDuration(lastActiveDuration
-                    + locationService.getSavedLastDuration(getActivity()), getActivity());
-            setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
-            setIconVisibility(locationService.getSavedLastDuration(getActivity()));
-            handler.postDelayed(this, 1000);
         }
     };
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public void updateFriendOrientation(Location myLocation, Friend friend) {
+        if (locationService == null) {
+            return;
+        }
+        if (myLocation == null) {
+            return;
+        }
+
+        double friendLat = friend.getLatitude();
+        double friendLong = friend.getLongitude();
+        double newDist = Utilities.recalculateDistance(myLocation.getLatitude(), myLocation.getLongitude(), friendLat, friendLong);
+
+        friend.setDistance(newDist);
+
+        float bearingAngle = Bearing.bearing(myLocation.getLatitude(), myLocation.getLongitude(), friendLat, friendLong);
+        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
+        friend.setBearingAngle(bearingAngle);
+    }
+
+    public void setCurrentAzimuth(float azimuth) {
+        currentAzimuth = azimuth;
+    }
+
+    public Location getCurrentLocation() {
+        return location;
+    }
+
+    /**
+     * Calculating distance for mocking
+     * @param location1 First location for distance
+     * @param location2 Second location for distance
+     * @return The distance between these locations
+     */
+    public float calculateDistance(Location location1, Location location2) {
+        if (location1 == null || location2 == null) {
+            throw new IllegalArgumentException("Locations cannot be null");
+        }
+        return location1.distanceTo(location2);
+    }
 }
