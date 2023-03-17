@@ -537,7 +537,10 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
-            if ()
+            boolean permission = locationService.checkPermissions();
+            if (!permission) {
+                return;
+            }
             if (locationService.getLastLocation() != null) {
                 location = locationService.getLastLocation();
             }
