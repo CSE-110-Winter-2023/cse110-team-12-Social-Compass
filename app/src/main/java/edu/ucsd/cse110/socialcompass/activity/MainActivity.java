@@ -2,70 +2,42 @@ package edu.ucsd.cse110.socialcompass.activity;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.os.Looper.getMainLooper;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.app.ActivityCompat;
-import androidx.core.util.Pair;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-
-import android.content.pm.PackageManager;
-
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
-import android.os.Handler;
-
-import android.os.Looper;
-
-import android.util.Log;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import edu.ucsd.cse110.socialcompass.Bearing;
-import edu.ucsd.cse110.socialcompass.Constants;
 import edu.ucsd.cse110.socialcompass.FriendIcon;
 import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
-import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
-import edu.ucsd.cse110.socialcompass.model.FriendDao;
-import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
+import edu.ucsd.cse110.socialcompass.services.ZoomingService;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.MainActivityViewModel;
@@ -79,13 +51,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private FriendListViewModel friendListViewModel;
     private double UserLatitude, UserLongitude;
     private Friend self;    // adding any new user to list of friends
-    private int range = 10;
+    private int range = 1000;
     private HashMap<String, FriendIcon> friendIcons;
     private Handler handler;
-    private FusedLocationProviderClient fusedLocationClient;
     private long lastActiveDuration;
+    private int scaleOfCircles = 100;
+    Location location;
 
-    //Sensor stuff
+    // Sensor stuff
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private Sensor magnetometer;
@@ -96,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float[] rotationMatrix = new float[9];
     private float[] orientation = new float[3];
     private float currentAzimuth = 0;
-
 
     @Override
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
@@ -115,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (newUser) {
             initNewUser();
         }
-        // TODO: add test to make sure UID will always pull correctly from shared preferences
         UID = preferences.getString("myUID", "Default UID");
 
         // Setup ViewModel and Adapter
@@ -132,12 +103,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         friendIcons = new HashMap<>();
         lastActiveDuration = locationService.getSavedLastDuration(this);
-        System.out.println("lastActiveDuration: " + lastActiveDuration);
         handler = new Handler();
         handler.postDelayed(myRunnable, 100);
         // Start polling friends
         startPollingFriends();
+        // Find views for zooming
+        var firstCircle = (TextView)findViewById(R.id.first_circle);
+        var secondCircle = (TextView)findViewById(R.id.second_circle);
+        var thirdCircle = (TextView)findViewById(R.id.third_circle);
+        var zoomIn = (TextView)findViewById(R.id.zoom_in);
+        var zoomOut = (TextView)findViewById(R.id.zoom_out);
 
+        // Fetch the zooming setting saved
+        int scaleOfCirclesSaved = preferences.getInt("scaleOfCircles", 300);
+
+        // Reflect zooming setting
+        ZoomingService zoomingService = new ZoomingService(this);
+        zoomingService.reflectZoomingSetting(this, zoomIn, firstCircle, secondCircle, thirdCircle, scaleOfCirclesSaved);
+
+        // Start polling friends
+        startPollingFriends();
+        displayFriends(mainViewModel, range, Double.POSITIVE_INFINITY, 480, true);
+
+        // Start zooming in and out service
+        zoomingService.zoomIn(this, zoomIn, firstCircle, secondCircle, thirdCircle);
+        zoomingService.zoomOut(this, zoomOut, firstCircle, secondCircle, thirdCircle);
     }
 
     @Override
@@ -152,7 +142,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onPause();
         sensorManager.unregisterListener(this, accelerometer);
         sensorManager.unregisterListener(this, magnetometer);
+
+        // Save the zooming setting
+        super.onPause();
+        SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("scaleOfCircles", scaleOfCircles);
+        editor.apply();
     }
+
+    public int getScaleOfCircles() {
+        return scaleOfCircles;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public void setScaleOfCircles(int scaleOfCircles) {
+        this.scaleOfCircles = scaleOfCircles;
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -168,18 +178,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             SensorManager.getOrientation(rotationMatrix, orientation);
             currentAzimuth = (float) Math.toDegrees(orientation[0]);
             currentAzimuth = (currentAzimuth + 360) % 360;
-
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // get implementation for accurate orientation
     }
 
     private void startPollingFriends() {
         // live updating for friends already in the database (when you rerun the program)
         LiveData<List<Friend>> friendsLiveData = friendListViewModel.getAll();
-        friendsLiveData.observe(this, new Observer<>() {
+        friendsLiveData.observe(this, new Observer<List<Friend>>() {
             //grabs the list of friends
             @Override
             public void onChanged(List<Friend> friendList) {
@@ -201,24 +211,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                     } else {
                                         double friendLat = friend.getLatitude();
                                         double friendLong = friend.getLongitude();
-                                        double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
-
+                                        double newDist = Utilities.recalculateDistance(UserLatitude,
+                                                UserLongitude,friendLat, friendLong);
 
                                         friend.setDistance(newDist);
-                                        int zone = Utilities.getFriendZone(newDist);
+                                        int zone = Utilities.getFriendZone(newDist, scaleOfCircles);
 
                                         float bearingAngle = Bearing.bearing(UserLatitude,
                                                 UserLongitude, friendLat, friendLong);
 
-                                        float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat, friendLong);
-
-                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360)%360;
+                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
 
                                         friend.setBearingAngle(bearingAngle);
 
                                         friendListViewModel.saveLocal(friend);
-
-
 
                                         boolean isWithinRange = newDist < range;
 
@@ -226,27 +232,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                             FriendIcon icon = friendIcons.get(friend.getUid());
 
                                             // check if there is overlap
-                                            if(icon != null && icon.getOverlapIconUID() != null && friendIcons.containsKey(icon.getOverlapIconUID())){
+                                            if (icon != null && icon.getOverlapIconUID() != null
+                                                    && friendIcons.containsKey(icon.getOverlapIconUID())){
                                                 FriendIcon overlapIcon = friendIcons.get(icon.getOverlapIconUID());
                                                 // check whether the the overlapIcon was shifted closer to the center or further and set offset to it
                                                 int offset = overlapIcon.getOverlapIsCloser() ? 75 : -75;
 
                                                 // if there is still overlap, return and don't update the icons, otherwise remove overlap
-                                                if(zone == overlapIcon.getRadius() + offset && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10){
+                                                if (zone == overlapIcon.getRadius() + offset
+                                                        && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10){
                                                     return;
                                                 }
-                                                else{
+                                                else {
                                                     overlapIcon.setOverlapIconUID(null);
-
                                                 }
                                             }
-
                                             mainLayout.removeView(friendIcons.get(friend.getUid()).getFriendIcon());
                                         }
-
-                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this,
-                                                friend.getName(), bearingAngle, zone, newDist, isWithinRange);
-                                        friendIcon.createIcon();
 
                                         // if the icon is within range, then check if there is any overlap, if so grab the uid of the icon that it is overlapping
                                         String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,bearingAngle) : "";
@@ -268,13 +270,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                             truncate = bearingAngle > 225 && bearingAngle < 315 ;
                                         }
                                         friendIcon.createIcon(truncate);
-
                                         mainLayout.addView(friendIcon.getFriendIcon());
 
                                         // add friendIcon to map
                                         friendIcons.put(friend.getUid(), friendIcon);
-
-
                                     }
                                 }
                             });
@@ -309,21 +308,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         mainLayout.removeView(friend.getFriendIcon());
-
         friend.setRadius(friend.getRadius() - 75);
-
         friend.setOverlapIconUID(overlapIconUID);
-
         friend.setOverlapIsCloser(true);
-
         boolean truncate = friend.getBearingAngle() < 135 && friend.getBearingAngle() > 45;
-
         friend.createIcon(truncate);
-
         mainLayout.addView(friend.getFriendIcon());
-
         friendIcons.put(uid, friend);
-
         return uid;
     }
 
@@ -335,14 +326,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return new ViewModelProvider(this).get(FriendListViewModel.class);
     }
 
-
     private void setFriends(List<Friend> friends1, List<Friend> friends2) {
         friends1 = friends2;
     }
 
     private void displayFriends(MainActivityViewModel viewModel, double inner, double outer,
                                 int radius, boolean isWithinRange) {
-        // .getValue() seems to return null for live data, so this implementation assumes it doesn't return null
         LiveData<List<Friend>> liveDataFriends = viewModel.getFriendsWithinZone(inner, outer);
         List<Friend> friends = new ArrayList<>();
         liveDataFriends.observeForever(new Observer<List<Friend>>() {
@@ -354,15 +343,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         });
 
-        // hardcoded
-        double distance = 0.1;
-        float bearingAngle = 180;
-
         for (Friend friend : friends) {
             ConstraintLayout mainLayout = findViewById(R.id.main_layout);
-            FriendIcon friendIcon = new FriendIcon(this, friend.getName(), bearingAngle,
-                    radius, distance, isWithinRange);
-            friendIcon.createIcon();
+            FriendIcon friendIcon = new FriendIcon(this, friend.getName(), friend.getBearingAngle(),
+                    radius, friend.getDistance(), isWithinRange);
+            double friendLat = friend.getLatitude();
+            double friendLong = friend.getLongitude();
+            double newDist = Utilities.recalculateDistance(UserLatitude, UserLongitude, friendLat, friendLong);
+
+            int zone = Utilities.getFriendZone(newDist, scaleOfCircles);
+            String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,friend.getBearingAngle()) : "";
+            int offset = overlapIconUID.equals("") ? 0 : 75;
+
+            boolean truncate = false;
+
+            // if there is overlap, we want to make note of that
+            if(offset > 0){
+                friendIcon.setOverlapIconUID(overlapIconUID);
+                friendIcon.setOverlapIsCloser(false);
+
+                // check if we want to truncate the icon
+                truncate = friend.getBearingAngle() > 225 && friend.getBearingAngle() < 315 ;
+            }
+            friendIcon.createIcon(truncate);
             mainLayout.addView(friendIcon.getFriendIcon());
         }
     }
@@ -463,24 +466,70 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
-            System.out.println("Last active time is: " + locationService.getLastActiveTime(getActivity()));
-            if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
-                // GPS signal has gone stale
-                locationService.incrementInactiveDuration(getActivity());
-            } else {
-                // GPS signal is live
-                locationService.resetInactiveDuration(getActivity());
-                lastActiveDuration = 0;
+            if (locationService != null) {
+                boolean permission = locationService.checkPermissions();
+                if (!permission) {
+                    handler.postDelayed(this, 1000);
+                    return;
+                }
+                if (locationService.getLastLocation() != null) {
+                    if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
+                        // GPS signal has gone stale
+                        locationService.incrementInactiveDuration(getActivity());
+                    } else {
+                        // GPS signal is live
+                        locationService.resetInactiveDuration(getActivity());
+                        lastActiveDuration = 0;
+                    }
+                    locationService.setLastKnownActiveTime(getActivity());
+                    locationService.setInactiveDuration(lastActiveDuration
+                            + locationService.getSavedLastDuration(getActivity()), getActivity());
+                    setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
+                    setIconVisibility(locationService.getSavedLastDuration(getActivity()));
+                    handler.postDelayed(this, 1000);
+                }
             }
-            locationService.setLastKnownActiveTime(getActivity());
-            // Last known coordinates to use
-            //System.out.println("Last Latitude: " + locationService.getLastLocation().getLatitude());
-            //System.out.println("Last Longitude: " + locationService.getLastLocation().getLongitude());
-            locationService.setInactiveDuration(lastActiveDuration
-                    + locationService.getSavedLastDuration(getActivity()), getActivity());
-            setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
-            setIconVisibility(locationService.getSavedLastDuration(getActivity()));
-            handler.postDelayed(this, 1000);
         }
     };
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public void updateFriendOrientation(Location myLocation, Friend friend) {
+        if (locationService == null) {
+            return;
+        }
+        if (myLocation == null) {
+            return;
+        }
+
+        double friendLat = friend.getLatitude();
+        double friendLong = friend.getLongitude();
+        double newDist = Utilities.recalculateDistance(myLocation.getLatitude(), myLocation.getLongitude(), friendLat, friendLong);
+
+        friend.setDistance(newDist);
+
+        float bearingAngle = Bearing.bearing(myLocation.getLatitude(), myLocation.getLongitude(), friendLat, friendLong);
+        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
+        friend.setBearingAngle(bearingAngle);
+    }
+
+    public void setCurrentAzimuth(float azimuth) {
+        currentAzimuth = azimuth;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    /**
+     * Calculating distance for mocking
+     * @param location1 First location for distance
+     * @param location2 Second location for distance
+     * @return The distance between these locations
+     */
+    public float calculateDistance(Location location1, Location location2) {
+        if (location1 == null || location2 == null) {
+            throw new IllegalArgumentException("Locations cannot be null");
+        }
+        return location1.distanceTo(location2);
+    }
 }

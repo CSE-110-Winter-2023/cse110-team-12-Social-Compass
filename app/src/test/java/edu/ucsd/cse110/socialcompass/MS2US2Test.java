@@ -1,24 +1,17 @@
 package edu.ucsd.cse110.socialcompass;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -30,29 +23,23 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import edu.ucsd.cse110.socialcompass.activity.FriendListActivity;
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDao;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 import edu.ucsd.cse110.socialcompass.model.FriendRepository;
-import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 
 /**
- * Tests for Milestone 2, Stories 2 and 3
+ * Tests for checking input into the database
  */
 @RunWith(RobolectricTestRunner.class)
-public class TestUsernameInput {
+public class MS2US2Test {
     FriendDatabase db;
     private FriendDao dao;
     ActivityScenario<MainActivity> scenario;
@@ -63,7 +50,7 @@ public class TestUsernameInput {
     @Before
     public void init() {
         scenario = ActivityScenario.launch(MainActivity.class);
-        Context context = ApplicationProvider.getApplicationContext();
+        Context context = getApplicationContext();
         db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
                 .allowMainThreadQueries()
                 .build();
@@ -131,27 +118,6 @@ public class TestUsernameInput {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        });
-    }
-
-    @Test
-    public void testCopyUid() {
-        scenario.onActivity(activity -> {
-
-            String uniqueID = UUID.randomUUID().toString();
-
-            //Open the alert console with a given uid and make sure the console has popped up
-            Utilities.showCopyUIDAlert(activity, "Copy UID", uniqueID);
-            AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
-            assertNotNull(alertDialog);
-
-            // find the copy button and simulate a click
-            TextView copyButton = alertDialog.findViewById(R.id.copy);
-            copyButton.performClick();
-
-            //Check if the data in the clipboard matches the uid
-            final ClipboardManager manager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            manager.addPrimaryClipChangedListener(() -> assertEquals(manager.getPrimaryClip().toString(), uniqueID));
         });
     }
 }

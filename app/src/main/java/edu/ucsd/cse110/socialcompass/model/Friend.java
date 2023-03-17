@@ -1,10 +1,6 @@
 package edu.ucsd.cse110.socialcompass.model;
 
-import android.util.Log;
-import android.util.Pair;
-
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
