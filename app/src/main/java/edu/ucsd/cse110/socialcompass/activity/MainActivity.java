@@ -472,20 +472,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     handler.postDelayed(this, 1000);
                     return;
                 }
-                if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
-                    // GPS signal has gone stale
-                    locationService.incrementInactiveDuration(getActivity());
-                } else {
-                    // GPS signal is live
-                    locationService.resetInactiveDuration(getActivity());
-                    lastActiveDuration = 0;
+                if (locationService.getLastLocation() != null) {
+                    if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
+                        // GPS signal has gone stale
+                        locationService.incrementInactiveDuration(getActivity());
+                    } else {
+                        // GPS signal is live
+                        locationService.resetInactiveDuration(getActivity());
+                        lastActiveDuration = 0;
+                    }
+                    locationService.setLastKnownActiveTime(getActivity());
+                    locationService.setInactiveDuration(lastActiveDuration
+                            + locationService.getSavedLastDuration(getActivity()), getActivity());
+                    setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
+                    setIconVisibility(locationService.getSavedLastDuration(getActivity()));
+                    handler.postDelayed(this, 1000);
                 }
-                locationService.setLastKnownActiveTime(getActivity());
-                locationService.setInactiveDuration(lastActiveDuration
-                        + locationService.getSavedLastDuration(getActivity()), getActivity());
-                setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
-                setIconVisibility(locationService.getSavedLastDuration(getActivity()));
-                handler.postDelayed(this, 1000);
             }
         }
     };
