@@ -38,18 +38,24 @@ public class FriendListActivity extends AppCompatActivity {
     private Friend self;    // adding any new user to list of friends
     private String UserName, UserUID;
     private double UserLatitude, UserLongitude;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
+        // initialize shared preferences and editor
+        preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
+        editor = preferences.edit();
+
         // For first time users, get their uid and name from sharedPreferences
-        SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
         UserName = preferences.getString("myName", "Error getting name");
         UserUID = preferences.getString("myUID", "Error getting UID");
         boolean newUser = preferences.getBoolean("newUser", true);
 
+        // setup views and adapter
         viewModel = setupViewModel();
         var adapter = setupAdapter(viewModel);
         setupViews(viewModel, adapter);
@@ -59,29 +65,28 @@ public class FriendListActivity extends AppCompatActivity {
         reobserveLocation();
 
         // if this is a new user, add them to the database
-        if (newUser) {
-            self = new Friend(UserName, UserUID, UserLatitude, UserLongitude,-1);
-            viewModel.save(self);
-            Log.d("USER", self.name);
+        if (newUser) { initNewUser(preferences); }
 
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("newUser", false);
-            editor.apply();
-
-            Gson gson = new Gson();
-            String json = gson.toJson(self);
-            editor.putString("self", json);
-            editor.apply();
-
-        }
-        // self info
+        // initialize self info
         TextView selfName = this.findViewById(R.id.selfName);
-        System.out.println(newUser);
-
-        selfName.setText(UserName);
-
         TextView selfUID = this.findViewById(R.id.selfUID);
+        System.out.println(newUser);
+        selfName.setText(UserName);
         selfUID.setText(UserUID);
+    }
+
+    private void initNewUser(SharedPreferences preferences) {
+        self = new Friend(UserName, UserUID, UserLatitude, UserLongitude,-1);
+        viewModel.save(self);
+        Log.d("USER", self.name);
+
+        editor.putBoolean("newUser", false);
+        editor.apply();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(self);
+        editor.putString("self", json);
+        editor.apply();
     }
 
     private void reobserveLocation() {
@@ -90,13 +95,16 @@ public class FriendListActivity extends AppCompatActivity {
     }
 
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
+        // update location text
         @SuppressLint("RestrictedApi") TextView locationText = this.findViewById(R.id.selfLocation);
         locationText.setText(latLong.first + ", " + latLong.second);
-        SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
+
+        // save latLong data to preferences
         editor.putFloat("myLatitude", latLong.first.floatValue());
         editor.putFloat("myLongitude", latLong.second.floatValue());
         editor.apply();
+
+        // update member variables
         UserLatitude = preferences.getFloat("myLatitude", 0);
         UserLongitude = preferences.getFloat("myLongitude", 0);
 
@@ -152,7 +160,7 @@ public class FriendListActivity extends AppCompatActivity {
                 return false;
             }
 
-            // Otherwise, create a new note, persist it...
+            // get friend livedata, persist it...
             var uid = input.getText().toString();
             var friend = viewModel.getFriend(uid);
 
@@ -191,11 +199,15 @@ public class FriendListActivity extends AppCompatActivity {
                 public void onChanged(Friend friend) {
                     // Remove the observer after the first update
                     friendLiveData.removeObserver(this);
+
+                    // getting updated values from observer
                     double friendLat = friend.getLatitude();
                     double friendLong = friend.getLongitude();
                     double newDist = Utilities.recalculateDistance(UserLatitude, UserLongitude, friendLat, friendLong);
-                    friend.setDistance(newDist);
                     float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat,friendLong);
+
+                    // updating values and saving to the local database
+                    friend.setDistance(newDist);
                     friend.setBearingAngle(bearingAngle);
                     viewModel.saveLocal(friend);
                 }
