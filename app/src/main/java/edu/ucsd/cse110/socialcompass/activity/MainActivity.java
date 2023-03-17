@@ -125,7 +125,10 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
 
         friendIcons = new HashMap<>();
         lastActiveDuration = locationService.getSavedLastDuration(this);
-        handler = new Handler();
+        UserLatitude = locationService.getLastLatitude(this);
+        UserLongitude = locationService.getLastLongitude(this);
+        self.setLatitude(UserLatitude);
+        self.setLongitude(UserLongitude);
         handler.postDelayed(myRunnable, 100);
 
         // Fetch the zooming setting saved
@@ -282,12 +285,14 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                                     } else {
                                         double friendLat = friend.getLatitude();
                                         double friendLong = friend.getLongitude();
-                                        double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
+                                        double newDist = Utilities.recalculateDistance(UserLatitude,
+                                                UserLongitude,friendLat, friendLong);
 
                                         friend.setDistance(newDist);
                                         int zone = Utilities.getFriendZone(newDist, scaleOfCircles);
 
-                                        float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat, friendLong);
+                                        float bearingAngle = Bearing.bearing(UserLatitude,
+                                                UserLongitude, friendLat, friendLong);
 
                                         bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360)%360;
 
@@ -466,8 +471,8 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         String json = preferences.getString("self", "");
         self = gson.fromJson(json, Friend.class);
 
-        UserLatitude = latLong.first;
-        UserLongitude = latLong.second;
+        UserLatitude = preferences.getFloat("myLatitude", 0);//latLong.first;
+        UserLongitude = preferences.getFloat("myLatitude", 0);//latLong.second;
 
         if (self != null) {
             if (self.getLatitude() != latLong.first || self.getLongitude() != latLong.second) {
@@ -534,9 +539,6 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
 
     // occasionally check for GPS status using a Runnable thread
     Runnable myRunnable = new Runnable() {
-
-
-
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
@@ -556,6 +558,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                 lastActiveDuration = 0;
             }
             locationService.setLastKnownActiveTime(getActivity());
+            locationService.setLastLocation(getActivity());
             // automatically use the last detected location if GPS is off
             locationService.setInactiveDuration(lastActiveDuration
                     + locationService.getSavedLastDuration(getActivity()), getActivity());
