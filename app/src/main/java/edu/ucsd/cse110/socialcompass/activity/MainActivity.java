@@ -537,6 +537,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
+            if ()
             if (locationService.getLastLocation() != null) {
                 location = locationService.getLastLocation();
             }
@@ -557,4 +558,46 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
             handler.postDelayed(this, 1000);
         }
     };
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public void updateFriendOrientation(Location myLocation, Friend friend) {
+        if (locationService == null) {
+            return;
+        }
+        //Location myLocation = locationService.getLastLocation();
+        if (myLocation == null) {
+            return;
+        }
+
+        double friendLat = friend.getLatitude();
+        double friendLong = friend.getLongitude();
+        double newDist = Utilities.recalculateDistance(myLocation.getLatitude(), myLocation.getLongitude(), friendLat, friendLong);
+
+        friend.setDistance(newDist);
+
+        float bearingAngle = Bearing.bearing(myLocation.getLatitude(), myLocation.getLongitude(), friendLat, friendLong);
+        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
+        friend.setBearingAngle(bearingAngle);
+    }
+
+    public void setCurrentAzimuth(float azimuth) {
+        currentAzimuth = azimuth;
+    }
+
+    public Location getCurrentLocation() {
+        return location;
+    }
+
+    /**
+     * Calculating distance for mocking
+     * @param location1 First location for distance
+     * @param location2 Second location for distance
+     * @return The distance between these locations
+     */
+    public float calculateDistance(Location location1, Location location2) {
+        if (location1 == null || location2 == null) {
+            throw new IllegalArgumentException("Locations cannot be null");
+        }
+        return location1.distanceTo(location2);
+    }
 }
