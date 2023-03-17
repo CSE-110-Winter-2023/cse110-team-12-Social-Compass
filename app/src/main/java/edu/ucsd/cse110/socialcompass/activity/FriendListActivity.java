@@ -38,14 +38,19 @@ public class FriendListActivity extends AppCompatActivity {
     private Friend self;    // adding any new user to list of friends
     private String UserName, UserUID;
     private double UserLatitude, UserLongitude;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
 
+        // initialize shared preferences and editor
+        preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
+        editor = preferences.edit();
+
         // For first time users, get their uid and name from sharedPreferences
-        SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
         UserName = preferences.getString("myName", "Error getting name");
         UserUID = preferences.getString("myUID", "Error getting UID");
         boolean newUser = preferences.getBoolean("newUser", true);
@@ -75,7 +80,6 @@ public class FriendListActivity extends AppCompatActivity {
         viewModel.save(self);
         Log.d("USER", self.name);
 
-        SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("newUser", false);
         editor.apply();
 
@@ -91,13 +95,16 @@ public class FriendListActivity extends AppCompatActivity {
     }
 
     private void onLocationChanged(android.util.Pair<Double, Double> latLong) {
+        // update location text
         @SuppressLint("RestrictedApi") TextView locationText = this.findViewById(R.id.selfLocation);
         locationText.setText(latLong.first + ", " + latLong.second);
-        SharedPreferences preferences = getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
+
+        // save latLong data to preferences
         editor.putFloat("myLatitude", latLong.first.floatValue());
         editor.putFloat("myLongitude", latLong.second.floatValue());
         editor.apply();
+
+        // update member variables
         UserLatitude = preferences.getFloat("myLatitude", 0);
         UserLongitude = preferences.getFloat("myLongitude", 0);
 
