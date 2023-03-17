@@ -14,8 +14,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,11 +37,12 @@ import edu.ucsd.cse110.socialcompass.R;
 import edu.ucsd.cse110.socialcompass.Utilities;
 import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.services.LocationService;
+import edu.ucsd.cse110.socialcompass.services.ZoomingService;
 import edu.ucsd.cse110.socialcompass.view.FriendAdapter;
 import edu.ucsd.cse110.socialcompass.viewmodel.FriendListViewModel;
 import edu.ucsd.cse110.socialcompass.viewmodel.MainActivityViewModel;
 
-public class MainActivity extends AppCompatActivity implements Animation.AnimationListener, SensorEventListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private LocationService locationService;
     private String UID; // The user's unique UID
@@ -82,26 +81,6 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        // Find views for zooming
-        var firstCircle = (TextView)findViewById(R.id.first_circle);
-        var secondCircle = (TextView)findViewById(R.id.second_circle);
-        var thirdCircle = (TextView)findViewById(R.id.third_circle);
-        var zoomIn = (TextView)findViewById(R.id.zoom_in);
-        var zoomOut = (TextView)findViewById(R.id.zoom_out);
-
-        // Set up animations
-        var zoomInFirstFrom100Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_first_circle_from_100);
-        var zoomInSecondFrom133Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_133);
-        var zoomInSecondFrom200Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_second_circle_from_200);
-        var zoomInThirdFrom267Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_third_circle_from_267);
-        var zoomInThirdBackAnimation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_in_third_circle_back);
-        var zoomOutFirstFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_first_circle_from_1000);
-        var zoomOutSecondFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_1000);
-        var zoomOutSecondFrom200Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_second_circle_from_200);
-        var zoomOutThirdFrom1000Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_third_circle_from_1000);
-        var zoomOutThirdFrom300Animation = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.zoom_out_third_circle_from_300);
-        zoomInFirstFrom100Animation.setAnimationListener(this);
-
         // Check if user is new
         SharedPreferences preferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         boolean newUser = preferences.getBoolean("newUser", true);
@@ -128,76 +107,27 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         handler = new Handler();
         handler.postDelayed(myRunnable, 100);
 
+        // Find views for zooming
+        var firstCircle = (TextView)findViewById(R.id.first_circle);
+        var secondCircle = (TextView)findViewById(R.id.second_circle);
+        var thirdCircle = (TextView)findViewById(R.id.third_circle);
+        var zoomIn = (TextView)findViewById(R.id.zoom_in);
+        var zoomOut = (TextView)findViewById(R.id.zoom_out);
+
         // Fetch the zooming setting saved
         int scaleOfCirclesSaved = preferences.getInt("scaleOfCircles", 300);
+
+        // Reflect zooming setting
+        ZoomingService zoomingService = new ZoomingService(this);
+        zoomingService.reflectZoomingSetting(this, zoomIn, firstCircle, secondCircle, thirdCircle, scaleOfCirclesSaved);
 
         // Start polling friends
         startPollingFriends();
         displayFriends(mainViewModel, range, Double.POSITIVE_INFINITY, 480, true);
 
-        // Zooming in based on the zooming setting
-        if(scaleOfCirclesSaved > 100) {
-            firstCircle.startAnimation(zoomInFirstFrom100Animation);
-            secondCircle.startAnimation(zoomOutSecondFrom200Animation);
-            thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
-            range = 500;
-            scaleOfCircles = 200;
-        }
-        if(scaleOfCirclesSaved > 200) {
-            secondCircle.startAnimation(zoomInSecondFrom133Animation);
-            thirdCircle.startAnimation(zoomInThirdFrom267Animation);
-            range = 10;
-            scaleOfCircles = 300;
-        }
-        if(scaleOfCirclesSaved > 300) {
-            secondCircle.startAnimation(zoomInSecondFrom200Animation);
-            range = 1;
-            scaleOfCircles = 400;
-        }
-
-        // Run animations
-        zoomIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(scaleOfCircles == 100) {
-                    firstCircle.startAnimation(zoomInFirstFrom100Animation);
-                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
-                    thirdCircle.startAnimation(zoomOutThirdFrom300Animation);
-                    range = 500;
-                    scaleOfCircles = 200;
-                } else if(scaleOfCircles == 200) {
-                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
-                    thirdCircle.startAnimation(zoomInThirdFrom267Animation);
-                    range = 10;
-                    scaleOfCircles = 300;
-                } else if(scaleOfCircles == 300) {
-                    secondCircle.startAnimation(zoomInSecondFrom200Animation);
-                    range = 1;
-                    scaleOfCircles = 400;
-                }
-            }
-        });
-        zoomOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(scaleOfCircles == 400) {
-                    secondCircle.startAnimation(zoomOutSecondFrom1000Animation);
-                    range = 10;
-                    scaleOfCircles = 300;
-                } else if(scaleOfCircles == 300) {
-                    secondCircle.startAnimation(zoomOutSecondFrom200Animation);
-                    thirdCircle.startAnimation(zoomOutThirdFrom1000Animation);
-                    range = 500;
-                    scaleOfCircles = 200;
-                } else if(scaleOfCircles == 200) {
-                    firstCircle.startAnimation(zoomOutFirstFrom1000Animation);
-                    secondCircle.startAnimation(zoomInSecondFrom133Animation);
-                    thirdCircle.startAnimation(zoomInThirdBackAnimation);
-                    range = 1000;
-                    scaleOfCircles = 100;
-                }
-            }
-        });
+        // Start zooming in and out service
+        zoomingService.zoomIn(this, zoomIn, firstCircle, secondCircle, thirdCircle);
+        zoomingService.zoomOut(this, zoomOut, firstCircle, secondCircle, thirdCircle);
     }
 
     @Override
@@ -221,6 +151,22 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         editor.apply();
     }
 
+    public int getRange() {
+        return range;
+    }
+
+    public int getScaleOfCircles() {
+        return scaleOfCircles;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public void setScaleOfCircles(int scaleOfCircles) {
+        this.scaleOfCircles = scaleOfCircles;
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -242,19 +188,6 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // get implementation for accurate orientation
-    }
-
-    @Override
-    public void onAnimationStart(Animation animation) {
-    }
-
-    @Override
-    public void onAnimationEnd(Animation animation) {
-    }
-
-    @Override
-    public void onAnimationRepeat(Animation animation) {
-
     }
 
     private void startPollingFriends() {
