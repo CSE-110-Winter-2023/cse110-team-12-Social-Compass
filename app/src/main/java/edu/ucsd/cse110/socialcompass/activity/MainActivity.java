@@ -105,11 +105,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         lastActiveDuration = locationService.getSavedLastDuration(this);
         handler = new Handler();
         handler.postDelayed(myRunnable, 100);
-
         // Start polling friends
         startPollingFriends();
-        displayFriends(mainViewModel, range, Double.POSITIVE_INFINITY, 480, true);
-
         // Find views for zooming
         var firstCircle = (TextView)findViewById(R.id.first_circle);
         var secondCircle = (TextView)findViewById(R.id.second_circle);
@@ -425,6 +422,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         startActivity(intent);
     }
 
+
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
     public void setInactiveTimeText(long seconds) {
         long minutes = seconds / 60;
@@ -438,6 +436,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             timeStr = "<1m";
         }
         TextView lastActiveTimeText = this.findViewById(R.id.gps_status);
+        System.out.println("Last saved Duration: " + seconds);
         if (seconds != 0) {
             // update the duration if we are inactive
             lastActiveTimeText.setText(timeStr + " ago");
@@ -463,36 +462,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public Location getLocation() {
-        return location;
-    }
-
-    // occasionally check for GPS status using a Runnable thread
     Runnable myRunnable = new Runnable() {
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
-            boolean permission = locationService.checkPermissions();
-            if (!permission) {
-                return;
+            if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
+                // GPS signal has gone stale
+                locationService.incrementInactiveDuration(getActivity());
+            } else {
+                // GPS signal is live
+                locationService.resetInactiveDuration(getActivity());
+                lastActiveDuration = 0;
             }
-            if (locationService.getLastLocation() != null) {
-                if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
-                    // GPS signal has gone stale
-                    locationService.incrementInactiveDuration(getActivity());
-                } else {
-                    // GPS signal is live
-                    locationService.resetInactiveDuration(getActivity());
-                    lastActiveDuration = 0;
-                }
-                locationService.setLastKnownActiveTime(getActivity());
-                // automatically use the last detected location if GPS is off
-                locationService.setInactiveDuration(lastActiveDuration
-                        + locationService.getSavedLastDuration(getActivity()), getActivity());
-                setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
-                setIconVisibility(locationService.getSavedLastDuration(getActivity()));
-                handler.postDelayed(this, 1000);
-            }
+            locationService.setLastKnownActiveTime(getActivity());
+            locationService.setInactiveDuration(lastActiveDuration
+                    + locationService.getSavedLastDuration(getActivity()), getActivity());
+            setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
+            setIconVisibility(locationService.getSavedLastDuration(getActivity()));
+            handler.postDelayed(this, 1000);
         }
     };
 
@@ -520,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         currentAzimuth = azimuth;
     }
 
-    public Location getCurrentLocation() {
+    public Location getLocation() {
         return location;
     }
 

@@ -1,12 +1,8 @@
 package edu.ucsd.cse110.socialcompass;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import android.app.AlertDialog;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.room.Room;
@@ -18,10 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.shadows.ShadowAlertDialog;
-import org.w3c.dom.Text;
-
-import java.util.UUID;
 
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
