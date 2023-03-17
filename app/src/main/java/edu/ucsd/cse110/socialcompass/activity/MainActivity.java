@@ -542,23 +542,22 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                 return;
             }
             if (locationService.getLastLocation() != null) {
-                location = locationService.getLastLocation();
+                if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
+                    // GPS signal has gone stale
+                    locationService.incrementInactiveDuration(getActivity());
+                } else {
+                    // GPS signal is live
+                    locationService.resetInactiveDuration(getActivity());
+                    lastActiveDuration = 0;
+                }
+                locationService.setLastKnownActiveTime(getActivity());
+                // automatically use the last detected location if GPS is off
+                locationService.setInactiveDuration(lastActiveDuration
+                        + locationService.getSavedLastDuration(getActivity()), getActivity());
+                setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
+                setIconVisibility(locationService.getSavedLastDuration(getActivity()));
+                handler.postDelayed(this, 1000);
             }
-            if (locationService.getLastActiveTime(getActivity()) == location.getTime()) {
-                // GPS signal has gone stale
-                locationService.incrementInactiveDuration(getActivity());
-            } else {
-                // GPS signal is live
-                locationService.resetInactiveDuration(getActivity());
-                lastActiveDuration = 0;
-            }
-            locationService.setLastKnownActiveTime(getActivity());
-            // automatically use the last detected location if GPS is off
-            locationService.setInactiveDuration(lastActiveDuration
-                    + locationService.getSavedLastDuration(getActivity()), getActivity());
-            setInactiveTimeText(locationService.getSavedLastDuration(getActivity()));
-            setIconVisibility(locationService.getSavedLastDuration(getActivity()));
-            handler.postDelayed(this, 1000);
         }
     };
 

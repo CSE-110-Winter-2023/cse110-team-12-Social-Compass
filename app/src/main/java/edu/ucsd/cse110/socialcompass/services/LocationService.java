@@ -113,6 +113,11 @@ public class LocationService implements LocationListener {
         this.locationValue = mockDataSource;
     }
 
+    public boolean checkPermissions() {
+        // We already have at least one of the location permissions, go ahead!
+        return Arrays.stream(REQUIRED_PERMISSIONS).allMatch(perm -> activity.checkSelfPermission(perm) == PackageManager.PERMISSION_GRANTED);
+    }
+
     @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
     public long getSavedLastDuration(Activity activity) {
         SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
