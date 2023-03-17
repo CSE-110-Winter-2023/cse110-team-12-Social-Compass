@@ -6,21 +6,13 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
-import android.content.pm.PackageManager;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-
-import android.os.Looper;
-
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -55,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
 
     private LocationService locationService;
     private String UID; // The user's unique UID
+    private LiveData<Friend> user;
     private MainActivityViewModel mainViewModel;
     private FriendListViewModel friendListViewModel;
     private double UserLatitude, UserLongitude;
@@ -267,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
     private void startPollingFriends() {
         // live updating for friends already in the database (when you rerun the program)
         LiveData<List<Friend>> friendsLiveData = friendListViewModel.getAll();
-        friendsLiveData.observe(this, new Observer<>() {
+        friendsLiveData.observe(this, new Observer<List<Friend>>() {
             //grabs the list of friends
             @Override
             public void onChanged(List<Friend> friendList) {
@@ -289,14 +282,14 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                                     } else {
                                         double friendLat = friend.getLatitude();
                                         double friendLong = friend.getLongitude();
-                                        double newDist = Utilities.recalculateDistance(UserLatitude, UserLongitude, friendLat, friendLong);
+                                        double newDist = Utilities.recalculateDistance(UserLatitude,UserLongitude,friendLat, friendLong);
 
                                         friend.setDistance(newDist);
                                         int zone = Utilities.getFriendZone(newDist, scaleOfCircles);
 
                                         float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat, friendLong);
 
-                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
+                                        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360)%360;
 
                                         friend.setBearingAngle(bearingAngle);
 
@@ -308,16 +301,17 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                                             FriendIcon icon = friendIcons.get(friend.getUid());
 
                                             // check if there is overlap
-                                            if (icon != null && icon.getOverlapIconUID() != null && friendIcons.containsKey(icon.getOverlapIconUID())) {
+                                            if (icon != null && icon.getOverlapIconUID() != null && friendIcons.containsKey(icon.getOverlapIconUID())){
                                                 FriendIcon overlapIcon = friendIcons.get(icon.getOverlapIconUID());
                                                 // check whether the the overlapIcon was shifted closer to the center or further and set offset to it
                                                 int offset = overlapIcon.getOverlapIsCloser() ? 75 : -75;
 
                                                 // if there is still overlap, return and don't update the icons, otherwise remove overlap
-                                                if (zone == overlapIcon.getRadius() + offset
-                                                        && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10) {
+                                                if(zone == overlapIcon.getRadius() + offset
+                                                        && Math.abs(overlapIcon.getBearingAngle() - bearingAngle) <= 10){
                                                     return;
-                                                } else {
+                                                }
+                                                else {
                                                     overlapIcon.setOverlapIconUID(null);
                                                 }
                                             }
@@ -325,24 +319,23 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
                                         }
 
                                         // if the icon is within range, then check if there is any overlap, if so grab the uid of the icon that it is overlapping
-                                        String overlapIconUID = isWithinRange ? stackLabels(mainLayout, friend.getUid(), zone, bearingAngle) : "";
+                                        String overlapIconUID = isWithinRange ? stackLabels(mainLayout,friend.getUid(),zone,bearingAngle) : "";
 
                                         // offset to shift the icon further from the circle if there is overlap
                                         int offset = overlapIconUID.equals("") ? 0 : 75;
 
                                         // create a new friendIcon with updated bearing, zone, and distance
-                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this,
-                                                friend.getName(), bearingAngle, zone + offset, newDist, isWithinRange);
+                                        FriendIcon friendIcon = new FriendIcon(MainActivity.this, friend.getName(), bearingAngle, zone + offset, newDist, isWithinRange);
 
                                         boolean truncate = false;
 
                                         // if there is overlap, we want to make note of that
-                                        if (offset > 0) {
+                                        if(offset > 0){
                                             friendIcon.setOverlapIconUID(overlapIconUID);
                                             friendIcon.setOverlapIsCloser(false);
 
                                             // check if we want to truncate the icon
-                                            truncate = bearingAngle > 225 && bearingAngle < 315;
+                                            truncate = bearingAngle > 225 && bearingAngle < 315 ;
                                         }
                                         friendIcon.createIcon(truncate);
                                         mainLayout.addView(friendIcon.getFriendIcon());
