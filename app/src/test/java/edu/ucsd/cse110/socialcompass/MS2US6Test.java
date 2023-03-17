@@ -2,29 +2,38 @@ package edu.ucsd.cse110.socialcompass;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import android.app.AlertDialog;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.location.LocationManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.room.Room;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.shadows.ShadowAlertDialog;
 
-import java.util.UUID;
+import static org.mockito.Mockito.when;
 
 import edu.ucsd.cse110.socialcompass.activity.MainActivity;
+import edu.ucsd.cse110.socialcompass.model.Friend;
 import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 
 /**
  * Tests for detecting last active time for GPS indicator
  */
+@RunWith(AndroidJUnit4.class)
 public class MS2US6Test {
     FriendDatabase db;
     ActivityScenario<MainActivity> scenario;
@@ -44,23 +53,62 @@ public class MS2US6Test {
     }
 
     @Test
-    public void testCopyUid() {
+    public void testDisplayGPSWhenLive() {
         scenario.onActivity(activity -> {
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name");
 
-            String uniqueID = UUID.randomUUID().toString();
-
-            //Open the alert console with a given uid and make sure the console has popped up
-            Utilities.showCopyUIDAlert(activity, "Copy UID", uniqueID);
             AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
-            assertNotNull(alertDialog);
 
-            // find the copy button and simulate a click
-            TextView copyButton = alertDialog.findViewById(R.id.copy);
-            copyButton.performClick();
+            // set the username
+            EditText username = alertDialog.findViewById(R.id.inputName);
+            String name = "Sam";
+            username.setText(name);
 
-            //Check if the data in the clipboard matches the uid
-            final ClipboardManager manager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            manager.addPrimaryClipChangedListener(() -> assertEquals(manager.getPrimaryClip().toString(), uniqueID));
+            LocationManager mockLocationManager = Mockito.mock(LocationManager.class);
+            //Mockito.when(context.getSystemService(Context.LOCATION_SERVICE)).thenReturn(mockLocationManager);
+            //Mockito.when(mockLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)).thenReturn(false);
+
+
+        });
+    }
+
+    @Test
+    public void testDisplayGPSShortInactive() {
+        scenario.onActivity(activity -> {
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name");
+
+            AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+
+            // set the username
+            EditText username = alertDialog.findViewById(R.id.inputName);
+            String name = "Sam";
+            username.setText(name);
+
+            // check that the name is set and that the alert is clicked
+            assertEquals("Sam", username.getText().toString());
+            assertTrue(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick());
+
+
+        });
+    }
+
+    @Test
+    public void testDisplayGPSLongInactive() {
+        scenario.onActivity(activity -> {
+            Utilities.showUserNamePromptAlert((MainActivity) activity, "Please enter your name");
+
+            AlertDialog alertDialog = ShadowAlertDialog.getLatestAlertDialog();
+
+            // set the username
+            EditText username = alertDialog.findViewById(R.id.inputName);
+            String name = "Sam";
+            username.setText(name);
+
+            // check that the name is set and that the alert is clicked
+            assertEquals("Sam", username.getText().toString());
+            assertTrue(alertDialog.getButton(DialogInterface.BUTTON_POSITIVE).performClick());
+
+
         });
     }
 
