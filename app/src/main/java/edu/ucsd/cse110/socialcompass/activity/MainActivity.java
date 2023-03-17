@@ -593,8 +593,23 @@ public class MainActivity extends AppCompatActivity implements Animation.Animati
         friend.setDistance(newDist);
 
         float bearingAngle = Bearing.bearing(myLocation.getLatitude(), myLocation.getLongitude(), friendLat, friendLong);
-        //bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
+        bearingAngle = (((bearingAngle - currentAzimuth) % 360) + 360) % 360;
         friend.setBearingAngle(bearingAngle);
+    }
+
+    public void setCurrentAzimuth(float azimuth) {
+        currentAzimuth = azimuth;
+    }
+
+    public Location getCurrentLocation() {
+        return location;
+    }
+
+    public float calculateDistance(Location location1, Location location2) {
+        if (location1 == null || location2 == null) {
+            throw new IllegalArgumentException("Locations cannot be null");
+        }
+        return location1.distanceTo(location2);
     }
 
 }
