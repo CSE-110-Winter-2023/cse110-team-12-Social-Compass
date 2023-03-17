@@ -99,6 +99,11 @@ public class LocationService implements LocationListener {
         }
     }
 
+    public boolean checkPermissions() {
+        // We already have at least one of the location permissions, go ahead!
+        return Arrays.stream(REQUIRED_PERMISSIONS).allMatch(perm -> activity.checkSelfPermission(perm) == PackageManager.PERMISSION_GRANTED);
+    }
+
     @Override
     public void onLocationChanged(@NonNull Location location) {
         this.locationValue.postValue(new Pair<Double,Double>(location.getLatitude(),location.getLongitude()));
