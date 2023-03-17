@@ -50,6 +50,7 @@ public class FriendListActivity extends AppCompatActivity {
         UserUID = preferences.getString("myUID", "Error getting UID");
         boolean newUser = preferences.getBoolean("newUser", true);
 
+        // setup views and adapter
         viewModel = setupViewModel();
         var adapter = setupAdapter(viewModel);
         setupViews(viewModel, adapter);
@@ -59,29 +60,29 @@ public class FriendListActivity extends AppCompatActivity {
         reobserveLocation();
 
         // if this is a new user, add them to the database
-        if (newUser) {
-            self = new Friend(UserName, UserUID, UserLatitude, UserLongitude,-1);
-            viewModel.save(self);
-            Log.d("USER", self.name);
+        if (newUser) { initNewUser(preferences); }
 
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("newUser", false);
-            editor.apply();
-
-            Gson gson = new Gson();
-            String json = gson.toJson(self);
-            editor.putString("self", json);
-            editor.apply();
-
-        }
-        // self info
+        // initialize self info
         TextView selfName = this.findViewById(R.id.selfName);
-        System.out.println(newUser);
-
-        selfName.setText(UserName);
-
         TextView selfUID = this.findViewById(R.id.selfUID);
+        System.out.println(newUser);
+        selfName.setText(UserName);
         selfUID.setText(UserUID);
+    }
+
+    private void initNewUser(SharedPreferences preferences) {
+        self = new Friend(UserName, UserUID, UserLatitude, UserLongitude,-1);
+        viewModel.save(self);
+        Log.d("USER", self.name);
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("newUser", false);
+        editor.apply();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(self);
+        editor.putString("self", json);
+        editor.apply();
     }
 
     private void reobserveLocation() {
