@@ -160,7 +160,7 @@ public class FriendListActivity extends AppCompatActivity {
                 return false;
             }
 
-            // Otherwise, create a new note, persist it...
+            // get friend livedata, persist it...
             var uid = input.getText().toString();
             var friend = viewModel.getFriend(uid);
 
@@ -199,11 +199,15 @@ public class FriendListActivity extends AppCompatActivity {
                 public void onChanged(Friend friend) {
                     // Remove the observer after the first update
                     friendLiveData.removeObserver(this);
+
+                    // getting updated values from observer
                     double friendLat = friend.getLatitude();
                     double friendLong = friend.getLongitude();
                     double newDist = Utilities.recalculateDistance(UserLatitude, UserLongitude, friendLat, friendLong);
-                    friend.setDistance(newDist);
                     float bearingAngle = Bearing.bearing(UserLatitude, UserLongitude, friendLat,friendLong);
+
+                    // updating values and saving to the local database
+                    friend.setDistance(newDist);
                     friend.setBearingAngle(bearingAngle);
                     viewModel.saveLocal(friend);
                 }
