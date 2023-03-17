@@ -23,21 +23,17 @@ import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
  */
 @RunWith(RobolectricTestRunner.class)
 public class MS2US6Test {
-    FriendDatabase db;
     ActivityScenario<MainActivity> scenario;
 
     @Before
     public void init() {
         scenario = ActivityScenario.launch(MainActivity.class);
-        Context context = ApplicationProvider.getApplicationContext();
-        db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
-                .allowMainThreadQueries()
-                .build();
+
     }
 
     @After
     public void teardown() {
-        db.close();
+
     }
 
     @Test

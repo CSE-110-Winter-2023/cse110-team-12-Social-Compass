@@ -30,16 +30,11 @@ public class MS2US7Test {
     @Before
     public void init() {
         scenario = ActivityScenario.launch(MainActivity.class);
-        Context context = ApplicationProvider.getApplicationContext();
-        db = Room.inMemoryDatabaseBuilder(context, FriendDatabase.class)
-                .allowMainThreadQueries()
-                .build();
     }
 
     @After
     public void teardown() {
-        scenario.close();
-        db.close();
+
     }
 
     @Test
