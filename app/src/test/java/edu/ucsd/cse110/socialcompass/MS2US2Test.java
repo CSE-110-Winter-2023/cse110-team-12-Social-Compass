@@ -19,6 +19,8 @@ import androidx.test.core.app.ApplicationProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
 
 import java.util.List;
@@ -36,6 +38,7 @@ import edu.ucsd.cse110.socialcompass.viewmodel.FriendViewModel;
 /**
  * Tests for
  */
+@RunWith(RobolectricTestRunner.class)
 public class MS2US2Test {
     FriendDatabase db;
     private FriendDao dao;
