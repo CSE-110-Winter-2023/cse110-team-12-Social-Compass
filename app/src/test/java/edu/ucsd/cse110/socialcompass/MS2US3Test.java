@@ -15,6 +15,8 @@ import androidx.test.core.app.ApplicationProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowAlertDialog;
 
 import java.util.UUID;
@@ -25,6 +27,7 @@ import edu.ucsd.cse110.socialcompass.model.FriendDatabase;
 /**
  * Tests for copying UIDs to clipboard
  */
+@RunWith(RobolectricTestRunner.class)
 public class MS2US3Test {
     FriendDatabase db;
     ActivityScenario<MainActivity> scenario;

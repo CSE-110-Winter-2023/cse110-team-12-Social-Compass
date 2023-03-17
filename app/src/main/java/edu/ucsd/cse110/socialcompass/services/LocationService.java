@@ -160,4 +160,25 @@ public class LocationService implements LocationListener {
         editor.putLong("inactiveDuration", value);
         editor.apply();
     }
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public void setLastLocation(Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putFloat("myLatitude", (float)locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
+        editor.putFloat("myLongitude", (float)locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
+        editor.apply();
+    }
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public float getLastLatitude(Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        return preferences.getFloat("myLatitude", 0);
+    }
+
+    @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
+    public float getLastLongitude(Activity activity) {
+        SharedPreferences preferences = activity.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        return preferences.getFloat("myLongitude", 0);
+    }
 }
