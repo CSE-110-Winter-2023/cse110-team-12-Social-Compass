@@ -466,6 +466,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         @RequiresPermission(anyOf = {ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION})
         public void run() {
+            boolean permission = locationService.checkPermissions();
+            if (!permission) {
+                handler.postDelayed(this, 1000);
+                return;
+            }
             if (locationService.getLastActiveTime(getActivity()) == locationService.getLastLocation().getTime()) {
                 // GPS signal has gone stale
                 locationService.incrementInactiveDuration(getActivity());
